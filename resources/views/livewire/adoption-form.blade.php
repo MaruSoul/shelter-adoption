@@ -32,19 +32,19 @@
 
                 <div class="grid gap-4 grid-cols-[repeat(auto-fit,minmax(220px,1fr))]">
                     <label class="label">Ваше імʼя *
-                        <input type="text" wire:model="name" autocomplete="name" class="field font-normal" aria-invalid="@error('name') true @else false @enderror">
+                        <input type="text" wire:model="name" autocomplete="name" class="field font-normal" @error('name') aria-invalid="true" @enderror>
                         @error('name')<span class="error">{{ $message }}</span>@enderror
                     </label>
                     <label class="label">Телефон *
-                        <input type="tel" wire:model.blur="phone" autocomplete="tel" inputmode="tel" class="field font-normal" aria-invalid="@error('phone') true @else false @enderror">
+                        <input type="tel" wire:model.blur="phone" autocomplete="tel" inputmode="tel" class="field font-normal" @error('phone') aria-invalid="true" @enderror>
                         @error('phone')<span class="error">{{ $message }}</span>@enderror
                     </label>
                     <label class="label">Електронна пошта *
-                        <input type="email" wire:model="email" autocomplete="email" class="field font-normal" aria-invalid="@error('email') true @else false @enderror">
+                        <input type="email" wire:model="email" autocomplete="email" class="field font-normal" @error('email') aria-invalid="true" @enderror>
                         @error('email')<span class="error">{{ $message }}</span>@enderror
                     </label>
                     <label class="label">Область *
-                        <select wire:model="region_id" class="field font-normal" aria-invalid="@error('region_id') true @else false @enderror">
+                        <select wire:model="region_id" class="field font-normal" @error('region_id') aria-invalid="true" @enderror>
                             <option value="">Оберіть область</option>
                             @foreach ($regions as $r)<option value="{{ $r->id }}">{{ $r->name }}</option>@endforeach
                         </select>
