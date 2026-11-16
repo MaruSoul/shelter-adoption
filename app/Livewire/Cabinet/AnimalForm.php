@@ -68,6 +68,10 @@ class AnimalForm extends Component
             $this->storeUploads($this->animal);
         });
 
+        if ($isNew) {
+            session()->flash('celebrate', true);
+        }
+
         session()->flash('status', $isNew
             ? 'Дякуємо! Картку надіслано на перевірку. Після схвалення вона зʼявиться в каталозі.'
             : 'Зміни збережено. Картка знову на перевірці у модератора.');

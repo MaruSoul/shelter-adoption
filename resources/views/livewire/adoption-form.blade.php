@@ -90,9 +90,10 @@
             </form>
         @else
             <div role="status" class="flex flex-col items-start gap-4">
-                <span class="size-16 rounded-full bg-sun-soft text-accent flex items-center justify-center">
-                    <svg class="size-8" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg>
-                </span>
+                <div class="relative size-32">
+                    <x-confetti />
+                    <x-mascot.cheer class="lapa-pop relative size-full" label="Лапа радіє разом із вами" />
+                </div>
                 <h1 class="text-3xl">Дякуємо! Анкету отримано</h1>
                 <p class="text-muted">Адміністратор притулку звʼяжеться з вами найближчим часом обраним способом. Копію анкети ми надіслали на {{ $email }}.</p>
                 @guest

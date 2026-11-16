@@ -78,7 +78,14 @@
 
 @if (session('status') && session('status') !== 'verification-link-sent')
     <div role="status" class="mx-auto max-w-6xl w-full px-6 pt-6">
-        <div class="rounded-2xl bg-success-soft text-success px-5 py-3 font-medium">{{ session('status') }}</div>
+        @if (session('celebrate'))
+            <div class="relative rounded-2xl bg-success-soft text-success px-5 py-3 font-medium flex items-center gap-4">
+                <span class="relative size-16 shrink-0"><x-confetti :count="14" /><x-mascot.cheer class="lapa-pop relative size-full" label="Лапа радіє" /></span>
+                <span>{{ session('status') }}</span>
+            </div>
+        @else
+            <div class="rounded-2xl bg-success-soft text-success px-5 py-3 font-medium">{{ session('status') }}</div>
+        @endif
     </div>
 @endif
 

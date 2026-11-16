@@ -130,3 +130,28 @@
     .card-lift, .card-photo { transition: none; }
     .card-lift:hover, .card-lift:focus-visible, .card-lift:hover .card-photo { transform: none; }
 }
+
+/* Святкування: Лапа «Ура!» зʼявляється з підскоком, навколо – одноразові конфеті */
+@keyframes lapa-pop {
+    0% { opacity: 0; transform: translateY(14px) scale(.6); }
+    60% { opacity: 1; transform: translateY(-4px) scale(1.08); }
+    100% { transform: none; }
+}
+.lapa-pop { animation: lapa-pop .55s cubic-bezier(.2, .9, .3, 1.2) both; }
+
+.confetti { position: absolute; inset: 0; pointer-events: none; }
+.confetti i {
+    position: absolute; left: 50%; top: 45%;
+    width: 7px; height: 12px; border-radius: 2px;
+    background: var(--c); opacity: 0;
+    animation: confetti-burst 1.3s cubic-bezier(.2, .7, .3, 1) var(--d) forwards;
+}
+@keyframes confetti-burst {
+    0% { opacity: 1; transform: translate(-50%, -50%) scale(.4) rotate(0); }
+    45% { opacity: 1; transform: translate(calc(-50% + var(--x)), calc(-50% + var(--y))) rotate(calc(var(--r) / 2)); }
+    100% { opacity: 0; transform: translate(calc(-50% + var(--x) * 1.15), calc(-50% + var(--y) + 110px)) rotate(var(--r)); }
+}
+@media (prefers-reduced-motion: reduce) {
+    .lapa-pop { animation: none; }
+    .confetti { display: none; }
+}

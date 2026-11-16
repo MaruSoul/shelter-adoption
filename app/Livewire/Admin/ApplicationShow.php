@@ -15,6 +15,9 @@ class ApplicationShow extends Component
 {
     public ?string $flash = null;
 
+    /** Прилаштування – головна подія сайту: показуємо Лапу з конфеті. */
+    public bool $celebrate = false;
+
     #[Locked]
     public int $applicationId;
 
@@ -63,6 +66,7 @@ class ApplicationShow extends Component
 
         $this->transitionNote = '';
         $this->flash = 'Статус змінено: '.$target->label().'.';
+        $this->celebrate = $target === ApplicationStatus::Adopted;
     }
 
     public function render()

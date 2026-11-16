@@ -1,6 +1,18 @@
 <div>
     <x-admin-nav />
-    <x-flash :message="$flash" />
+    @if ($celebrate)
+        <div class="mx-auto max-w-6xl w-full px-6 pt-6" role="status" wire:key="celebrate">
+            <div class="relative rounded-2xl bg-sun-soft px-5 py-4 flex items-center gap-4">
+                <span class="relative size-20 shrink-0"><x-confetti /><x-mascot.cheer class="lapa-pop relative size-full" label="Лапа радіє" /></span>
+                <span class="flex flex-col">
+                    <span class="font-display font-extrabold text-2xl">Ура! {{ $this->application()->animal->foundHomePhrase() }}</span>
+                    <span class="text-muted">Інші активні анкети на цю тварину закрито автоматично.</span>
+                </span>
+            </div>
+        </div>
+    @else
+        <x-flash :message="$flash" />
+    @endif
     <div class="mx-auto max-w-6xl px-6 py-8 flex flex-col gap-6">
         <a href="{{ route('admin.applications.index') }}" class="font-semibold text-primary hover:underline">← Усі анкети</a>
         <div class="flex flex-wrap items-center gap-4">

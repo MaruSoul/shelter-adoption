@@ -61,3 +61,10 @@ it('приймає лише https-посилання на соцмережі', f
         ->call('save')
         ->assertHasErrors(['form.facebook_url']);
 });
+
+it('показує сторінку 404 з Лапою для неіснуючої адреси', function () {
+    $this->get('/takoi-storinky-nemaye')
+        ->assertNotFound()
+        ->assertSee('Такої сторінки немає')
+        ->assertSee('Лапа визирає');
+});

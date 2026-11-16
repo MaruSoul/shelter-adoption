@@ -99,7 +99,7 @@
             <div wire:loading.class="opacity-60" class="transition-opacity">
                 @if ($this->animals->isEmpty())
                     <div class="card p-10 flex flex-col items-center gap-3 text-center">
-                        <x-icon.paw class="size-14" />
+                        <x-mascot.sleep class="w-48" label="Лапа дрімає" />
                         <h2 class="text-2xl">Нікого не знайшли</h2>
                         <p class="text-muted max-w-md">За цими фільтрами тварин зараз немає. Спробуйте прибрати частину фільтрів – можливо, ваш друг уже чекає.</p>
                         <button type="button" wire:click="resetFilters" class="btn-primary">Скинути фільтри</button>

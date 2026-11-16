@@ -49,9 +49,12 @@
                 </div>
             </article>
         @empty
-            <div class="card p-8 flex flex-col gap-3 items-start">
+            <div class="card p-8 flex flex-wrap items-center gap-6">
+                <x-mascot.sleep class="w-36 shrink-0" label="Лапа дрімає" />
+                <div class="flex flex-col gap-3 items-start grow basis-64">
                 <p class="text-muted">Анкет поки немає. Анкети, подані раніше з адресою {{ auth()->user()->email }}, зʼявляться тут автоматично.</p>
                 <a href="{{ route('animals.index') }}" class="btn-primary">Знайти друга</a>
+                </div>
             </div>
         @endforelse
     @else
@@ -83,9 +86,12 @@
                 </div>
             </article>
         @empty
-            <div class="card p-8 flex flex-col gap-3 items-start">
+            <div class="card p-8 flex flex-wrap items-center gap-6">
+                <x-mascot.sleep class="w-36 shrink-0" label="Лапа дрімає" />
+                <div class="flex flex-col gap-3 items-start grow basis-64">
                 <p class="text-muted">Ви ще не розміщували тварин. Знайшли тварину на вулиці? Розмістіть її картку – після перевірки вона зʼявиться в каталозі.</p>
                 <a href="{{ route('cabinet.animals.create') }}" class="btn-sun">Розмістити тварину</a>
+                </div>
             </div>
         @endforelse
     @endif

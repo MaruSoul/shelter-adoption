@@ -111,3 +111,13 @@ it('адміністратор бачить усі анкети однієї л�
         ->assertSee('Інші анкети цієї людини')
         ->assertSee($a2->animal->name);
 });
+
+it('після прилаштування адміністратор бачить святкування з Лапою', function () {
+    $animal = Animal::factory()->create(['name' => 'Лада', 'sex' => 'female']);
+    $application = AdoptionApplication::factory()->status(ApplicationStatus::MeetingScheduled)->create(['animal_id' => $animal->id]);
+
+    Livewire::actingAs(admin())->test(ApplicationShow::class, ['application' => $application])
+        ->call('changeStatus', 'adopted')
+        ->assertSet('celebrate', true)
+        ->assertSee('Ура! Лада вже знайшла дім');
+});

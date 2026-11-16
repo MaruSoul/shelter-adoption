@@ -163,3 +163,11 @@ it('привʼязує анкету користувача, який увійш�
 
     expect(AdoptionApplication::sole()->user_id)->toBe($me->id);
 });
+
+it('після надсилання анкети Лапа радіє', function () {
+    Mail::fake();
+
+    fillForm(Livewire::test(AdoptionForm::class, ['animal' => Animal::factory()->create()]))
+        ->call('submit')
+        ->assertSee('Лапа радіє разом із вами');
+});
