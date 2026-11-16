@@ -10,6 +10,7 @@ services:
     env_file: .env
     environment:
       RUN_MIGRATIONS: "true"
+    restart: unless-stopped
     volumes:
       - storage:/var/www/html/storage/app
     depends_on:
@@ -20,6 +21,7 @@ services:
     image: shelter-app
     env_file: .env
     command: ["php", "artisan", "queue:work", "--tries=3", "--sleep=2"]
+    restart: unless-stopped
     volumes:
       - storage:/var/www/html/storage/app
     depends_on:
@@ -31,6 +33,7 @@ services:
       dockerfile: docker/php/Dockerfile
       target: web
     image: shelter-web
+    restart: unless-stopped
     ports:
       - "${APP_PORT:-8080}:80"
     volumes:
@@ -52,6 +55,20 @@ services:
       interval: 5s
       timeout: 5s
       retries: 10
+
+  # Автотести: docker compose --profile tests run --rm tests
+  tests:
+    build:
+      context: .
+      dockerfile: docker/php/Dockerfile
+      target: tests
+    profiles: ["tests"]
+    env_file: .env
+    environment:
+      APP_ENV: testing
+    depends_on:
+      db:
+        condition: service_healthy
 
   mailpit:
     image: axllent/mailpit:latest
