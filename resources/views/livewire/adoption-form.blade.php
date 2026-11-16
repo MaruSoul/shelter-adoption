@@ -89,24 +89,27 @@
                 </button>
             </form>
         @else
-            <div role="status" class="flex flex-col items-start gap-4">
-                <div class="relative size-32">
-                    <x-confetti />
-                    <x-mascot.cheer class="lapa-pop relative size-full" label="Лапа радіє разом із вами" />
+            {{-- Як «урок завершено» в Duolingo: великий персонаж по центру, під ним заголовок і одна головна дія --}}
+            <div role="status" class="flex flex-col items-center text-center gap-4 py-4">
+                <div class="relative size-52 flex items-center justify-center">
+                    <span class="absolute inset-4 rounded-full bg-sun-soft" aria-hidden="true"></span>
+                    <x-confetti :count="26" />
+                    <x-mascot.cheer class="lapa-pop relative w-44" label="Лапа радіє разом із вами" />
                 </div>
-                <h1 class="text-3xl">Дякуємо! Анкету отримано</h1>
-                <p class="text-muted">Адміністратор притулку звʼяжеться з вами найближчим часом обраним способом. Копію анкети ми надіслали на {{ $email }}.</p>
+                <h1 class="text-3xl md:text-4xl">Дякуємо! Анкету отримано</h1>
+                <p class="text-lg max-w-md"><strong>{{ $animal->name }}</strong> уже чекає на знайомство з вами.</p>
+                <p class="text-muted max-w-md">Адміністратор притулку звʼяжеться з вами найближчим часом обраним способом. Копію анкети ми надіслали на {{ $email }}.</p>
                 @guest
-                    <div class="rounded-2xl bg-sun-soft p-5 flex flex-col gap-2.5">
+                    <div class="rounded-2xl bg-sun-soft p-5 flex flex-col items-center gap-2.5 max-w-md w-full mt-2">
                         <span class="font-semibold">Хочете стежити за статусом анкети?</span>
-                        <span class="text-muted">Увійдіть в акаунт з цією ж поштою – анкета вже чекатиме у вашому кабінеті. Акаунта ще немає? Створіть його: після підтвердження адреси анкета зʼявиться там автоматично.</span>
-                        <div class="flex flex-wrap gap-2">
+                        <span class="text-muted text-sm">Увійдіть в акаунт з цією ж поштою – анкета вже чекатиме у вашому кабінеті. Акаунта ще немає? Створіть його: після підтвердження адреси анкета зʼявиться там автоматично.</span>
+                        <div class="flex flex-wrap justify-center gap-2">
                             <a href="{{ route('login') }}" class="btn-primary">Увійти</a>
                             <a href="{{ route('register') }}" class="btn-outline">Створити акаунт</a>
                         </div>
                     </div>
                 @else
-                    <a href="{{ route('cabinet') }}" class="btn-primary">Перейти до кабінету</a>
+                    <a href="{{ route('cabinet') }}" class="btn-primary min-h-12 px-8 mt-2">Перейти до кабінету</a>
                 @endguest
                 <a href="{{ route('animals.index') }}" class="font-semibold text-primary hover:underline">← До каталогу</a>
             </div>
