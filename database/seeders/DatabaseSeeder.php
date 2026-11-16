@@ -36,6 +36,12 @@ class DatabaseSeeder extends Seeder
             'address' => 'м. Одеса, вул. [адреса притулку]',
             'phone' => '+380 00 000 00 00',
             'email' => 'hello@domivka.local',
+            // Демо: головні сторінки мереж; справжні посилання притулок вставляє в адмінці
+            'instagram_url' => 'https://www.instagram.com/',
+            'facebook_url' => 'https://www.facebook.com/',
+            'telegram_url' => 'https://telegram.org/',
+            'tiktok_url' => 'https://www.tiktok.com/',
+            'youtube_url' => 'https://www.youtube.com/',
             'notification_email' => 'admin@domivka.local',
         ]);
 

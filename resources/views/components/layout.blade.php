@@ -97,11 +97,28 @@
                 @if ($shelter->email) · <a href="mailto:{{ $shelter->email }}" class="hover:underline">{{ $shelter->email }}</a>@endif
             </span>
         </div>
-        <nav aria-label="Нижнє меню" class="flex flex-wrap gap-6">
-            <a href="{{ route('animals.index') }}" class="hover:underline">Знайти друга</a>
-            <a href="{{ route('blog.index') }}" class="hover:underline">Блог</a>
-            <a href="{{ route('privacy') }}" class="hover:underline">Політика конфіденційності</a>
-        </nav>
+        <div class="flex flex-col gap-8">
+            <nav aria-label="Нижнє меню" class="flex flex-wrap gap-6">
+                <a href="{{ route('animals.index') }}" class="hover:underline">Знайти друга</a>
+                <a href="{{ route('blog.index') }}" class="hover:underline">Блог</a>
+                <a href="{{ route('privacy') }}" class="hover:underline">Політика конфіденційності</a>
+            </nav>
+            @if ($socials = $shelter->socialLinks())
+                <div class="flex flex-col gap-3">
+                    <span class="font-semibold">Слідкуй за нами</span>
+                    <ul class="flex flex-wrap gap-3">
+                        @foreach ($socials as $network => $link)
+                            <li>
+                                <a href="{{ $link['url'] }}" target="_blank" rel="noopener" aria-label="{{ $link['label'] }} притулку"
+                                   class="size-12 rounded-full bg-sun text-ink flex items-center justify-center transition-transform hover:-translate-y-0.5 hover:bg-card">
+                                    <x-icon.social :network="$network" class="size-6" />
+                                </a>
+                            </li>
+                        @endforeach
+                    </ul>
+                </div>
+            @endif
+        </div>
     </div>
 </footer>
 

@@ -9,7 +9,7 @@ use Illuminate\Support\Facades\Cache;
 /**
  * Налаштування притулку зберігаються одним рядком і кешуються (FR-16).
  */
-#[Fillable(['name', 'tagline', 'address', 'phone', 'email', 'notification_email', 'instagram_url', 'telegram_url'])]
+#[Fillable(['name', 'tagline', 'address', 'phone', 'email', 'notification_email', 'instagram_url', 'facebook_url', 'telegram_url', 'tiktok_url', 'youtube_url'])]
 class ShelterSetting extends Model
 {
     private const CACHE_KEY = 'shelter_settings';
@@ -17,6 +17,28 @@ class ShelterSetting extends Model
     protected static function booted(): void
     {
         static::saved(fn () => Cache::forget(self::CACHE_KEY));
+    }
+
+    /** Мережі для блоку «Слідкуй за нами»: поле → назва. Порядок тут = порядок кнопок. */
+    public const SOCIALS = [
+        'instagram_url' => 'Instagram',
+        'facebook_url' => 'Facebook',
+        'telegram_url' => 'Telegram',
+        'tiktok_url' => 'TikTok',
+        'youtube_url' => 'YouTube',
+    ];
+
+    /** @return array<string, array{label: string, url: string}> заповнені посилання, ключ – коротка назва мережі */
+    public function socialLinks(): array
+    {
+        $links = [];
+        foreach (self::SOCIALS as $field => $label) {
+            if (filled($this->{$field})) {
+                $links[str_replace('_url', '', $field)] = ['label' => $label, 'url' => $this->{$field}];
+            }
+        }
+
+        return $links;
     }
 
     public static function current(): self

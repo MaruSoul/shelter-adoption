@@ -28,7 +28,10 @@ class Settings extends Component
             'form.email' => ['nullable', 'email', 'max:150'],
             'form.notification_email' => ['required', 'email', 'max:150'],
             'form.instagram_url' => ['nullable', 'url:https', 'max:255'],
+            'form.facebook_url' => ['nullable', 'url:https', 'max:255'],
             'form.telegram_url' => ['nullable', 'url:https', 'max:255'],
+            'form.tiktok_url' => ['nullable', 'url:https', 'max:255'],
+            'form.youtube_url' => ['nullable', 'url:https', 'max:255'],
         ], [], [
             'form.name' => 'назва', 'form.notification_email' => 'e-mail для сповіщень', 'form.email' => 'e-mail',
         ])['form'];
