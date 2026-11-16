@@ -7,6 +7,7 @@
             @if ($animal->exists)
                 <x-animal-status :status="$animal->status" />
                 <a href="{{ route('animals.show', $animal) }}" target="_blank" class="font-semibold text-primary hover:underline">Переглянути на сайті ↗</a>
+                <a href="{{ route('admin.applications.index', ['animal' => $animal->name]) }}" class="font-semibold text-primary hover:underline">Анкети на цю тварину ({{ $animal->applications()->count() }})</a>
             @endif
         </div>
         <form wire:submit="save" class="card p-6 md:p-8 flex flex-col gap-5" novalidate>

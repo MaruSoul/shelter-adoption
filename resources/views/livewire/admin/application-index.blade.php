@@ -33,7 +33,7 @@
                         <tr class="border-b border-line last:border-0 hover:bg-bg" wire:key="a-{{ $application->id }}">
                             <td class="p-4 whitespace-nowrap text-sm">{{ $application->created_at->format('d.m.Y H:i') }}</td>
                             <td class="p-4"><a href="{{ route('admin.applications.show', $application) }}" class="font-semibold text-primary hover:underline">{{ $application->name }}</a><br><span class="text-sm text-muted">{{ $application->phone }} · {{ $application->region->name }}</span></td>
-                            <td class="p-4">{{ $application->animal->name }}</td>
+                            <td class="p-4"><a href="{{ route('admin.animals.edit', $application->animal) }}" class="font-semibold text-primary hover:underline">{{ $application->animal->name }}</a></td>
                             <td class="p-4 text-sm">{{ $application->contact_channels->map->label()->join(', ') }}</td>
                             <td class="p-4"><span class="chip {{ $application->status->badgeClasses() }}">{{ $application->status->label() }}</span></td>
                         </tr>
