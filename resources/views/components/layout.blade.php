@@ -25,6 +25,10 @@
         <meta property="og:image" content="{{ url($image) }}">
     @endif
     <link rel="icon" href="/favicon.svg" type="image/svg+xml">
+    <meta name="csrf-token" content="{{ csrf_token() }}">
+    @auth
+        <meta name="favorites" content="{{ json_encode(auth()->user()->favorites()->pluck('animals.id')) }}" data-sync="{{ route('favorites.sync') }}" data-toggle="{{ url('/obrani') }}">
+    @endauth
     {{ $head ?? '' }}
     <script>
         // М'яка поява блоків під час скролу: лише якщо людина не просила зменшити рух

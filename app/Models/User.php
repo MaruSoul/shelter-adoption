@@ -9,6 +9,7 @@ use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Attributes\Hidden;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
@@ -47,6 +48,12 @@ class User extends Authenticatable implements MustVerifyEmail
     public function region(): BelongsTo
     {
         return $this->belongsTo(Region::class);
+    }
+
+    /** Обрані тварини, найновіші зверху. */
+    public function favorites(): BelongsToMany
+    {
+        return $this->belongsToMany(Animal::class, 'favorites')->withPivot('created_at')->orderByPivot('created_at', 'desc');
     }
 
     public function applications(): HasMany

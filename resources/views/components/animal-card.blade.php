@@ -1,5 +1,6 @@
 @props(['animal'])
-<a href="{{ route('animals.show', $animal) }}" {{ $attributes->merge(['class' => 'card card-lift overflow-hidden flex flex-col group', 'data-reveal' => true]) }}>
+<div {{ $attributes->merge(['class' => 'card card-lift relative overflow-hidden group', 'data-reveal' => true]) }}>
+<a href="{{ route('animals.show', $animal) }}" class="flex flex-col h-full focus-visible:outline-offset-[-4px]">
     <div class="relative aspect-[4/3] bg-tint-1 overflow-hidden">
         @if ($animal->coverPhoto)
             <img src="{{ $animal->coverPhoto->thumbUrl() }}" alt="{{ $animal->coverPhoto->alt ?? $animal->name }}" loading="lazy" decoding="async" width="600" height="450" class="size-full object-cover card-photo">
@@ -19,3 +20,7 @@
         <span class="text-sm text-muted">{{ $animal->ageLabel() }} · {{ $animal->sex->label() }} · {{ $animal->locality->name }}</span>
     </div>
 </a>
+@if ($animal->isPublic())
+    <x-favorite-button :animal-id="$animal->id" :name="$animal->name" class="absolute right-3 top-3" />
+@endif
+</div>

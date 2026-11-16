@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\AnimalController;
 use App\Http\Controllers\BlogController;
+use App\Http\Controllers\FavoriteController;
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\SitemapController;
 use App\Livewire\Admin;
@@ -17,6 +18,13 @@ Route::get('/', HomeController::class)->name('home');
 Route::get('/tvaryny', AnimalCatalog::class)->name('animals.index');
 Route::get('/tvaryny/{animal}', [AnimalController::class, 'show'])->name('animals.show');
 Route::get('/tvaryny/{animal}/vzyaty-dodomu', AdoptionForm::class)->name('animals.adopt');
+
+Route::get('/obrani', [FavoriteController::class, 'index'])->name('favorites.index');
+Route::get('/obrani/kartky', [FavoriteController::class, 'cards'])->name('favorites.cards')->middleware('throttle:60,1');
+Route::middleware('auth')->group(function () {
+    Route::post('/obrani/synkhronizuvaty', [FavoriteController::class, 'sync'])->name('favorites.sync');
+    Route::post('/obrani/{animalId}', [FavoriteController::class, 'toggle'])->whereNumber('animalId')->name('favorites.toggle')->middleware('throttle:120,1');
+});
 
 Route::get('/blog', [BlogController::class, 'index'])->name('blog.index');
 Route::get('/blog/{post}', [BlogController::class, 'show'])->name('blog.show');

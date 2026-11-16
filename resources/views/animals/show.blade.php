@@ -91,6 +91,11 @@
 
                 @if ($animal->acceptsApplications())
                     <a href="{{ route('animals.adopt', $animal) }}" class="btn-primary min-h-14 text-lg">Взяти додому</a>
+                @endif
+                @if ($animal->isPublic())
+                    <x-favorite-button :animal-id="$animal->id" :name="$animal->name" :large="true" />
+                @endif
+                @if ($animal->acceptsApplications())
                 @else
                     <p class="rounded-2xl bg-success-soft text-success px-4 py-3 font-medium">{{ $animal->foundHomePhrase() }}. Подивіться інших тварин, які чекають на вас.</p>
                 @endif

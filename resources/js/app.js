@@ -40,3 +40,80 @@ if (root.classList.contains('reveal') && 'IntersectionObserver' in window) {
 } else {
     root.classList.remove('reveal');
 }
+
+/**
+ * Обрані тварини ($store.favorites).
+ * Гість: список id у localStorage цього браузера.
+ * Користувач, який увійшов: список із сервера (meta[name=favorites]); зміни зберігаються в базі.
+ * Після входу обрані з браузера один раз переносяться в акаунт.
+ */
+const STORAGE_KEY = 'domivka:favorites';
+
+const readLocal = () => {
+    try {
+        return JSON.parse(localStorage.getItem(STORAGE_KEY) || '[]').map(Number).filter(Boolean);
+    } catch {
+        return [];
+    }
+};
+const writeLocal = (ids) => {
+    try {
+        localStorage.setItem(STORAGE_KEY, JSON.stringify(ids));
+    } catch {
+        /* приватний режим без сховища – обрані живуть до перезавантаження */
+    }
+};
+
+const registerFavorites = () => {
+    const meta = document.querySelector('meta[name="favorites"]');
+    const csrf = document.querySelector('meta[name="csrf-token"]')?.content;
+    const post = (url, body) => fetch(url, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', Accept: 'application/json', 'X-CSRF-TOKEN': csrf },
+        body: body ? JSON.stringify(body) : null,
+    });
+
+    window.Alpine.store('favorites', {
+        ids: meta ? JSON.parse(meta.content) : readLocal(),
+        loggedIn: Boolean(meta),
+
+        init() {
+            if (!this.loggedIn) return;
+            const local = readLocal();
+            if (!local.length) return;
+            post(meta.dataset.sync, { ids: local })
+                .then((r) => (r.ok ? r.json() : Promise.reject()))
+                .then((data) => {
+                    this.ids = data.ids;
+                    writeLocal([]);
+                })
+                .catch(() => {});
+        },
+
+        has(id) {
+            return this.ids.includes(id);
+        },
+
+        toggle(id) {
+            const wasFavorite = this.has(id);
+            this.ids = wasFavorite ? this.ids.filter((x) => x !== id) : [id, ...this.ids];
+
+            if (!this.loggedIn) {
+                writeLocal(this.ids);
+                return;
+            }
+            post(`${meta.dataset.toggle}/${id}`).then((r) => {
+                if (!r.ok) throw new Error();
+            }).catch(() => {
+                // Сервер не зберіг – повертаємо як було
+                this.ids = wasFavorite ? [id, ...this.ids] : this.ids.filter((x) => x !== id);
+            });
+        },
+    });
+};
+
+if (window.Alpine) {
+    registerFavorites();
+} else {
+    document.addEventListener('alpine:init', registerFavorites);
+}
