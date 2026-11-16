@@ -24,6 +24,8 @@ class ShelterSetting extends Model
         // Кеш зберігає масив атрибутів, а не обʼєкт: Laravel 13 за замовчуванням не десеріалізує обʼєкти з кешу
         $attributes = Cache::rememberForever(self::CACHE_KEY, function () {
             return static::query()->first()?->getAttributes() ?? [
+                // Налаштувань ще немає (свіжа інсталяція): усі поля порожні, крім назви та адреси сповіщень
+                ...array_fill_keys((new static)->getFillable(), null),
                 'name' => config('app.name'),
                 'notification_email' => config('mail.from.address'),
             ];

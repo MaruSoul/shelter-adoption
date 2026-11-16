@@ -23,6 +23,11 @@ class User extends Authenticatable implements MustVerifyEmail
     /** @use HasFactory<UserFactory> */
     use HasFactory, Notifiable;
 
+    /** Значення за замовчуванням, щоб роль була відома ще до перечитування з БД. */
+    protected $attributes = [
+        'role' => 'user',
+    ];
+
     protected function casts(): array
     {
         return [
