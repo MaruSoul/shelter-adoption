@@ -12,13 +12,9 @@
                 <div><dt class="text-sm text-muted">Знайшли дім через сайт</dt><dd class="font-display font-extrabold text-3xl">{{ $adoptedCount }}</dd></div>
             </dl>
         </div>
-        <div class="grow basis-[380px] min-w-0 aspect-[5/4] rounded-[2rem] bg-sun-soft overflow-hidden grid grid-cols-2 gap-3 p-3">
-            @foreach ($animals->take(4) as $a)
-                <a href="{{ route('animals.show', $a) }}" class="rounded-2xl overflow-hidden bg-tint-1 block">
-                    @if ($a->coverPhoto)<img src="{{ $a->coverPhoto->thumbUrl() }}" alt="{{ $a->name }}" class="size-full object-cover">@endif
-                </a>
-            @endforeach
-        </div>
+        @if (count($lottery) > 0)
+            <x-friend-lottery :pool="$lottery" class="grow basis-[380px] min-w-0" />
+        @endif
     </section>
 
     <section aria-label="Швидкий пошук" class="mx-auto max-w-6xl px-6 pb-14">
