@@ -1,0 +1,81 @@
+@import '@fontsource/inter/cyrillic-400.css';
+@import '@fontsource/inter/cyrillic-500.css';
+@import '@fontsource/inter/cyrillic-600.css';
+@import '@fontsource/inter/latin-400.css';
+@import '@fontsource/inter/latin-500.css';
+@import '@fontsource/inter/latin-600.css';
+@import '@fontsource/nunito/cyrillic-700.css';
+@import '@fontsource/nunito/cyrillic-800.css';
+@import '@fontsource/nunito/latin-700.css';
+@import '@fontsource/nunito/latin-800.css';
+@import 'tailwindcss';
+
+@source '../../vendor/laravel/framework/src/Illuminate/Pagination/resources/views/*.blade.php';
+@source '../../storage/framework/views/*.php';
+@source '../../app/**/*.php';
+
+/* Палітра «Лаванда + сонце» */
+@theme {
+    --font-sans: 'Inter', ui-sans-serif, system-ui, sans-serif;
+    --font-display: 'Nunito', ui-rounded, 'Inter', sans-serif;
+
+    --color-bg: #F8F6FC;
+    --color-surface: #ECE8FA;
+    --color-card: #FFFFFF;
+    --color-ink: #1E1A2E;
+    --color-muted: #5C5670;
+    --color-line: #DDD7F0;
+    --color-primary: #5546B8;
+    --color-primary-dark: #4537A0;
+    --color-primary-ink: #FFFFFF;
+    --color-sun: #F6C945;
+    --color-sun-ink: #1E1A2E;
+    --color-sun-soft: #FFF4CC;
+    --color-accent: #6E4A00;
+    --color-danger: #B42318;
+    --color-danger-soft: #FDECEA;
+    --color-success: #1D6F55;
+    --color-success-soft: #DCF0E6;
+
+    --color-tint-1: #E6E1FA;
+    --color-tint-2: #FFF1C2;
+    --color-tint-3: #DFF0EC;
+    --color-tint-4: #F6E0EA;
+}
+
+@layer base {
+    html { @apply bg-bg text-ink font-sans antialiased; }
+    h1, h2, h3 { @apply font-display font-extrabold; }
+    :focus-visible { @apply outline-2 outline-offset-2 outline-primary; }
+}
+
+@utility btn {
+    @apply inline-flex items-center justify-center gap-2 min-h-11 px-5 rounded-full font-semibold transition-colors disabled:opacity-60;
+}
+@utility btn-primary {
+    @apply btn bg-primary text-primary-ink hover:bg-primary-dark;
+}
+@utility btn-outline {
+    @apply btn border-[1.5px] border-primary text-primary hover:bg-surface;
+}
+@utility btn-sun {
+    @apply btn bg-sun text-sun-ink hover:brightness-95;
+}
+@utility btn-ghost {
+    @apply btn text-primary hover:bg-surface;
+}
+@utility card {
+    @apply bg-card border border-line rounded-3xl;
+}
+@utility field {
+    @apply w-full min-h-12 px-3.5 rounded-xl border border-line bg-bg text-ink placeholder:text-muted/80 focus:border-primary;
+}
+@utility label {
+    @apply flex flex-col gap-1.5 font-semibold;
+}
+@utility chip {
+    @apply inline-flex items-center px-3 py-1 rounded-full text-sm font-semibold;
+}
+@utility error {
+    @apply text-sm font-medium text-danger;
+}
