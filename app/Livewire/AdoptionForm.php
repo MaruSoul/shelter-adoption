@@ -19,6 +19,7 @@ use Livewire\Component;
 class AdoptionForm extends Component
 {
     /** Скільки анкет можна надіслати з однієї IP-адреси за годину. */
+    /** Типове обмеження; фактичне значення – config('shelter.adoption_max_per_hour'). */
     public const MAX_PER_HOUR = 5;
 
     #[Locked]
@@ -128,7 +129,7 @@ class AdoptionForm extends Component
         }
 
         $key = 'adoption-form:'.request()->ip();
-        if (RateLimiter::tooManyAttempts($key, self::MAX_PER_HOUR)) {
+        if (RateLimiter::tooManyAttempts($key, (int) config('shelter.adoption_max_per_hour', self::MAX_PER_HOUR))) {
             $minutes = (int) ceil(RateLimiter::availableIn($key) / 60);
             $this->addError('form', "Забагато анкет за короткий час. Спробуйте ще раз через {$minutes} хв.");
 

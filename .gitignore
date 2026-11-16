@@ -28,3 +28,8 @@ Thumbs.db
 
 # Оригінали фото (стиснуті копії лежать у database/seeders/photos)
 /storage/media
+
+# Наскрізні тести
+/test-results
+/playwright-report
+/storage/e2e-report

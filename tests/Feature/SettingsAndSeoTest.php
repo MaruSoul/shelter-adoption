@@ -68,3 +68,10 @@ it('показує сторінку 404 з Лапою для неіснуючо�
         ->assertSee('Такої сторінки немає')
         ->assertSee('Лапа визирає');
 });
+
+it('віддає robots.txt з абсолютною адресою sitemap', function () {
+    $this->get('/robots.txt')
+        ->assertOk()
+        ->assertSee('Disallow: /admin')
+        ->assertSee('Sitemap: '.route('sitemap'));
+});

@@ -25,7 +25,7 @@
         @else
             <section class="card p-6 flex flex-col gap-4">
                 <label class="label">Заголовок *
-                    <input type="text" wire:model.blur="title" class="field font-normal text-lg">
+                    <input type="text" wire:model.live.blur="title" class="field font-normal text-lg">
                     @error('title')<span class="error">{{ $message }}</span>@enderror
                 </label>
                 <div class="grid gap-4 grid-cols-[repeat(auto-fit,minmax(220px,1fr))]">

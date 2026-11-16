@@ -11,7 +11,7 @@
         </button>
 
         {{-- Фільтри --}}
-        <aside id="catalog-filters" aria-label="Фільтри" class="card p-6 flex-col gap-5 grow basis-64 lg:max-w-72 lg:flex" x-bind:class="filtersOpen ? 'flex' : 'hidden'">
+        <aside id="catalog-filters" aria-label="Фільтри" class="card p-6 flex-col gap-5 grow basis-64 lg:max-w-72 hidden lg:flex" x-bind:class="filtersOpen && 'max-lg:flex'">
             <fieldset class="flex flex-col gap-2">
                 <legend class="font-semibold mb-2">Кого шукаєте</legend>
                 <div class="flex flex-wrap gap-2">

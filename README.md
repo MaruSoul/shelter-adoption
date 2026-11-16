@@ -105,6 +105,20 @@ docker compose --profile tests run --rm tests
 - модерація карток волонтера, видалення картки волонтером, завантаження фото, блоковий конструктор, екранування HTML (XSS), sitemap;
 - обрані (гість і користувач, синхронізація), профіль і підстановка контактів, привʼязка анкети до акаунта за поштою, гра «Хто мій друг?», кеш налаштувань притулку.
 
+### Наскрізні, швидкодія й навантаження
+
+Потрібні Node.js 22 і запущений сайт із демо-даними (`migrate:fresh --seed`).
+
+```bash
+npm ci && npx playwright install chromium     # один раз
+npx playwright test                           # наскрізні сценарії (tests/e2e)
+npx lighthouse http://localhost:8080/tvaryny --form-factor=mobile --view
+# навантаження (brew install k6); на час тесту в .env: ADOPTION_MAX_PER_HOUR=100000
+k6 run -e BASE_URL=http://localhost:8080 tests/load/catalog-and-form.js
+```
+
+Протоколи останніх вимірювань – у `docs/quality`.
+
 ## Локальний запуск без Docker
 
 Потрібні PHP 8.3+ з розширеннями `pdo_pgsql`, `gd`, `intl`, `zip`, `exif`, Composer, Node.js 22 і PostgreSQL.

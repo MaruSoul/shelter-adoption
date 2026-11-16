@@ -15,9 +15,28 @@
 @source '../../app/**/*.php';
 
 /* Палітра «Лаванда + сонце» */
+/* Запасні шрифти з підігнаними метриками: поки Inter і Nunito завантажуються, текст займає
+   майже стільки ж місця, тож після підміни шрифту сторінка не «стрибає» (CLS) */
+@font-face {
+    font-family: 'Inter Fallback';
+    src: local('Arial'), local('Liberation Sans'), local('Helvetica');
+    size-adjust: 107%;
+    ascent-override: 90.5%;
+    descent-override: 22.5%;
+    line-gap-override: 0%;
+}
+@font-face {
+    font-family: 'Nunito Fallback';
+    src: local('Arial'), local('Liberation Sans'), local('Helvetica');
+    size-adjust: 101%;
+    ascent-override: 99.5%;
+    descent-override: 34.7%;
+    line-gap-override: 0%;
+}
+
 @theme {
-    --font-sans: 'Inter', ui-sans-serif, system-ui, sans-serif;
-    --font-display: 'Nunito', ui-rounded, 'Inter', sans-serif;
+    --font-sans: 'Inter', 'Inter Fallback', ui-sans-serif, system-ui, sans-serif;
+    --font-display: 'Nunito', 'Nunito Fallback', ui-rounded, 'Inter', sans-serif;
 
     --color-bg: #F8F6FC;
     --color-surface: #ECE8FA;

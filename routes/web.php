@@ -31,6 +31,14 @@ Route::get('/blog/{post}', [BlogController::class, 'show'])->name('blog.show');
 
 Route::view('/polityka-konfidentsiinosti', 'pages.privacy')->name('privacy');
 Route::get('/sitemap.xml', SitemapController::class)->name('sitemap');
+// robots.txt формується застосунком, бо адреса sitemap має бути абсолютною (з доменом сайту)
+Route::get('/robots.txt', fn () => response(implode("\n", [
+    'User-agent: *',
+    'Disallow: /admin',
+    'Disallow: /kabinet',
+    '',
+    'Sitemap: '.route('sitemap'),
+])."\n", 200, ['Content-Type' => 'text/plain; charset=UTF-8']))->name('robots');
 
 /* ---------- Кабінет користувача (волонтера) ---------- */
 

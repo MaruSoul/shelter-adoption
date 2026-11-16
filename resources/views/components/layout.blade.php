@@ -38,6 +38,12 @@
             setTimeout(() => window.__revealReady || document.documentElement.classList.remove('reveal'), 2500);
         }
     </script>
+    {{-- Основні шрифти (кирилиця й латиниця з цифрами) завантажуємо одразу, щоб текст не «стрибав» після їх появи (CLS) --}}
+    @if (is_file(public_path('build/manifest.json')))
+        @foreach (['inter-cyrillic-400', 'inter-cyrillic-500', 'inter-cyrillic-600', 'inter-latin-400', 'inter-latin-500', 'inter-latin-600', 'nunito-cyrillic-800', 'nunito-latin-800'] as $font)
+            <link rel="preload" as="font" type="font/woff2" href="{{ \Illuminate\Support\Facades\Vite::asset('node_modules/@fontsource/'.strtok($font, '-').'/files/'.$font.'-normal.woff2') }}" crossorigin>
+        @endforeach
+    @endif
     @vite(['resources/css/app.css', 'resources/js/app.js'])
     @livewireStyles
 </head>
@@ -62,8 +68,8 @@
         </button>
 
         <nav id="main-nav" aria-label="Головне меню"
-             class="w-full lg:w-auto lg:flex flex-col lg:flex-row gap-1 lg:gap-5 xl:gap-6 font-medium"
-             x-bind:class="open ? 'flex' : 'hidden lg:flex'">
+             class="w-full lg:w-auto hidden lg:flex flex-col lg:flex-row gap-1 lg:gap-5 xl:gap-6 font-medium"
+             x-bind:class="open && 'max-lg:flex'">
             <a href="{{ route('animals.index') }}" @class(['py-2', 'text-primary font-semibold' => request()->routeIs('animals.*') && ! request('species')])>Знайти друга</a>
             <a href="{{ route('animals.index', ['species' => 'cat']) }}" @class(['py-2', 'text-primary font-semibold' => request('species') === 'cat'])>Котики</a>
             <a href="{{ route('animals.index', ['species' => 'dog']) }}" @class(['py-2', 'text-primary font-semibold' => request('species') === 'dog'])>Песики</a>

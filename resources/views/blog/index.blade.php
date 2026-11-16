@@ -15,7 +15,7 @@
         @else
             <div class="grid gap-6 grid-cols-[repeat(auto-fill,minmax(280px,1fr))]">
                 @foreach ($posts as $post)
-                    <x-post-card :post="$post" />
+                    <x-post-card :post="$post" :eager="$loop->first && $posts->onFirstPage()" />
                 @endforeach
             </div>
             {{ $posts->links() }}

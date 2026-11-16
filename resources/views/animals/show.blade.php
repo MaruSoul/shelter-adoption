@@ -23,7 +23,7 @@
                  x-data="{
                      active: 0,
                      startX: null,
-                     photos: @js($animal->photos->map(fn ($p) => ['url' => $p->url(), 'alt' => $p->alt ?? $animal->name])->values()),
+                     photos: @js($animal->photos->map(fn ($p) => ['url' => $p->url(), 'srcset' => $p->thumbUrl().' 600w, '.$p->url().' 1400w', 'alt' => $p->alt ?? $animal->name])->values()),
                      go(step) { this.active = (this.active + step + this.photos.length) % this.photos.length },
                      swipe(endX) { if (this.startX !== null && Math.abs(endX - this.startX) > 40) this.go(endX < this.startX ? 1 : -1); this.startX = null },
                  }">
@@ -34,9 +34,13 @@
                          x-on:touchstart.passive="startX = $event.touches[0].clientX"
                          x-on:touchend="swipe($event.changedTouches[0].clientX)"
                      @endif>
-                    <template x-if="photos.length">
-                        <img x-bind:src="photos[active].url" x-bind:alt="photos[active].alt" class="size-full object-cover">
-                    </template>
+                    {{-- Перше фото є в HTML одразу (браузер починає його вантажити ще до запуску скриптів), далі галерея лише підміняє адресу --}}
+                    @if ($cover)
+                        {{-- На телефоні браузер бере мініатюру 600 px, на великому екрані – повне фото --}}
+                        <img src="{{ $cover->url() }}" srcset="{{ $cover->thumbUrl() }} 600w, {{ $cover->url() }} 1400w"
+                             sizes="(min-width: 1024px) 720px, 100vw" alt="{{ $cover->alt ?? $animal->name }}" fetchpriority="high" width="1200" height="900"
+                             x-bind:src="photos[active].url" x-bind:srcset="photos[active].srcset" x-bind:alt="photos[active].alt" class="size-full object-cover">
+                    @endif
                     @if ($animal->photos->count() > 1)
                         <button type="button" x-on:click="go(-1)" aria-label="Попереднє фото"
                                 class="absolute left-3 top-1/2 -translate-y-1/2 size-11 rounded-full bg-card/70 backdrop-blur text-ink shadow flex items-center justify-center opacity-80 transition hover:bg-card hover:opacity-100 group-hover:opacity-100 focus-visible:opacity-100">
