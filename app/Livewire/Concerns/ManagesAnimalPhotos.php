@@ -6,6 +6,7 @@ use App\Models\Animal;
 use App\Models\AnimalPhoto;
 use App\Services\PhotoStorage;
 use Illuminate\Support\Facades\DB;
+use Livewire\Features\SupportFileUploads\TemporaryUploadedFile;
 use Livewire\WithFileUploads;
 
 /**
@@ -16,8 +17,11 @@ trait ManagesAnimalPhotos
 {
     use WithFileUploads;
 
-    /** @var array<int, \Livewire\Features\SupportFileUploads\TemporaryUploadedFile> */
+    /** @var array<int, TemporaryUploadedFile> */
     public array $uploads = [];
+
+    /** Щойно обрані файли: додаються до $uploads, а не замінюють попередній вибір. */
+    public array $newUploads = [];
 
     protected function photoRules(): array
     {
@@ -27,6 +31,32 @@ trait ManagesAnimalPhotos
             'uploads' => ['array', 'max:'.max(0, static::MAX_PHOTOS - $existing)],
             'uploads.*' => ['image', 'mimes:jpeg,jpg,png,webp', 'max:10240'],
         ];
+    }
+
+    public function updatedNewUploads(): void
+    {
+        $existing = $this->animal?->exists ? $this->animal->photos()->count() : 0;
+        $left = max(0, static::MAX_PHOTOS - $existing - count($this->uploads));
+
+        $this->validate([
+            'newUploads' => ['array', 'max:'.$left],
+            'newUploads.*' => ['image', 'mimes:jpeg,jpg,png,webp', 'max:10240'],
+        ], [
+            'newUploads.max' => $left === 0 ? 'Більше фото додати не можна.' : 'Можна додати ще не більше :max фото.',
+            'newUploads.*.max' => 'Кожне фото має бути не більшим за 10 МБ.',
+            'newUploads.*.mimes' => 'Підтримуються лише JPEG, PNG і WebP.',
+            'newUploads.*.image' => 'Файл має бути зображенням.',
+        ]);
+
+        $this->uploads = [...$this->uploads, ...$this->newUploads];
+        $this->newUploads = [];
+    }
+
+    /** Прибирає ще не збережене фото зі списку обраних. */
+    public function removeUpload(int $index): void
+    {
+        unset($this->uploads[$index]);
+        $this->uploads = array_values($this->uploads);
     }
 
     public function updatedUploads(): void

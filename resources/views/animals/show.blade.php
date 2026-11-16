@@ -17,18 +17,45 @@
         @endunless
 
         <div class="flex flex-wrap gap-10 items-start">
+            {{-- Галерея: стрілки видно завжди (на телефоні немає наведення), гортання клавішами ← → і свайпом --}}
             <div class="grow-[999] basis-[520px] min-w-0 flex flex-col gap-3"
-                 x-data="{ active: 0, photos: @js($animal->photos->map(fn ($p) => ['url' => $p->url(), 'alt' => $p->alt ?? $animal->name])->values()) }">
-                <div class="aspect-[4/3] rounded-[1.75rem] bg-tint-1 overflow-hidden">
+                 x-data="{
+                     active: 0,
+                     startX: null,
+                     photos: @js($animal->photos->map(fn ($p) => ['url' => $p->url(), 'alt' => $p->alt ?? $animal->name])->values()),
+                     go(step) { this.active = (this.active + step + this.photos.length) % this.photos.length },
+                     swipe(endX) { if (this.startX !== null && Math.abs(endX - this.startX) > 40) this.go(endX < this.startX ? 1 : -1); this.startX = null },
+                 }">
+                <div class="group relative aspect-[4/3] rounded-[1.75rem] bg-tint-1 overflow-hidden"
+                     @if ($animal->photos->count() > 1)
+                         role="region" aria-roledescription="галерея" aria-label="Фото {{ $animal->name }}" tabindex="0"
+                         x-on:keydown.left.prevent="go(-1)" x-on:keydown.right.prevent="go(1)"
+                         x-on:touchstart.passive="startX = $event.touches[0].clientX"
+                         x-on:touchend="swipe($event.changedTouches[0].clientX)"
+                     @endif>
                     <template x-if="photos.length">
                         <img x-bind:src="photos[active].url" x-bind:alt="photos[active].alt" class="size-full object-cover">
                     </template>
+                    @if ($animal->photos->count() > 1)
+                        <button type="button" x-on:click="go(-1)" aria-label="Попереднє фото"
+                                class="absolute left-3 top-1/2 -translate-y-1/2 size-11 rounded-full bg-card/70 backdrop-blur text-ink shadow flex items-center justify-center opacity-80 transition hover:bg-card hover:opacity-100 group-hover:opacity-100 focus-visible:opacity-100">
+                            <svg viewBox="0 0 24 24" class="size-6" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M15 5l-7 7 7 7"/></svg>
+                        </button>
+                        <button type="button" x-on:click="go(1)" aria-label="Наступне фото"
+                                class="absolute right-3 top-1/2 -translate-y-1/2 size-11 rounded-full bg-card/70 backdrop-blur text-ink shadow flex items-center justify-center opacity-80 transition hover:bg-card hover:opacity-100 group-hover:opacity-100 focus-visible:opacity-100">
+                            <svg viewBox="0 0 24 24" class="size-6" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 5l7 7-7 7"/></svg>
+                        </button>
+                        <span class="absolute bottom-3 right-3 rounded-full bg-ink/60 text-bg text-sm font-semibold px-3 py-1" aria-live="polite">
+                            <span x-text="active + 1">1</span> / {{ $animal->photos->count() }}
+                        </span>
+                    @endif
                 </div>
                 @if ($animal->photos->count() > 1)
-                    <div class="grid grid-cols-4 gap-3">
+                    <div class="grid grid-cols-5 gap-3">
                         @foreach ($animal->photos as $i => $photo)
-                            <button type="button" x-on:click="active = {{ $i }}" class="aspect-[4/3] rounded-2xl overflow-hidden border-2"
-                                    x-bind:class="active === {{ $i }} ? 'border-primary' : 'border-transparent'"
+                            <button type="button" x-on:click="active = {{ $i }}" class="aspect-[4/3] rounded-2xl overflow-hidden border-2 transition-opacity"
+                                    x-bind:class="active === {{ $i }} ? 'border-primary' : 'border-transparent opacity-75 hover:opacity-100'"
+                                    x-bind:aria-current="active === {{ $i }}"
                                     aria-label="Показати фото {{ $i + 1 }}">
                                 <img src="{{ $photo->thumbUrl() }}" alt="" loading="lazy" class="size-full object-cover">
                             </button>

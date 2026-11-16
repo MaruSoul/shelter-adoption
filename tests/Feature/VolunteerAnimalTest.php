@@ -102,3 +102,19 @@ it('у формі є населені пункти будь-якої облас�
         ->and($names->count())->toBeGreaterThan(40)
         ->and(Region::alphabetical()->value('name'))->toBe('Автономна Республіка Крим');
 });
+
+it('обрані фото додаються до попередніх, показуються превʼю і їх можна прибрати до збереження', function () {
+    Storage::fake('public');
+
+    $form = Livewire::actingAs(volunteer())->test(AnimalForm::class)
+        ->set('newUploads', [UploadedFile::fake()->image('a.jpg'), UploadedFile::fake()->image('b.jpg')])
+        ->set('newUploads', [UploadedFile::fake()->image('c.jpg')])
+        ->assertCount('uploads', 3)
+        ->assertSee('Прибрати')
+        ->call('removeUpload', 1)
+        ->assertCount('uploads', 2);
+
+    $form->set('newUploads', array_map(fn ($i) => UploadedFile::fake()->image("x$i.jpg"), range(1, 4)))
+        ->assertHasErrors('newUploads')
+        ->assertCount('uploads', 2);
+});

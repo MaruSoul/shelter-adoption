@@ -46,11 +46,20 @@
                     @error('excerpt')<span class="error">{{ $message }}</span>@enderror
                 </label>
                 <div class="flex flex-wrap items-center gap-4">
-                    @if ($post->coverUrl())<img src="{{ $post->coverUrl() }}" alt="" class="h-20 rounded-xl">@endif
-                    <label class="btn-outline cursor-pointer">{{ $post->cover_path ? 'Замінити обкладинку' : 'Додати обкладинку' }}
+                    {{-- Нова обкладинка показується одразу, до збереження статті --}}
+                    @if ($cover && method_exists($cover, 'isPreviewable') && $cover->isPreviewable())
+                        <span class="relative">
+                            <img src="{{ $cover->temporaryUrl() }}" alt="Нова обкладинка" class="h-24 aspect-[1200/630] object-cover rounded-xl border-2 border-dashed border-primary/40">
+                            <span class="chip absolute right-1.5 top-1.5 bg-primary text-primary-ink text-xs">Нова</span>
+                        </span>
+                        <button type="button" wire:click="$set('cover', null)" class="btn-ghost text-danger">Скасувати</button>
+                    @elseif ($post->coverUrl())
+                        <img src="{{ $post->coverUrl() }}" alt="" class="h-24 aspect-[1200/630] object-cover rounded-xl">
+                    @endif
+                    <label class="btn-outline cursor-pointer">{{ $post->cover_path || $cover ? 'Замінити обкладинку' : 'Додати обкладинку' }}
                         <input type="file" wire:model="cover" accept="image/jpeg,image/png,image/webp" class="sr-only">
                     </label>
-                    @if ($cover)<span class="text-sm text-muted">Обрано новий файл</span>@endif
+                    <span wire:loading wire:target="cover" class="text-sm text-muted">Завантажуємо…</span>
                     @error('cover')<span class="error">{{ $message }}</span>@enderror
                 </div>
             </section>
@@ -93,9 +102,13 @@
                                 <button type="button" wire:click="addListItem({{ $i }})" class="btn-ghost self-start">+ Пункт</button>
                                 @break
                             @case('image')
-                                @if (! empty($block['data']['path']))
+                                @php($pending = $blockImages[$i] ?? null)
+                                @if ($pending && method_exists($pending, 'isPreviewable') && $pending->isPreviewable())
+                                    <img src="{{ $pending->temporaryUrl() }}" alt="" class="max-h-64 rounded-2xl self-start border-2 border-dashed border-primary/40">
+                                @elseif (! empty($block['data']['path']))
                                     <img src="{{ \Illuminate\Support\Facades\Storage::disk('public')->url($block['data']['path']) }}" alt="" class="max-h-64 rounded-2xl self-start">
                                 @endif
+                                <span wire:loading wire:target="blockImages.{{ $i }}" class="text-sm text-muted">Завантажуємо…</span>
                                 <label class="btn-outline cursor-pointer self-start">{{ empty($block['data']['path']) ? 'Обрати зображення' : 'Замінити' }}
                                     <input type="file" wire:model="blockImages.{{ $i }}" accept="image/jpeg,image/png,image/webp" class="sr-only">
                                 </label>
