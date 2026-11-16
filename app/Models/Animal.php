@@ -116,6 +116,12 @@ class Animal extends Model
         return $this->source === AnimalSource::Volunteer;
     }
 
+    /** «Ліра вже знайшла дім» / «Граф вже знайшов дім». */
+    public function foundHomePhrase(): string
+    {
+        return $this->name.' вже '.($this->sex === Sex::Female ? 'знайшла' : 'знайшов').' дім';
+    }
+
     public function ageLabel(): string
     {
         return Ukrainian::age($this->birth_date);

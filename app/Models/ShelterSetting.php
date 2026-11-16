@@ -21,11 +21,14 @@ class ShelterSetting extends Model
 
     public static function current(): self
     {
-        return Cache::rememberForever(self::CACHE_KEY, function () {
-            return static::query()->first() ?? new static([
+        // Кеш зберігає масив атрибутів, а не обʼєкт: Laravel 13 за замовчуванням не десеріалізує обʼєкти з кешу
+        $attributes = Cache::rememberForever(self::CACHE_KEY, function () {
+            return static::query()->first()?->getAttributes() ?? [
                 'name' => config('app.name'),
                 'notification_email' => config('mail.from.address'),
-            ]);
+            ];
         });
+
+        return (new static)->newFromBuilder($attributes);
     }
 }

@@ -1,0 +1,1 @@
+<svg {{ $attributes }} viewBox="0 0 32 32" aria-hidden="true"><circle cx="16" cy="16" r="16" class="fill-surface"/><g class="fill-primary"><ellipse cx="16" cy="19.5" rx="5.5" ry="4.5"/><circle cx="9.5" cy="13" r="2.3"/><circle cx="13.5" cy="9.5" r="2.3"/><circle cx="18.5" cy="9.5" r="2.3"/><circle cx="22.5" cy="13" r="2.3"/></g></svg>
