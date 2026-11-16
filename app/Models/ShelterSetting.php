@@ -53,6 +53,10 @@ class ShelterSetting extends Model
             ];
         });
 
+        // Кеш міг лишитися з версії до нових полів (наприклад, соцмереж): доповнюємо відсутні ключі,
+        // щоб строгий режим не падав на MissingAttributeException
+        $attributes = [...array_fill_keys((new static)->getFillable(), null), ...$attributes];
+
         return (new static)->newFromBuilder($attributes);
     }
 }
