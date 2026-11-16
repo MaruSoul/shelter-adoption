@@ -72,6 +72,7 @@ class ApplicationShow extends Component
         return view('livewire.admin.application-show', [
             'application' => $application,
             'others' => AdoptionApplication::where('animal_id', $application->animal_id)->whereKeyNot($application->id)->latest()->get(),
+            'samePerson' => AdoptionApplication::with('animal')->where('email', $application->email)->whereKeyNot($application->id)->latest()->get(),
         ])->title('Анкета: '.$application->name);
     }
 }

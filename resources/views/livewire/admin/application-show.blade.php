@@ -83,6 +83,20 @@
                         <p class="text-sm text-muted">Інших анкет немає.</p>
                     @endforelse
                 </div>
+                <div class="card p-5 flex flex-col gap-3">
+                    <h2 class="text-xl">Інші анкети цієї людини</h2>
+                    @forelse ($samePerson as $other)
+                        <a href="{{ route('admin.applications.show', $other) }}" class="flex justify-between gap-2 hover:text-primary" wire:key="same-{{ $other->id }}">
+                            <span>{{ $other->animal->name }} <span class="text-sm text-muted">· {{ $other->created_at->format('d.m.Y') }}</span></span>
+                            <span class="chip {{ $other->status->badgeClasses() }} text-xs">{{ $other->status->label() }}</span>
+                        </a>
+                    @empty
+                        <p class="text-sm text-muted">Це перша анкета від {{ $application->email }}.</p>
+                    @endforelse
+                    @if ($samePerson->isNotEmpty())
+                        <a href="{{ route('admin.applications.index', ['email' => $application->email]) }}" class="text-sm font-semibold text-primary hover:underline">Усі анкети цієї людини →</a>
+                    @endif
+                </div>
             </aside>
         </div>
     </div>

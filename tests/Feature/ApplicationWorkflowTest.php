@@ -4,6 +4,7 @@ use App\Enums\AnimalStatus;
 use App\Enums\ApplicationStatus;
 use App\Exceptions\AnimalAlreadyAdoptedException;
 use App\Exceptions\InvalidStatusTransitionException;
+use App\Livewire\Admin\ApplicationIndex;
 use App\Livewire\Admin\ApplicationShow;
 use App\Models\AdoptionApplication;
 use App\Models\Animal;
@@ -91,4 +92,22 @@ it('вимагає причину відмови в панелі адмініс�
         ->assertHasNoErrors();
 
     expect($application->fresh()->status)->toBe(ApplicationStatus::Declined);
+});
+
+it('адміністратор бачить усі анкети однієї людини і може відкрити кожну', function () {
+    $a1 = AdoptionApplication::factory()->create(['email' => 'andrii@example.com', 'name' => 'Андрій']);
+    $a2 = AdoptionApplication::factory()->create(['email' => 'andrii@example.com', 'name' => 'Андрій']);
+    $other = AdoptionApplication::factory()->create(['email' => 'olena@example.com', 'name' => 'Олена']);
+
+    Livewire::actingAs(admin())->test(ApplicationIndex::class)
+        ->assertSee('Відкрити')
+        ->assertSee('усього анкет: 2')
+        ->set('email', 'andrii@example.com')
+        ->assertSee(route('admin.applications.show', $a1))
+        ->assertSee(route('admin.applications.show', $a2))
+        ->assertDontSee(route('admin.applications.show', $other));
+
+    Livewire::actingAs(admin())->test(ApplicationShow::class, ['application' => $a1])
+        ->assertSee('Інші анкети цієї людини')
+        ->assertSee($a2->animal->name);
 });
