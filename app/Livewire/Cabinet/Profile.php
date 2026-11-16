@@ -61,7 +61,7 @@ class Profile extends Component
     public function render()
     {
         return view('livewire.cabinet.profile', [
-            'regions' => Region::orderBy('name')->get(),
+            'regions' => Region::alphabetical()->get(),
         ])->title('Мій профіль');
     }
 }

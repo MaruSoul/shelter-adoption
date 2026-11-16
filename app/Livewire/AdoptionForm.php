@@ -163,7 +163,7 @@ class AdoptionForm extends Component
     public function render()
     {
         return view('livewire.adoption-form', [
-            'regions' => Region::orderBy('name')->get(),
+            'regions' => Region::alphabetical()->get(),
             'channels' => ContactChannel::cases(),
         ])->title('Взяти додому '.$this->animal->name);
     }

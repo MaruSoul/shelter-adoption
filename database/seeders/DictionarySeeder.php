@@ -22,12 +22,6 @@ class DictionarySeeder extends Seeder
         'м. Київ', 'Автономна Республіка Крим',
     ];
 
-    private const LOCALITIES = [
-        'Одеська' => ['Одеса', 'Чорноморськ', 'Южне', 'Біляївка', 'Овідіополь', 'Білгород-Дністровський', 'Ізмаїл'],
-        'Миколаївська' => ['Миколаїв', 'Вознесенськ'],
-        'м. Київ' => ['Київ'],
-    ];
-
     private const BREEDS = [
         'cat' => ['Без породи', 'Британська короткошерста', 'Шотландська висловуха', 'Сіамська', 'Мейн-кун'],
         'dog' => ['Без породи', 'Лабрадор-ретривер', 'Німецька вівчарка', 'Хаскі', 'Такса', 'Джек-рассел-терʼєр'],
@@ -43,12 +37,7 @@ class DictionarySeeder extends Seeder
             Region::firstOrCreate(['name' => $name]);
         }
 
-        foreach (self::LOCALITIES as $region => $localities) {
-            $regionId = Region::where('name', $region)->value('id');
-            foreach ($localities as $name) {
-                Locality::firstOrCreate(['region_id' => $regionId, 'name' => $name]);
-            }
-        }
+        $this->seedLocalities();
 
         $species = [
             'cat' => Species::firstOrCreate(['slug' => 'cat'], ['name' => 'Котик', 'name_plural' => 'Котики']),
@@ -63,6 +52,31 @@ class DictionarySeeder extends Seeder
 
         foreach (self::COLORS as $name) {
             Color::firstOrCreate(['name' => $name]);
+        }
+    }
+
+    /**
+     * Міста й селища всіх областей з КАТОТТГ (database/seeders/data, джерело – README.md там же).
+     * Додаються лише відсутні записи, тож сідер можна безпечно запускати на вже заповненій базі.
+     */
+    private function seedLocalities(): void
+    {
+        $data = json_decode(file_get_contents(database_path('seeders/data/localities.json')), true, flags: JSON_THROW_ON_ERROR);
+        $regions = Region::pluck('id', 'name');
+
+        foreach ($data as $regionName => $names) {
+            $regionId = $regions[$regionName] ?? null;
+            if (! $regionId) {
+                continue;
+            }
+
+            $existing = Locality::where('region_id', $regionId)->pluck('name')->flip();
+            $rows = collect($names)
+                ->reject(fn ($name) => $existing->has($name))
+                ->map(fn ($name) => ['region_id' => $regionId, 'name' => $name, 'created_at' => now(), 'updated_at' => now()])
+                ->values();
+
+            $rows->chunk(500)->each(fn ($chunk) => Locality::insert($chunk->all()));
         }
     }
 }

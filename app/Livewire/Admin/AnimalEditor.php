@@ -78,7 +78,7 @@ class AnimalEditor extends Component
         return view('livewire.admin.animal-editor', [
             'species' => Species::orderBy('id')->get(),
             'colors' => Color::orderBy('name')->get(),
-            'regions' => Region::orderBy('name')->get(),
+            'regions' => Region::alphabetical()->get(),
             'existingPhotos' => $this->animal->exists ? $this->animal->photos : collect(),
             'maxPhotos' => self::MAX_PHOTOS,
             'statuses' => $this->selectableStatuses(),

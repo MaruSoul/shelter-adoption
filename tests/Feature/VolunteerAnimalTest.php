@@ -6,6 +6,7 @@ use App\Livewire\Admin\ModerationQueue;
 use App\Livewire\Cabinet\AnimalForm;
 use App\Models\Animal;
 use App\Models\Locality;
+use App\Models\Region;
 use App\Models\Species;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\Storage;
@@ -90,4 +91,14 @@ it('редагування схваленої картки повертає її
         ->assertHasNoErrors();
 
     expect($animal->fresh())->status->toBe(AnimalStatus::Moderation)->name->toBe('Нове імʼя');
+});
+
+it('у формі є населені пункти будь-якої області, відсортовані за українським алфавітом', function () {
+    $lviv = Region::firstWhere('name', 'Львівська');
+
+    $names = Locality::where('region_id', $lviv->id)->alphabetical()->pluck('name');
+
+    expect($names)->toContain('Львів', 'Дрогобич', 'Трускавець')
+        ->and($names->count())->toBeGreaterThan(40)
+        ->and(Region::alphabetical()->value('name'))->toBe('Автономна Республіка Крим');
 });

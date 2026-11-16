@@ -84,7 +84,7 @@ class AnimalForm extends Component
         return view('livewire.cabinet.animal-form', [
             'species' => Species::orderBy('id')->get(),
             'colors' => Color::orderBy('name')->get(),
-            'regions' => Region::orderBy('name')->get(),
+            'regions' => Region::alphabetical()->get(),
             'existingPhotos' => $this->animal->exists ? $this->animal->photos : collect(),
             'maxPhotos' => self::MAX_PHOTOS,
         ])->title($this->animal->exists ? 'Редагування картки' : 'Розмістити тварину');

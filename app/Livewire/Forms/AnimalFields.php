@@ -119,6 +119,6 @@ class AnimalFields extends Form
 
     public function localities()
     {
-        return $this->region_id ? Locality::where('region_id', $this->region_id)->orderBy('name')->get() : collect();
+        return $this->region_id ? Locality::where('region_id', $this->region_id)->alphabetical()->get() : collect();
     }
 }
