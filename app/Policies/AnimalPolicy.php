@@ -28,6 +28,16 @@ class AnimalPolicy
             && in_array($animal->status, [AnimalStatus::Moderation, AnimalStatus::Available, AnimalStatus::Rejected], true);
     }
 
+    /** Волонтер може прибрати власну картку, поки тварину не прилаштовано. */
+    public function delete(User $user, Animal $animal): bool
+    {
+        if ($animal->status === AnimalStatus::Adopted) {
+            return false;
+        }
+
+        return $user->isAdmin() || $animal->created_by === $user->id;
+    }
+
     public function moderate(User $user): bool
     {
         return $user->isAdmin();

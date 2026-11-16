@@ -10,6 +10,6 @@
         <h2 class="text-2xl pt-2">Фото тварин</h2>
         <p>Під час завантаження фото ми видаляємо з них метадані (зокрема координати, де зроблено знімок).</p>
         <h2 class="text-2xl pt-2">Як видалити дані</h2>
-        <p>Напишіть нам@if ($shelter->email) на <a href="mailto:{{ $shelter->email }}" class="text-primary underline">{{ $shelter->email }}</a>@endif – ми видалимо анкету та повʼязані з нею дані.</p>
+        <p>Напишіть нам@if ($shelter->email) на <a href="mailto:{{ $shelter->email }}" class="text-primary underline">{{ $shelter->email }}</a>@endif – ми видалимо анкету та повʼязані з нею дані. Картку тварини, яку ви розмістили, можна видалити самостійно в кабінеті.</p>
     </article>
 </x-layout>

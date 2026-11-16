@@ -39,7 +39,8 @@ class AdoptionApplication extends Model
 
     public function animal(): BelongsTo
     {
-        return $this->belongsTo(Animal::class);
+        // Анкета лишається читабельною, навіть якщо волонтер видалив картку тварини
+        return $this->belongsTo(Animal::class)->withTrashed();
     }
 
     public function user(): BelongsTo

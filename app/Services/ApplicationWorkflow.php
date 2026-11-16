@@ -83,6 +83,22 @@ class ApplicationWorkflow
         }
     }
 
+    /**
+     * Закриває всі активні анкети на тварину, картку якої видалив її автор.
+     */
+    public function closeForRemovedAnimal(Animal $animal, User $actor): void
+    {
+        $active = AdoptionApplication::query()
+            ->where('animal_id', $animal->id)
+            ->active()
+            ->lockForUpdate()
+            ->get();
+
+        foreach ($active as $application) {
+            $this->apply($application, ApplicationStatus::Closed, $actor, 'Автор оголошення прибрав картку тварини з сайту.');
+        }
+    }
+
     public function assertAllowed(ApplicationStatus $from, ApplicationStatus $to): void
     {
         if (! $from->canTransitionTo($to)) {

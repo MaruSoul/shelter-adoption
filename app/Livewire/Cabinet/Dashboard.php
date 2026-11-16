@@ -2,6 +2,7 @@
 
 namespace App\Livewire\Cabinet;
 
+use App\Services\RemoveAnimal;
 use Livewire\Component;
 
 /**
@@ -11,6 +12,20 @@ use Livewire\Component;
 class Dashboard extends Component
 {
     public string $tab = 'applications';
+
+    public ?string $flash = null;
+
+    public function deleteAnimal(int $id, RemoveAnimal $remover): void
+    {
+        // Шукаємо лише серед власних карток: чужу знайти неможливо
+        $animal = auth()->user()->animals()->findOrFail($id);
+        $this->authorize('delete', $animal);
+
+        $remover->handle($animal, auth()->user());
+
+        $this->tab = 'animals';
+        $this->flash = 'Картку «'.$animal->name.'» видалено.';
+    }
 
     public function render()
     {
