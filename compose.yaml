@@ -7,6 +7,7 @@ services:
       dockerfile: docker/php/Dockerfile
       target: app
     image: shelter-app
+    pull_policy: build      # образ збирається локально, у Docker Hub його не шукаємо
     env_file: .env
     environment:
       RUN_MIGRATIONS: "true"
@@ -19,6 +20,7 @@ services:
 
   queue:
     image: shelter-app
+    pull_policy: never      # використовує образ, зібраний для сервісу app
     env_file: .env
     command: ["php", "artisan", "queue:work", "--tries=3", "--sleep=2"]
     restart: unless-stopped
@@ -33,6 +35,7 @@ services:
       dockerfile: docker/php/Dockerfile
       target: web
     image: shelter-web
+    pull_policy: build
     restart: unless-stopped
     ports:
       - "${APP_PORT:-8080}:80"
@@ -62,6 +65,7 @@ services:
       context: .
       dockerfile: docker/php/Dockerfile
       target: tests
+    pull_policy: build
     profiles: ["tests"]
     env_file: .env
     environment:
