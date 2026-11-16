@@ -4,7 +4,9 @@ namespace App\Http\Controllers;
 
 use App\Models\Post;
 use App\Models\PostCategory;
+use App\Services\PostBlocks;
 use Illuminate\Http\Request;
+use Illuminate\Support\Collection;
 
 class BlogController extends Controller
 {
@@ -39,7 +41,27 @@ class BlogController extends Controller
 
         return view('blog.show', [
             'post' => $post,
-            'blocks' => app(\App\Services\PostBlocks::class)->forRender($post->blocks ?? []),
+            'blocks' => app(PostBlocks::class)->forRender($post->blocks ?? []),
+            'related' => $this->related($post),
         ]);
+    }
+
+    /**
+     * «Читайте також»: спершу статті тієї ж рубрики, потім найсвіжіші з інших – разом до трьох.
+     *
+     * @return Collection<int, Post>
+     */
+    private function related(Post $post)
+    {
+        $sameRubric = Post::published()->with('category')
+            ->where('post_category_id', $post->post_category_id)
+            ->whereKeyNot($post->id)
+            ->latest('published_at')->take(3)->get();
+
+        $others = Post::published()->with('category')
+            ->whereKeyNot([$post->id, ...$sameRubric->modelKeys()])
+            ->latest('published_at')->take(3 - $sameRubric->count())->get();
+
+        return $sameRubric->concat($others);
     }
 }

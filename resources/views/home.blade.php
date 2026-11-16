@@ -1,4 +1,5 @@
 <x-layout>
+    <x-slot:head><x-json-ld :data="\App\Support\StructuredData::shelter(\App\Models\ShelterSetting::current())" /></x-slot:head>
     <section class="mx-auto max-w-6xl px-6 pt-14 pb-10 flex flex-wrap items-center gap-12">
         <div class="grow basis-[440px] min-w-0 flex flex-col gap-6">
             <h1 class="text-5xl md:text-6xl leading-[1.08]">Знайдіть друга, який чекає саме на вас</h1>
@@ -17,36 +18,31 @@
         @endif
     </section>
 
-    <section aria-label="Швидкий пошук" class="mx-auto max-w-6xl px-6 pb-14">
-        <form action="{{ route('animals.index') }}" method="get" class="card p-5 flex flex-wrap gap-4 items-end shadow-lg shadow-primary/5">
-            <label class="label grow basis-44 text-sm">Кого шукаєте
-                <select name="species" class="field font-normal">
-                    <option value="">Усі тварини</option>
-                    @foreach ($species as $s)<option value="{{ $s->slug }}">{{ $s->name_plural }}</option>@endforeach
-                </select>
-            </label>
-            <label class="label grow basis-44 text-sm">Вік
-                <select name="age[]" class="field font-normal">
-                    <option value="">Будь-який</option>
-                    @foreach (\App\Enums\AgeGroup::cases() as $g)<option value="{{ $g->value }}">{{ $g->label() }}</option>@endforeach
-                </select>
-            </label>
-            <label class="label grow basis-44 text-sm">Стать
-                <select name="sex[]" class="field font-normal">
-                    <option value="">Будь-яка</option>
-                    @foreach (\App\Enums\Sex::cases() as $s)<option value="{{ $s->value }}">{{ $s->label() }}</option>@endforeach
-                </select>
-            </label>
-            <button type="submit" class="btn-primary rounded-xl min-h-12 px-7">Показати</button>
-        </form>
-    </section>
+    @if (count($quickPicks) > 0)
+        <section aria-labelledby="quick-picks" class="mx-auto max-w-6xl px-6 pb-14 flex flex-col gap-4">
+            <h2 id="quick-picks" class="text-sm font-semibold uppercase tracking-wide text-muted">Швидкий вибір</h2>
+            <ul class="flex gap-3 overflow-x-auto -mx-6 px-6 pb-2 snap-x sm:flex-wrap sm:overflow-visible sm:mx-0 sm:px-0">
+                @foreach ($quickPicks as $pick)
+                    <li class="snap-start shrink-0">
+                        <a href="{{ $pick['url'] }}" class="card card-lift flex items-center gap-3 rounded-2xl pl-5 pr-3 py-3 hover:border-primary">
+                            <span class="flex flex-col leading-tight">
+                                <span class="font-display font-extrabold text-lg">{{ $pick['label'] }}</span>
+                                <span class="text-xs text-muted">{{ $pick['hint'] }}</span>
+                            </span>
+                            <span class="min-w-9 h-9 px-2 rounded-full bg-sun-soft text-accent font-bold flex items-center justify-center" aria-label="{{ $pick['count'] }} тварин">{{ $pick['count'] }}</span>
+                        </a>
+                    </li>
+                @endforeach
+            </ul>
+        </section>
+    @endif
 
     <section class="mx-auto max-w-6xl px-6 pb-16 flex flex-col gap-7">
         <div class="flex flex-wrap items-end justify-between gap-3">
             <h2 class="text-4xl" data-reveal>Вони шукають дім</h2>
             <a href="{{ route('animals.index') }}" class="font-semibold text-primary hover:underline">Дивитися всіх →</a>
         </div>
-        <div class="grid gap-6 grid-cols-[repeat(auto-fill,minmax(240px,1fr))]">
+        <div class="animal-grid">
             @foreach ($animals as $animal)
                 <x-animal-card :animal="$animal" />
             @endforeach

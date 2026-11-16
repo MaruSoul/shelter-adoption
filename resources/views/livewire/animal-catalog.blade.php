@@ -105,7 +105,7 @@
                         <button type="button" wire:click="resetFilters" class="btn-primary">Скинути фільтри</button>
                     </div>
                 @else
-                    <div class="grid gap-5 grid-cols-[repeat(auto-fill,minmax(230px,1fr))]">
+                    <div class="animal-grid">
                         @foreach ($this->animals as $animal)
                             <x-animal-card :animal="$animal" wire:key="animal-{{ $animal->id }}" />
                         @endforeach

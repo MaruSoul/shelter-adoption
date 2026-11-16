@@ -73,6 +73,14 @@
 @utility label {
     @apply flex flex-col gap-1.5 font-semibold;
 }
+/* Сітка карток тварин: на телефоні завжди дві колонки, далі – скільки влізе */
+@utility animal-grid {
+    @apply grid grid-cols-2 gap-3 sm:gap-5 sm:grid-cols-[repeat(auto-fill,minmax(230px,1fr))];
+}
+/* Кругла кнопка «поділитися» з піктограмою */
+@utility share-btn {
+    @apply size-11 rounded-full border border-line bg-bg text-primary inline-flex items-center justify-center transition hover:bg-primary hover:text-bg hover:border-primary;
+}
 @utility chip {
     @apply inline-flex items-center px-3 py-1 rounded-full text-sm font-semibold;
 }

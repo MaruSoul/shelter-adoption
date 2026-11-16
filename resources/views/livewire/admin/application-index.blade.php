@@ -9,6 +9,7 @@
             <label class="label text-sm">Статус
                 <select wire:model.live="status" class="field font-normal">
                     <option value="">Усі</option>
+                    <option value="working">У роботі (усі етапи)</option>
                     @foreach ($statuses as $s)<option value="{{ $s->value }}">{{ $s->label() }}</option>@endforeach
                 </select>
             </label>

@@ -24,6 +24,17 @@
             <div class="grow-[999] basis-[480px] min-w-0 flex flex-col gap-6">
                 <section class="card p-6 flex flex-col gap-4">
                     <h2 class="text-2xl">Контакти</h2>
+                    {{-- Звʼязатися одним дотиком; канали, які людина обрала в анкеті, виділено --}}
+                    <div class="flex flex-wrap gap-2">
+                        @foreach (\App\Enums\ContactChannel::cases() as $channel)
+                            @php($preferred = $application->contact_channels->contains($channel))
+                            <a href="{{ $channel->link($application->phone) }}" @if ($channel !== \App\Enums\ContactChannel::Phone) target="_blank" rel="noopener" @endif
+                               @class(['btn min-h-11 text-sm', 'btn-primary' => $preferred, 'btn-outline' => ! $preferred])>
+                                {{ $channel->actionLabel() }}@if ($preferred)<span class="sr-only"> (обраний канал)</span>@endif
+                            </a>
+                        @endforeach
+                        <a href="mailto:{{ $application->email }}?subject={{ rawurlencode('Анкета на '.$application->animal->name) }}" class="btn btn-outline min-h-11 text-sm">Написати лист</a>
+                    </div>
                     <dl class="grid gap-4 grid-cols-[repeat(auto-fit,minmax(200px,1fr))]">
                         <div><dt class="text-sm text-muted">Телефон</dt><dd class="font-semibold"><a href="tel:{{ $application->phone }}" class="text-primary hover:underline">{{ $application->phone }}</a></dd></div>
                         <div><dt class="text-sm text-muted">E-mail</dt><dd class="font-semibold break-all"><a href="mailto:{{ $application->email }}" class="text-primary hover:underline">{{ $application->email }}</a></dd></div>

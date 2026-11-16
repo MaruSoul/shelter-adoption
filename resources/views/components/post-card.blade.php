@@ -8,8 +8,11 @@
     <div class="p-5 flex flex-col gap-2">
         <span class="text-sm font-semibold text-accent">{{ $post->category->name }}</span>
         <span class="font-display font-extrabold text-xl leading-tight group-hover:text-primary">{{ $post->title }}</span>
-        @if ($post->published_at)
-            <time datetime="{{ $post->published_at->toDateString() }}" class="text-sm text-muted">{{ $post->published_at->translatedFormat('j F Y') }}</time>
-        @endif
+        <span class="text-sm text-muted">
+            @if ($post->published_at)
+                <time datetime="{{ $post->published_at->toDateString() }}">{{ $post->published_at->translatedFormat('j F Y') }}</time> ·
+            @endif
+            {{ $post->readingMinutes() }} хв
+        </span>
     </div>
 </a>

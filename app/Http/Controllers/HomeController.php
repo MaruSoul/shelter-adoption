@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Enums\AgeGroup;
 use App\Enums\AnimalStatus;
 use App\Models\Animal;
 use App\Models\Post;
@@ -20,10 +21,38 @@ class HomeController extends Controller
                 ->get(),
             'lottery' => $this->lotteryPool(),
             'posts' => Post::published()->with('category')->latest('published_at')->take(3)->get(),
-            'species' => Species::orderBy('id')->get(),
+            'quickPicks' => $this->quickPicks(),
             'adoptedCount' => Animal::where('status', AnimalStatus::Adopted)->count(),
             'waitingCount' => Animal::where('status', AnimalStatus::Available)->count(),
         ]);
+    }
+
+    /**
+     * Готові добірки замість форми швидкого пошуку: один дотик – і відкривається каталог із фільтром.
+     * Порожні добірки не показуємо.
+     *
+     * @return list<array{label: string, hint: string, url: string, count: int}>
+     */
+    private function quickPicks(): array
+    {
+        $picks = [];
+        foreach (Species::orderBy('id')->get() as $species) {
+            $picks[] = ['label' => $species->name_plural, 'hint' => 'усі '.mb_strtolower($species->name_plural), 'filters' => ['species' => $species->slug]];
+        }
+        $picks[] = ['label' => 'Малюки', 'hint' => 'до року', 'filters' => ['age' => [AgeGroup::UpToOne->value]]];
+        $picks[] = ['label' => 'Старшенькі', 'hint' => 'понад 5 років', 'filters' => ['age' => [AgeGroup::OverFive->value]]];
+        $picks[] = ['label' => 'Готові до переїзду', 'hint' => 'стерилізовані й щеплені', 'filters' => ['sterilized' => true, 'vaccinated' => true]];
+
+        return collect($picks)
+            ->map(fn (array $p) => [
+                'label' => $p['label'],
+                'hint' => $p['hint'],
+                'url' => route('animals.index', array_map(fn ($v) => is_bool($v) ? 1 : $v, $p['filters'])),
+                'count' => Animal::query()->filter($p['filters'])->count(),
+            ])
+            ->filter(fn (array $p) => $p['count'] > 0)
+            ->values()
+            ->all();
     }
 
     /**

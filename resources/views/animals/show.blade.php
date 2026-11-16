@@ -2,6 +2,7 @@
 <x-layout :title="$animal->name.' – '.$animal->species->name.' шукає дім'"
           :description="\Illuminate\Support\Str::limit($animal->story ?? $animal->behavior ?? '', 155)"
           :image="$cover?->url()">
+    <x-slot:head><x-json-ld :data="\App\Support\StructuredData::animalBreadcrumbs($animal)" /></x-slot:head>
     <div class="mx-auto max-w-6xl px-6 py-7 flex flex-col gap-10">
         <nav aria-label="Навігаційний ланцюжок" class="text-sm text-muted flex flex-wrap gap-2">
             <a href="{{ route('home') }}" class="hover:underline">Головна</a><span aria-hidden="true">/</span>
@@ -51,7 +52,7 @@
                     @endif
                 </div>
                 @if ($animal->photos->count() > 1)
-                    <div class="grid grid-cols-5 gap-3">
+                    <div class="grid grid-cols-5 sm:grid-cols-6 gap-2 sm:gap-3">
                         @foreach ($animal->photos as $i => $photo)
                             <button type="button" x-on:click="active = {{ $i }}" class="aspect-[4/3] rounded-2xl overflow-hidden border-2 transition-opacity"
                                     x-bind:class="active === {{ $i }} ? 'border-primary' : 'border-transparent opacity-75 hover:opacity-100'"
@@ -90,7 +91,8 @@
                 </dl>
 
                 @if ($animal->acceptsApplications())
-                    <a href="{{ route('animals.adopt', $animal) }}" class="btn-primary min-h-14 text-lg">Взяти додому</a>
+                    <a href="{{ route('animals.adopt', $animal) }}" class="btn-primary min-h-14 text-lg" x-data
+                       x-init="new IntersectionObserver(([e]) => $dispatch('main-cta', e.isIntersecting)).observe($el)">Взяти додому</a>
                 @endif
                 @if ($animal->isPublic())
                     <x-favorite-button :animal-id="$animal->id" :name="$animal->name" :large="true" />
@@ -100,14 +102,29 @@
                     <p class="rounded-2xl bg-success-soft text-success px-4 py-3 font-medium">{{ $animal->foundHomePhrase() }}. Подивіться інших тварин, які чекають на вас.</p>
                 @endif
 
-                <div class="flex flex-wrap items-center gap-x-4 text-sm text-muted" x-data="{ copied: false }">
-                    <span>Поділитися:</span>
-                    <a href="https://t.me/share/url?url={{ urlencode(url()->current()) }}&text={{ urlencode($animal->name.' шукає дім') }}" target="_blank" rel="noopener" class="min-h-11 inline-flex items-center font-semibold text-primary hover:underline">Telegram</a>
-                    <a href="https://www.facebook.com/sharer/sharer.php?u={{ urlencode(url()->current()) }}" target="_blank" rel="noopener" class="min-h-11 inline-flex items-center font-semibold text-primary hover:underline">Facebook</a>
-                    <button type="button" class="min-h-11 font-semibold text-primary hover:underline"
-                            x-on:click="navigator.clipboard.writeText(@js(url()->current())); copied = true; setTimeout(() => copied = false, 2000)">
-                        <span x-show="!copied">Копіювати посилання</span><span x-show="copied" x-cloak>Скопійовано</span>
+                @php($shareUrl = url()->current())
+                @php($shareText = $animal->name.' шукає дім')
+                <div class="flex flex-wrap items-center gap-2 text-sm text-muted" x-data="{ copied: false, canShare: !! navigator.share }">
+                    <span class="w-full">Поділитися:</span>
+                    {{-- На телефоні – системне меню «Поділитися» з усіма месенджерами --}}
+                    <button type="button" x-show="canShare" x-cloak class="share-btn" aria-label="Поділитися"
+                            x-on:click="navigator.share({ title: @js($shareText), url: @js($shareUrl) }).catch(() => {})">
+                        <x-icon.social network="share" class="size-5" />
                     </button>
+                    <a href="https://t.me/share/url?url={{ urlencode($shareUrl) }}&text={{ urlencode($shareText) }}" target="_blank" rel="noopener" class="share-btn" aria-label="Поділитися в Telegram" title="Telegram">
+                        <x-icon.social network="telegram" class="size-5" />
+                    </a>
+                    <a href="viber://forward?text={{ rawurlencode($shareText.' '.$shareUrl) }}" class="share-btn" aria-label="Поділитися у Viber" title="Viber">
+                        <x-icon.social network="viber" class="size-5" />
+                    </a>
+                    <a href="https://www.facebook.com/sharer/sharer.php?u={{ urlencode($shareUrl) }}" target="_blank" rel="noopener" class="share-btn" aria-label="Поділитися у Facebook" title="Facebook">
+                        <x-icon.social network="facebook" class="size-5" />
+                    </a>
+                    <button type="button" class="share-btn" x-bind:aria-label="copied ? 'Посилання скопійовано' : 'Копіювати посилання'" title="Копіювати посилання"
+                            x-on:click="navigator.clipboard.writeText(@js($shareUrl)); copied = true; setTimeout(() => copied = false, 2000)">
+                        <x-icon.social network="link" class="size-5" />
+                    </button>
+                    <span x-show="copied" x-cloak role="status" class="font-semibold text-success">Скопійовано</span>
                 </div>
             </aside>
         </div>
@@ -129,7 +146,7 @@
                     <h2 class="text-3xl">Вони теж шукають дім</h2>
                     <a href="{{ route('animals.index', ['species' => $animal->species->slug]) }}" class="font-semibold text-primary hover:underline">Дивитися всіх →</a>
                 </div>
-                <div class="grid gap-5 grid-cols-[repeat(auto-fill,minmax(230px,1fr))]">
+                <div class="animal-grid">
                     @foreach ($similar as $other)
                         <x-animal-card :animal="$other" />
                     @endforeach
@@ -137,4 +154,20 @@
             </section>
         @endif
     </div>
+
+    @if ($animal->acceptsApplications())
+        {{-- На телефоні кнопка «Взяти додому» завжди під рукою, поки основна кнопка поза екраном --}}
+        <div class="lg:hidden fixed inset-x-0 bottom-0 z-30 border-t border-line bg-card/95 backdrop-blur px-4 py-3 pb-[max(.75rem,env(safe-area-inset-bottom))] flex items-center gap-3 transition-transform duration-200"
+             x-data="{ cta: true, footer: false, get hidden() { return this.cta || this.footer } }"
+             x-init="const f = document.querySelector('footer'); f && new IntersectionObserver(([e]) => footer = e.isIntersecting).observe(f)"
+             x-on:main-cta.window="cta = $event.detail"
+             x-bind:class="hidden ? 'translate-y-full' : 'translate-y-0'" x-bind:aria-hidden="hidden" x-bind:inert="hidden">
+            <div class="min-w-0 grow leading-tight">
+                <span class="block font-display font-extrabold truncate">{{ $animal->name }}</span>
+                <span class="block text-xs text-muted truncate">{{ $animal->ageLabel() }} · {{ $animal->sex->label() }}</span>
+            </div>
+            <x-favorite-button :animal-id="$animal->id" :name="$animal->name" class="shrink-0 border border-line" />
+            <a href="{{ route('animals.adopt', $animal) }}" class="btn-primary shrink-0 min-h-12 px-5">Взяти додому</a>
+        </div>
+    @endif
 </x-layout>

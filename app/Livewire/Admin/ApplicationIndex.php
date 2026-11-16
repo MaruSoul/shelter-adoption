@@ -41,7 +41,8 @@ class ApplicationIndex extends Component
     {
         $applications = AdoptionApplication::query()
             ->with(['animal', 'region'])
-            ->when($this->status, fn ($q) => $q->where('status', $this->status))
+            ->when($this->status === 'working', fn ($q) => $q->active()->where('status', '!=', ApplicationStatus::New))
+            ->when($this->status && $this->status !== 'working', fn ($q) => $q->where('status', $this->status))
             ->when($this->email, fn ($q) => $q->where('email', mb_strtolower($this->email)))
             ->when($this->animal, fn ($q) => $q->whereHas('animal', fn ($a) => $a->where('name', 'ilike', '%'.$this->animal.'%')))
             ->when($this->from, fn ($q) => $q->whereDate('created_at', '>=', $this->from))

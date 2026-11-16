@@ -55,4 +55,23 @@ class Post extends Model
     {
         return $this->cover_path ? Storage::disk('public')->url($this->cover_path) : null;
     }
+
+    /**
+     * Орієнтовний час читання в хвилинах: слова з усіх текстових блоків ÷ 180 слів/хв
+     * (середня швидкість читання українського тексту з екрана), щонайменше 1 хвилина.
+     */
+    public function readingMinutes(): int
+    {
+        $text = collect($this->blocks ?? [])
+            ->map(fn (array $b) => implode(' ', array_filter([
+                $b['data']['text'] ?? null,
+                $b['data']['author'] ?? null,
+                $b['data']['caption'] ?? null,
+                ...($b['data']['items'] ?? []),
+            ], 'is_string')))
+            ->implode(' ');
+        $words = preg_match_all('/[\p{L}\p{N}ʼ\'-]+/u', $text);
+
+        return max(1, (int) round($words / 180));
+    }
 }

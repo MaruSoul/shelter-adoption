@@ -52,7 +52,7 @@ class ModerationQueue extends Component
     {
         return view('livewire.admin.moderation-queue', [
             'animals' => Animal::where('status', AnimalStatus::Moderation)
-                ->with(['photos', 'species', 'breed', 'locality', 'author'])
+                ->with(['photos', 'species', 'breed', 'color', 'locality.region', 'author'])
                 ->oldest('updated_at')
                 ->get(),
         ])->title('Модерація');

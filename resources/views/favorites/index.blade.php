@@ -23,7 +23,7 @@
             </p>
         </div>
 
-        <div class="grid gap-6 grid-cols-[repeat(auto-fill,minmax(240px,1fr))]" x-ref="grid">
+        <div class="animal-grid" x-ref="grid">
             @if ($animals !== null)
                 @include('favorites.cards', ['animals' => $animals])
             @endif
