@@ -74,7 +74,6 @@
                             </div>
                         </div>
                     </div>
-                    <x-mascot.cheer class="absolute -left-6 -top-14 w-24 sm:-left-10 sm:w-28 rotate-[-8deg] pointer-events-none" label="Лапа радіє" />
                     <button type="button" @click="spin()"
                             class="absolute -right-3 -bottom-6 sm:-right-6 size-16 rounded-full bg-card shadow-lg flex flex-col items-center justify-center text-primary hover:bg-tint-1"
                             aria-label="Ще раз">

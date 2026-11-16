@@ -52,29 +52,29 @@
             <span class="flex flex-col leading-tight">
                 <span class="font-display font-extrabold text-2xl uppercase tracking-wider text-primary">{{ $shelter->name }}</span>
                 @if ($shelter->tagline)
-                    <span class="hidden sm:block text-sm text-muted">{{ $shelter->tagline }}</span>
+                    <span class="hidden sm:block lg:hidden xl:block text-sm text-muted">{{ $shelter->tagline }}</span>
                 @endif
             </span>
         </a>
 
-        <button type="button" class="md:hidden btn-ghost px-3" x-on:click="open = !open" x-bind:aria-expanded="open" aria-controls="main-nav" aria-label="Меню">
+        <button type="button" class="lg:hidden btn-ghost px-3" x-on:click="open = !open" x-bind:aria-expanded="open" aria-controls="main-nav" aria-label="Меню">
             <svg class="size-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M4 7h16M4 12h16M4 17h16"/></svg>
         </button>
 
         <nav id="main-nav" aria-label="Головне меню"
-             class="w-full md:w-auto md:flex flex-col md:flex-row gap-1 md:gap-6 font-medium"
-             x-bind:class="open ? 'flex' : 'hidden md:flex'">
+             class="w-full lg:w-auto lg:flex flex-col lg:flex-row gap-1 lg:gap-5 xl:gap-6 font-medium"
+             x-bind:class="open ? 'flex' : 'hidden lg:flex'">
             <a href="{{ route('animals.index') }}" @class(['py-2', 'text-primary font-semibold' => request()->routeIs('animals.*') && ! request('species')])>Знайти друга</a>
             <a href="{{ route('animals.index', ['species' => 'cat']) }}" @class(['py-2', 'text-primary font-semibold' => request('species') === 'cat'])>Котики</a>
             <a href="{{ route('animals.index', ['species' => 'dog']) }}" @class(['py-2', 'text-primary font-semibold' => request('species') === 'dog'])>Песики</a>
             <a href="{{ route('blog.index') }}" @class(['py-2', 'text-primary font-semibold' => request()->routeIs('blog.*')])>Блог</a>
             <a href="{{ route('home') }}#help" class="py-2">Як допомогти</a>
-            <div class="flex flex-wrap gap-2 pt-2 md:hidden">
+            <div class="flex flex-wrap gap-2 pt-2 lg:hidden">
                 @include('components.partials.auth-links')
             </div>
         </nav>
 
-        <div class="hidden md:flex items-center gap-2">
+        <div class="hidden lg:flex items-center gap-2">
             @include('components.partials.auth-links')
         </div>
     </div>
