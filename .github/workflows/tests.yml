@@ -1,13 +1,9 @@
-name: Tests
+name: Тести
 
 on:
   push:
-    branches:
-      - master
-      - '*.x'
+    branches: [main]
   pull_request:
-  schedule:
-    - cron: '0 0 * * *'
 
 permissions:
   contents: read
@@ -16,34 +12,49 @@ jobs:
   tests:
     runs-on: ubuntu-latest
 
-    strategy:
-      fail-fast: true
-      matrix:
-        php: [8.3, 8.4, 8.5]
-
-    name: PHP ${{ matrix.php }}
+    services:
+      postgres:
+        image: postgres:17-alpine
+        env:
+          POSTGRES_DB: shelter_test
+          POSTGRES_USER: shelter
+          POSTGRES_PASSWORD: secret
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd "pg_isready -U shelter -d shelter_test"
+          --health-interval 5s --health-timeout 5s --health-retries 10
 
     steps:
-      - name: Checkout code
+      - name: Отримати код
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
           persist-credentials: false
 
-      - name: Setup PHP
+      - name: PHP 8.5
         uses: shivammathur/setup-php@eb7c497e18156a6bbabfef1d3a82760b9eda3962 # v2
         with:
-          php-version: ${{ matrix.php }}
-          extensions: dom, curl, libxml, mbstring, zip, pcntl, pdo, sqlite, pdo_sqlite
+          php-version: '8.5'
+          extensions: mbstring, pdo_pgsql, pgsql, gd, intl, zip, exif, bcmath
           coverage: none
 
-      - name: Install Composer dependencies
+      - name: Node.js 22
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+
+      - name: Залежності PHP
         run: composer install --prefer-dist --no-interaction --no-progress
 
-      - name: Copy environment file
-        run: cp .env.example .env
+      - name: Збірка фронтенду
+        run: npm ci && npm run build
 
-      - name: Generate app key
-        run: php artisan key:generate
+      - name: Середовище
+        run: |
+          cp .env.example .env
+          sed -i 's/^DB_HOST=.*/DB_HOST=127.0.0.1/' .env
+          php artisan key:generate
 
-      - name: Execute tests
-        run: php artisan test
+      - name: Автотести
+        run: ./vendor/bin/pest
