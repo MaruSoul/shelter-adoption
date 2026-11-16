@@ -41,7 +41,7 @@ return [
         'public' => [
             'driver' => 'local',
             'root' => storage_path('app/public'),
-            'url' => rtrim(env('APP_URL', 'http://localhost'), '/').'/storage',
+            'url' => '/storage', // відносна адреса: не залежить від домену чи порту
             'visibility' => 'public',
             'throw' => false,
             'report' => false,

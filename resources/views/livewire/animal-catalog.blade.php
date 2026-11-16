@@ -4,9 +4,14 @@
         <p class="text-muted">Усі тварини оглянуті ветеринаром. Фільтри зберігаються в адресі сторінки – нею можна поділитися.</p>
     </div>
 
-    <div class="flex flex-wrap gap-8 items-start">
+    <div class="flex flex-wrap gap-8 items-start" x-data="{ filtersOpen: false }">
+        {{-- На телефоні фільтри сховані за кнопкою, щоб тварин було видно одразу --}}
+        <button type="button" class="lg:hidden btn-outline w-full" x-on:click="filtersOpen = !filtersOpen" x-bind:aria-expanded="filtersOpen" aria-controls="catalog-filters">
+            <span x-text="filtersOpen ? 'Сховати фільтри' : 'Фільтри'">Фільтри</span>@if ($activeCount > 0) <span class="chip bg-sun text-sun-ink text-xs px-2 py-0.5">{{ $activeCount }}</span>@endif
+        </button>
+
         {{-- Фільтри --}}
-        <aside aria-label="Фільтри" class="card p-6 flex flex-col gap-5 grow basis-64 lg:max-w-72">
+        <aside id="catalog-filters" aria-label="Фільтри" class="card p-6 flex-col gap-5 grow basis-64 lg:max-w-72 lg:flex" x-bind:class="filtersOpen ? 'flex' : 'hidden'">
             <fieldset class="flex flex-col gap-2">
                 <legend class="font-semibold mb-2">Кого шукаєте</legend>
                 <div class="flex flex-wrap gap-2">

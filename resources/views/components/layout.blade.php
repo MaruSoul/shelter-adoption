@@ -22,7 +22,7 @@
     <meta property="og:description" content="{{ $pageDescription }}">
     <meta property="og:url" content="{{ url()->current() }}">
     @if ($image)
-        <meta property="og:image" content="{{ $image }}">
+        <meta property="og:image" content="{{ url($image) }}">
     @endif
     <link rel="icon" href="/favicon.svg" type="image/svg+xml">
     {{ $head ?? '' }}
