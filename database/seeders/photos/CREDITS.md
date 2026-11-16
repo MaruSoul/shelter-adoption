@@ -1,6 +1,6 @@
 # Фото для демонстраційних даних
 
-Усі фото взято з [Unsplash](https://unsplash.com) і використовуються відповідно до [ліцензії Unsplash](https://unsplash.com/license) (безкоштовне використання, зокрема в некомерційних проєктах, без обовʼязкової атрибуції). Фото зменшено до 1600 px і збережено без метаданих.
+Усі фото взято з [Unsplash](https://unsplash.com) і використовуються відповідно до [ліцензії Unsplash](https://unsplash.com/license) (безкоштовне використання, зокрема в некомерційних проєктах, без обовʼязкової атрибуції). Фото тварин зменшено до 1600 px, обкладинки статей обрізано до 1200×630; усі збережено без метаданих.
 
 | Файл | Автор | Джерело |
 |---|---|---|
@@ -44,3 +44,8 @@
 | dogs/richard-brutyo-Sg3XwuEpybU.jpg | Richard Brutyo | https://unsplash.com/photos/Sg3XwuEpybU |
 | dogs/ryan-walton-AbNO2iejoXA.jpg | Ryan Walton | https://unsplash.com/photos/AbNO2iejoXA |
 | dogs/t-r-photography-TzjMd7i5WQI.jpg | T R Photography | https://unsplash.com/photos/TzjMd7i5WQI |
+| blog/alvan-nee-T-0EW-SEbsE.jpg | Alvan Nee | https://unsplash.com/photos/T-0EW-SEbsE |
+| blog/berkay-gumustekin-ngqyo2AYYnE.jpg | Berkay Gumustekin | https://unsplash.com/photos/ngqyo2AYYnE |
+| blog/james-barker-v3-zcCWMjgM.jpg | James Barker | https://unsplash.com/photos/v3-zcCWMjgM |
+| blog/joe-caione-qO-PIF84Vxg.jpg | Joe Caione | https://unsplash.com/photos/qO-PIF84Vxg |
+| blog/krista-mangulsone-9gz3wfHr65U.jpg | Krista Mangulsone | https://unsplash.com/photos/9gz3wfHr65U |

@@ -7,7 +7,6 @@ use App\Enums\ApplicationStatus;
 use App\Enums\PostStatus;
 use App\Models\AdoptionApplication;
 use App\Models\Animal;
-use App\Models\AnimalPhoto;
 use App\Models\ApplicationStatusChange;
 use App\Models\Post;
 use App\Models\PostCategory;
@@ -177,5 +176,8 @@ class DatabaseSeeder extends Seeder
             $post->published_at = $status === PostStatus::Published ? now()->subDays(3 * ($i + 1)) : null;
             $post->save();
         }
+
+        // Замість заглушок – справжні фото
+        $this->call(BlogCoverSeeder::class);
     }
 }
