@@ -40,8 +40,7 @@ class SubmitAdoptionApplication
                     ...$data,
                     'email' => $email,
                     'animal_id' => $animal->id,
-                    // Привʼязуємо до акаунта лише якщо адресу підтверджено і вона збігається
-                    'user_id' => $user?->hasVerifiedEmail() && $user->email === $email ? $user->id : null,
+                    'user_id' => $this->ownerId($email, $user),
                     'consent_at' => now(),
                     'ip_address' => $ip,
                 ]);
@@ -64,6 +63,23 @@ class SubmitAdoptionApplication
         $this->notify($application);
 
         return $application;
+    }
+
+    /**
+     * Кому належить анкета. Привʼязуємо лише до акаунта, у якому ця адреса вже підтверджена:
+     * тоді анкету побачить справжній власник пошти, навіть якщо подав її, не увійшовши.
+     * Для непідтвердженого акаунта привʼязка відбудеться після підтвердження (FR-09).
+     */
+    private function ownerId(string $email, ?User $user): ?int
+    {
+        if ($user?->hasVerifiedEmail() && mb_strtolower($user->email) === $email) {
+            return $user->id;
+        }
+
+        return User::query()
+            ->whereRaw('lower(email) = ?', [$email])
+            ->whereNotNull('email_verified_at')
+            ->value('id');
     }
 
     public function hasActiveDuplicate(Animal $animal, string $email): bool

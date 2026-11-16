@@ -98,8 +98,11 @@
                 @guest
                     <div class="rounded-2xl bg-sun-soft p-5 flex flex-col gap-2.5">
                         <span class="font-semibold">Хочете стежити за статусом анкети?</span>
-                        <span class="text-muted">Створіть акаунт з цією ж поштою – після підтвердження адреси анкета зʼявиться у вашому кабінеті.</span>
-                        <a href="{{ route('register') }}" class="btn-primary self-start">Створити акаунт</a>
+                        <span class="text-muted">Увійдіть в акаунт з цією ж поштою – анкета вже чекатиме у вашому кабінеті. Акаунта ще немає? Створіть його: після підтвердження адреси анкета зʼявиться там автоматично.</span>
+                        <div class="flex flex-wrap gap-2">
+                            <a href="{{ route('login') }}" class="btn-primary">Увійти</a>
+                            <a href="{{ route('register') }}" class="btn-outline">Створити акаунт</a>
+                        </div>
                     </div>
                 @else
                     <a href="{{ route('cabinet') }}" class="btn-primary">Перейти до кабінету</a>

@@ -2,6 +2,7 @@
 
 use App\Enums\ApplicationStatus;
 use App\Livewire\AdoptionForm;
+use App\Livewire\Cabinet\Dashboard;
 use App\Mail\ApplicationReceivedMail;
 use App\Mail\NewApplicationMail;
 use App\Models\AdoptionApplication;
@@ -128,4 +129,37 @@ it('не дає подати анкету на тварину на модера�
     $animal = Animal::factory()->fromVolunteer(volunteer())->create();
 
     $this->get(route('animals.adopt', $animal))->assertNotFound();
+});
+
+it('гість з поштою вже підтвердженого акаунта бачить анкету в кабінеті одразу після входу', function () {
+    Mail::fake();
+    $owner = volunteer(['email' => 'andrii@example.com', 'email_verified_at' => now()]);
+    $animal = Animal::factory()->create(['name' => 'Тигрик']);
+
+    fillForm(Livewire::test(AdoptionForm::class, ['animal' => $animal]), ['email' => 'Andrii@Example.com'])
+        ->call('submit')
+        ->assertHasNoErrors()
+        ->assertSee('Увійти');
+
+    expect(AdoptionApplication::sole()->user_id)->toBe($owner->id);
+
+    Livewire::actingAs($owner)->test(Dashboard::class)->assertSee('Тигрик');
+});
+
+it('не привʼязує анкету гостя до акаунта з непідтвердженою поштою', function () {
+    Mail::fake();
+    volunteer(['email' => 'olena@example.com', 'email_verified_at' => null]);
+
+    fillForm(Livewire::test(AdoptionForm::class, ['animal' => Animal::factory()->create()]))->call('submit');
+
+    expect(AdoptionApplication::sole()->user_id)->toBeNull();
+});
+
+it('привʼязує анкету користувача, який увійшов, навіть якщо пошту набрано в іншому регістрі', function () {
+    Mail::fake();
+    $me = volunteer(['email' => 'olena@example.com', 'email_verified_at' => now()]);
+
+    fillForm(Livewire::actingAs($me)->test(AdoptionForm::class, ['animal' => Animal::factory()->create()]))->call('submit');
+
+    expect(AdoptionApplication::sole()->user_id)->toBe($me->id);
 });
