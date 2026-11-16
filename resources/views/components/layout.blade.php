@@ -34,9 +34,15 @@
 
 <header class="border-b border-line bg-bg" x-data="{ open: false }">
     <div class="mx-auto max-w-6xl px-6 py-4 flex flex-wrap items-center justify-between gap-4">
-        <a href="{{ route('home') }}" class="flex items-center gap-2.5 font-display font-extrabold text-2xl text-primary">
-            <x-icon.paw class="size-8" />
-            <span>{{ $shelter->name }}</span>
+        {{-- Логотип: велика лапка, назва капсом і підпис притулку одним блоком --}}
+        <a href="{{ route('home') }}" class="flex items-center gap-3 group" aria-label="{{ $shelter->name }} – на головну">
+            <x-icon.paw class="size-12 shrink-0" />
+            <span class="flex flex-col leading-tight">
+                <span class="font-display font-extrabold text-2xl uppercase tracking-wider text-primary">{{ $shelter->name }}</span>
+                @if ($shelter->tagline)
+                    <span class="hidden sm:block text-sm text-muted">{{ $shelter->tagline }}</span>
+                @endif
+            </span>
         </a>
 
         <button type="button" class="md:hidden btn-ghost px-3" x-on:click="open = !open" x-bind:aria-expanded="open" aria-controls="main-nav" aria-label="Меню">
@@ -75,7 +81,7 @@
 <footer class="bg-ink text-bg mt-16">
     <div class="mx-auto max-w-6xl px-6 py-12 flex flex-wrap justify-between gap-8">
         <div class="flex flex-col gap-2 max-w-sm">
-            <span class="font-display font-extrabold text-xl">{{ $shelter->name }}</span>
+            <span class="font-display font-extrabold text-xl uppercase tracking-wider">{{ $shelter->name }}</span>
             @if ($shelter->tagline)<span class="opacity-85">{{ $shelter->tagline }}</span>@endif
             <span class="opacity-85">
                 @if ($shelter->address){{ $shelter->address }}<br>@endif

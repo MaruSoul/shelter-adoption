@@ -5,7 +5,7 @@
         <div class="flex flex-wrap items-center justify-between gap-4">
             <div class="flex items-center gap-3">
                 <h1 class="text-4xl">{{ $post->exists ? 'Редагування статті' : 'Нова стаття' }}</h1>
-                @if ($post->exists)<span @class(['chip', 'bg-success-soft text-success' => $post->isPublished(), 'bg-sun text-sun-ink' => ! $post->isPublished()])>{{ $post->status->label() }}</span>@endif
+                @if ($post->exists)<span @class(['chip', 'bg-success-soft text-success' => $post->isPublished(), 'bg-sun-soft text-accent' => ! $post->isPublished()])>{{ $post->status->label() }}</span>@endif
             </div>
             <div class="flex gap-1 rounded-full bg-surface p-1" role="tablist">
                 <button type="button" role="tab" aria-selected="{{ $preview ? 'false' : 'true' }}" wire:click="$set('preview', false)" @class(['btn min-h-10', 'bg-card shadow-sm' => ! $preview, 'text-muted' => $preview])>Редактор</button>

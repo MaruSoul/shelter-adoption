@@ -1,7 +1,6 @@
 <x-layout>
     <section class="mx-auto max-w-6xl px-6 pt-14 pb-10 flex flex-wrap items-center gap-12">
         <div class="grow basis-[440px] min-w-0 flex flex-col gap-6">
-            <span class="chip self-start bg-sun text-sun-ink">{{ \App\Models\ShelterSetting::current()->tagline ?? 'Притулок для котів і собак' }}</span>
             <h1 class="text-5xl md:text-6xl leading-[1.08]">Знайдіть друга, який чекає саме на вас</h1>
             <p class="text-lg text-muted max-w-xl">Кожна тварина в нашому каталозі оглянута ветеринаром і готова до нового дому. Оберіть за характером, залиште анкету – ми зателефонуємо самі.</p>
             <div class="flex flex-wrap gap-3">
@@ -68,7 +67,7 @@
                     ['Познайомтесь', 'Ми зателефонуємо, домовимось про зустріч у притулку і допоможемо з адаптацією.'],
                 ] as $i => [$title, $text])
                     <li class="bg-card rounded-3xl p-7 flex flex-col gap-3">
-                        <span class="size-11 rounded-full bg-sun text-sun-ink flex items-center justify-center font-display font-extrabold text-xl" aria-hidden="true">{{ $i + 1 }}</span>
+                        <span class="size-11 rounded-full bg-sun-soft text-accent flex items-center justify-center font-display font-extrabold text-xl" aria-hidden="true">{{ $i + 1 }}</span>
                         <h3 class="text-2xl">{{ $title }}</h3>
                         <p class="text-muted">{{ $text }}</p>
                     </li>

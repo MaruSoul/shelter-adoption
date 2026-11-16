@@ -90,7 +90,7 @@
             </form>
         @else
             <div role="status" class="flex flex-col items-start gap-4">
-                <span class="size-16 rounded-full bg-sun text-sun-ink flex items-center justify-center">
+                <span class="size-16 rounded-full bg-sun-soft text-accent flex items-center justify-center">
                     <svg class="size-8" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg>
                 </span>
                 <h1 class="text-3xl">Дякуємо! Анкету отримано</h1>

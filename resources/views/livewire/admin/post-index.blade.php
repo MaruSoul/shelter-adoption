@@ -13,7 +13,7 @@
                         <tr class="border-b border-line last:border-0 hover:bg-bg" wire:key="p-{{ $post->id }}">
                             <td class="p-4"><a href="{{ route('admin.posts.edit', $post) }}" class="font-semibold text-primary hover:underline">{{ $post->title }}</a></td>
                             <td class="p-4">{{ $post->category->name }}</td>
-                            <td class="p-4"><span @class(['chip', 'bg-success-soft text-success' => $post->isPublished(), 'bg-sun text-sun-ink' => ! $post->isPublished()])>{{ $post->status->label() }}</span></td>
+                            <td class="p-4"><span @class(['chip', 'bg-success-soft text-success' => $post->isPublished(), 'bg-sun-soft text-accent' => ! $post->isPublished()])>{{ $post->status->label() }}</span></td>
                             <td class="p-4 text-sm text-muted">{{ $post->updated_at->format('d.m.Y H:i') }}</td>
                         </tr>
                     @empty

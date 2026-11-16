@@ -5,7 +5,7 @@
             <img src="{{ $animal->coverPhoto->thumbUrl() }}" alt="{{ $animal->coverPhoto->alt ?? $animal->name }}" loading="lazy" decoding="async" width="600" height="450" class="size-full object-cover">
         @endif
         @if ($animal->isFromVolunteer())
-            <span class="chip absolute left-3 top-3 bg-sun text-sun-ink text-xs">Розміщено волонтером</span>
+            <span class="chip absolute left-3 top-3 bg-sun-soft text-accent text-xs border border-sun/60">Розміщено волонтером</span>
         @endif
         @if ($animal->status === \App\Enums\AnimalStatus::Adopted)
             <span class="chip absolute left-3 top-3 bg-success-soft text-success text-xs">Вже вдома</span>

@@ -40,7 +40,7 @@
             <aside class="card grow basis-80 min-w-0 p-7 flex flex-col gap-5">
                 <div class="flex flex-col gap-2">
                     <h1 class="text-5xl leading-tight">{{ $animal->name }}</h1>
-                    <span @class(['chip self-start', 'bg-sun text-sun-ink' => $animal->acceptsApplications(), 'bg-success-soft text-success' => ! $animal->acceptsApplications()])>
+                    <span @class(['chip self-start', 'bg-sun-soft text-accent' => $animal->acceptsApplications(), 'bg-success-soft text-success' => ! $animal->acceptsApplications()])>
                         {{ $animal->species->name }} · {{ mb_strtolower($animal->status->label()) }}
                     </span>
                     @if ($animal->isFromVolunteer())

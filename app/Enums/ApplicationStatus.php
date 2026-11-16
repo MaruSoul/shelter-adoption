@@ -67,7 +67,7 @@ enum ApplicationStatus: string
     public function badgeClasses(): string
     {
         return match ($this) {
-            self::New => 'bg-sun text-sun-ink',
+            self::New => 'bg-sun-soft text-accent',
             self::InProgress, self::MeetingScheduled => 'bg-surface text-primary',
             self::Adopted => 'bg-success-soft text-success',
             self::Declined => 'bg-danger-soft text-danger',
