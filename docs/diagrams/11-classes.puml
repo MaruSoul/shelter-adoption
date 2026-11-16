@@ -1,0 +1,58 @@
+@startuml
+!include _style.iuml
+hide empty members
+class AdoptionForm <<Livewire>> {
+  +submit(SubmitAdoptionApplication)
+  +updatedPhone()
+}
+class SubmitAdoptionApplication {
+  +handle(Animal, array, ?User, ?string): AdoptionApplication
+  +hasActiveDuplicate(Animal, string): bool
+  -ownerId(string, ?User): ?int
+  -notify(AdoptionApplication)
+}
+class ApplicationWorkflow {
+  +transition(app, ApplicationStatus, User, ?string)
+  +adopt(app, User, ?string)
+  +closeForRemovedAnimal(Animal, User)
+  +assertAllowed(from, to)
+}
+class ApplicationShow <<Livewire>> {
+  +changeStatus(string)
+  +saveNotes()
+}
+class PostBlocks {
+  +validate(array): array
+  +forRender(array): array
+  +{static} blank(string): array
+}
+class PostEditor <<Livewire>>
+class ApplicationStatus <<enum>> {
+  New, InProgress, MeetingScheduled,
+  Adopted, Declined, Closed
+  +allowedTransitions(): list
+  +canTransitionTo(target): bool
+}
+class AnimalStatus <<enum>>
+class AgeGroup <<enum>> {
+  +birthDateRange(today): array
+}
+class AnimalCatalog <<Livewire>>
+class "Animal" as Animal <<Model>> {
+  +scopeFilter(query, filters)
+  +acceptsApplications(): bool
+}
+class AnimalPolicy <<Policy>>
+class LinkApplicationsToVerifiedUser <<Listener>> {
+  +handle(Verified)
+}
+AdoptionForm --> SubmitAdoptionApplication
+ApplicationShow --> ApplicationWorkflow
+ApplicationWorkflow --> ApplicationStatus
+ApplicationWorkflow --> Animal
+PostEditor --> PostBlocks
+AnimalCatalog --> Animal
+Animal --> AgeGroup
+Animal --> AnimalStatus
+AnimalCatalog ..> AnimalPolicy
+@enduml

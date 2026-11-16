@@ -1,0 +1,113 @@
+@startuml
+!include _style.iuml
+hide circle
+skinparam linetype ortho
+entity "species" as species {
+  * id : bigint <<PK>>
+  --
+  name, name_plural, slug <<UQ>>
+}
+entity "breeds" as breeds {
+  * id <<PK>>
+  --
+  * species_id <<FK>>
+  name (UQ з species_id)
+}
+entity "colors" as colors {
+  * id <<PK>>
+  --
+  name <<UQ>>
+}
+entity "regions" as regions {
+  * id <<PK>>
+  --
+  name <<UQ>>
+}
+entity "localities" as localities {
+  * id <<PK>>
+  --
+  * region_id <<FK>>
+  name (UQ з region_id)
+}
+entity "users" as users {
+  * id <<PK>>
+  --
+  name, email <<UQ>>, password (хеш)
+  role: user | admin
+  email_verified_at, phone, region_id <<FK>>
+}
+entity "animals" as animals {
+  * id <<PK>>
+  --
+  * species_id, locality_id <<FK>>
+  breed_id, color_id, created_by <<FK>>
+  name, slug <<UQ>>, sex, birth_date
+  is_sterilized, is_vaccinated
+  story, behavior, adoption_terms
+  current_location, source, status
+  moderation_note, published_at,
+  adopted_at, deleted_at
+}
+entity "animal_photos" as photos {
+  * id <<PK>>
+  --
+  * animal_id <<FK>>
+  path, thumb_path, alt, sort_order
+}
+entity "adoption_applications" as apps {
+  * id <<PK>>
+  --
+  * animal_id, region_id <<FK>>
+  user_id <<FK>>
+  name, email, phone, social_url
+  contact_channels (json), comment
+  consent_at, status, admin_notes, ip_address
+}
+entity "application_status_changes" as changes {
+  * id <<PK>>
+  --
+  * adoption_application_id <<FK>>
+  user_id <<FK>>
+  from_status, to_status, note, created_at
+}
+entity "favorites" as fav {
+  * user_id, animal_id <<PK, FK>>
+}
+entity "post_categories" as cats {
+  * id <<PK>>
+  --
+  name <<UQ>>, slug <<UQ>>
+}
+entity "posts" as posts {
+  * id <<PK>>
+  --
+  * post_category_id <<FK>>
+  author_id <<FK>>
+  title, slug <<UQ>>, excerpt, cover_path
+  blocks (jsonb), status, published_at
+}
+entity "shelter_settings" as settings {
+  * id <<PK>>
+  --
+  name, tagline, address, phone, email,
+  notification_email, *_url соцмереж
+}
+species ||--o{ breeds
+species ||--o{ animals
+breeds |o--o{ animals
+colors |o--o{ animals
+regions ||--o{ localities
+localities ||--o{ animals
+users |o--o{ animals : created_by
+animals ||--o{ photos
+animals ||--o{ apps
+regions ||--o{ apps
+users |o--o{ apps
+apps ||--o{ changes
+users |o--o{ changes
+users ||--o{ fav
+animals ||--o{ fav
+cats ||--o{ posts
+users |o--o{ posts : author_id
+regions |o--o{ users
+@enduml

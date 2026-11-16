@@ -1,0 +1,29 @@
+@startuml
+!include _style.iuml
+hide empty description
+state "Нова\n(new)" as New
+state "В роботі\n(in_progress)" as InProgress
+state "Знайомство призначено\n(meeting_scheduled)" as Meeting
+state "Прилаштовано\n(adopted)" as Adopted
+state "Відмовлено\n(declined)" as Declined
+state "Закрито\n(closed)" as Closed
+[*] --> New : гість або користувач\nподає анкету
+New --> InProgress : адміністратор
+New --> Declined : адміністратор,\nпричина обовʼязкова
+InProgress --> Meeting : адміністратор
+Meeting --> InProgress : адміністратор
+InProgress --> Adopted : адміністратор
+Meeting --> Adopted : адміністратор
+InProgress --> Declined
+Meeting --> Declined
+New --> Closed : система: тварину прилаштовано\nза іншою анкетою або картку видалено
+InProgress --> Closed : система
+Meeting --> Closed : система
+Adopted --> [*]
+Declined --> [*]
+Closed --> [*]
+note right of Adopted
+  не більше однієї на тварину
+  (частковий унікальний індекс)
+end note
+@enduml

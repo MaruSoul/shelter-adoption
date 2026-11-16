@@ -1,0 +1,34 @@
+@startuml
+!include _style.iuml
+actor "Гість / користувач" as User
+actor "Адміністратор" as Admin
+node "Браузер" {
+  [Сторінки Blade + Livewire\n(Alpine.js, Tailwind CSS)] as UI
+  [Сховище обраних\n(localStorage)] as LS
+}
+node "Довірена серверна частина (Laravel 13)" {
+  [Маршрути, middleware\n(auth, verified, can:admin, throttle)] as Routes
+  [Компоненти Livewire і контролери\n(каталог, анкета, кабінет, панель)] as Comp
+  [Політики доступу\nAnimalPolicy, AdoptionApplicationPolicy] as Pol
+  [Сервіси предметних правил\nSubmitAdoptionApplication,\nApplicationWorkflow, PostBlocks,\nRemoveAnimal, PhotoStorage] as Svc
+  [Моделі Eloquent\nі переліки станів] as Models
+  [Черга завдань:\nмініатюри, листи] as Queue
+}
+database "PostgreSQL 17\n(схема, часткові\nунікальні індекси)" as DB
+folder "Файлове сховище\nstorage/app/public\n(фото без EXIF)" as FS
+cloud "SMTP-сервіс\n(Mailpit у розробці)" as SMTP
+User --> UI : дії
+Admin --> UI : дії
+UI --> Routes : HTTPS: GET-сторінки,\nPOST /livewire/update (CSRF)
+UI ..> LS : обрані гостя
+Routes --> Comp
+Comp --> Pol : перевірка права\nна обʼєкт
+Comp --> Svc : виклик сценарію
+Svc --> Models
+Models --> DB : SQL (PDO, параметри),\nтранзакції
+Svc --> FS : збереження фото
+Svc --> Queue : відкладені завдання
+Queue --> DB : таблиця jobs
+Queue --> SMTP : листи про анкету
+Queue --> FS : мініатюри 600×450
+@enduml

@@ -1,0 +1,39 @@
+@startuml
+!include _style.iuml
+left to right direction
+actor "Гість" as G
+actor "Зареєстрований\nкористувач\n(волонтер)" as U
+actor "Адміністратор\nпритулку" as A
+actor "Поштовий сервіс\n(зовнішня система)" as M
+U -|> G
+rectangle "Вебсистема Домівка" {
+  usecase "UC-01 Переглянути каталог\nз фільтрами" as UC1
+  usecase "UC-02 Переглянути сторінку\nтварини" as UC2
+  usecase "UC-03 Подати анкету\n«Взяти додому»" as UC3
+  usecase "UC-04 Читати блог" as UC4
+  usecase "UC-05 Зареєструватися\nй підтвердити e-mail" as UC5
+  usecase "UC-06 Переглянути свої анкети\nта їхні статуси" as UC6
+  usecase "UC-07 Розмістити знайдену\nтварину" as UC7
+  usecase "UC-08 Обробити анкету\n(зміна статусу, нотатки)" as UC8
+  usecase "UC-09 Позначити\nприлаштування" as UC9
+  usecase "UC-10 Модерувати картку\nволонтера" as UC10
+  usecase "UC-11 Керувати тваринами\nй фото" as UC11
+  usecase "UC-12 Створити статтю\nв конструкторі" as UC12
+  usecase "UC-13 Змінити налаштування\nпритулку" as UC13
+}
+G -- UC1
+G -- UC2
+G -- UC3
+G -- UC4
+G -- UC5
+U -- UC6
+U -- UC7
+UC8 -- A
+UC9 -- A
+UC10 -- A
+UC11 -- A
+UC12 -- A
+UC13 -- A
+UC3 ..> M : «include»\nсповіщення
+UC9 .> UC8 : «extend»
+@enduml

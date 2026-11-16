@@ -1,0 +1,23 @@
+@startuml
+!include _style.iuml
+hide empty description
+state "На модерації\n(moderation)" as Mod
+state "Шукає дім\n(available)" as Av
+state "Знайшла дім\n(adopted)" as Ad
+state "Відхилена\n(rejected)" as Rej
+state "В архіві\n(archived)" as Arch
+[*] --> Mod : волонтер розміщує картку
+[*] --> Av : адміністратор додає\nтварину притулку
+Mod --> Av : модератор схвалює
+Mod --> Rej : модератор відхиляє\n(причина обовʼязкова)
+Rej --> Mod : волонтер виправляє картку
+Av --> Mod : волонтер редагує\nсхвалену картку
+Av --> Ad : анкета «Прилаштовано»\n(лише через анкету)
+Av --> Arch : адміністратор архівує
+Arch --> Av : адміністратор повертає
+Ad --> [*]
+note bottom of Av
+  у каталозі видно лише «Шукає дім»
+  (і «Знайшла дім» за перемикачем)
+end note
+@enduml

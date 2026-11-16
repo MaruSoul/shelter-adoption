@@ -1,0 +1,26 @@
+@startuml
+!include _style.iuml
+node "Пристрій користувача" <<device>> {
+  node "Веббраузер" <<executionEnvironment>> as Browser
+}
+node "Сервер (локально: Docker Desktop; публічно: VPS)" <<node>> {
+  node "web: nginx 1.x\n:80 → хост :8080\n(gzip, статичні файли)" <<container>> as Web
+  node "app: php-fpm 8.5\nLaravel, міграції під час старту" <<container>> as App
+  node "queue: php artisan queue:work" <<container>> as Q
+  database "db: PostgreSQL 17\n(том pgdata)" <<container>> as DB
+  node "mailpit: SMTP :1025,\nвеб :8025 (лише розробка)" <<container>> as Mail
+  folder "том storage\n(фото, мініатюри)" as Vol
+}
+Browser --> Web : HTTP(S)
+Web --> App : FastCGI :9000\n(внутрішня мережа)
+App --> DB : TCP 5432\n(внутрішня мережа)
+Q --> DB : jobs
+Q --> Mail : SMTP
+App --> Vol
+Q --> Vol
+Web --> Vol : лише читання
+note right of DB
+  порт СКБД назовні
+  не публікується
+end note
+@enduml

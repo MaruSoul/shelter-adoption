@@ -1,0 +1,27 @@
+@startuml
+!include _style.iuml
+autonumber
+actor "Гість" as G
+participant "Браузер" as B
+participant "AdoptionForm\n(Livewire)" as F
+participant "SubmitAdoption-\nApplication" as S
+database "PostgreSQL" as DB
+queue "Черга" as Q
+G -> B : заповнює й надсилає анкету
+B -> F : POST /livewire/update\n(snapshot, CSRF, submit)
+F -> F : поле-пастка порожнє?\nvalidate(): обовʼязкові поля,\n+380XXXXXXXXX, згода
+F -> DB : тварина ще «Шукає дім»?
+F -> F : ліміт: ≤ N анкет\nз IP за годину
+F -> S : handle(animal, data, user, ip)
+S -> DB : активна анкета з цим\ne-mail на тварину?
+alt дубліката немає
+  S -> DB : BEGIN; INSERT анкета «Нова»;\nINSERT історія; COMMIT
+  S -> Q : лист адміністратору\nі заявнику
+  S --> F : анкета
+  F --> B : екран «уже чекає\nна знайомство з вами»
+else одночасний дублікат
+  DB --> S : порушення часткового\nунікального індексу
+  S --> F : DuplicateApplicationException
+  F --> B : повідомлення, що анкета вже є;\nдані форми збережено
+end
+@enduml

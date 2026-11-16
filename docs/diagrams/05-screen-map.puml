@@ -1,0 +1,39 @@
+@startuml
+!include _style.iuml
+hide empty description
+state "UI-01 Головна\n(гра Хто мій друг?,\nшвидкий вибір)" as Home
+state "UI-02 Каталог\nЗнайти друга" as Cat
+state "UI-03 Сторінка тварини" as Pet
+state "UI-04 Анкета\nВзяти додому" as Form
+state "UI-05 Успіх: анкету\nнадіслано" as Ok
+state "UI-06 Обрані" as Fav
+state "UI-07 Вхід / реєстрація /\nпідтвердження e-mail" as Auth
+state "UI-08 Кабінет:\nмої анкети й тварини" as Cab
+state "UI-09 Форма тварини\nволонтера" as VForm
+state "UI-10 Панель: огляд" as ADash
+state "UI-11 Список анкет" as AList
+state "UI-12 Картка анкети" as AShow
+state "UI-13 Модерація" as AMod
+state "UI-14 Конструктор статті" as APost
+state "UI-15 Блог і стаття" as Blog
+[*] --> Home
+Home --> Cat : Знайти друга /\nдобірка
+Home --> Pet : результат гри
+Cat --> Pet : картка
+Cat --> Cat : фільтри (стан у URL);\nпорожня вибірка – Лапа дрімає
+Pet --> Form : Взяти додому\n(лише Шукає дім)
+Form --> Form : помилки біля полів,\nвведене зберігається
+Form --> Ok : анкету створено
+Ok --> Auth : Створити акаунт
+Pet --> Fav : сердечко
+Home --> Blog
+Auth --> Cab : пошту підтверджено
+Cab --> VForm : Розмістити тварину
+VForm --> Cab : картка на модерації
+Auth --> ADash : роль адміністратор
+ADash --> AList : лічильник
+AList --> AShow : Відкрити →
+ADash --> AMod
+ADash --> APost
+APost --> Blog : попередній перегляд /\nпублікація
+@enduml

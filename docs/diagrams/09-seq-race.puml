@@ -1,0 +1,24 @@
+@startuml
+!include _style.iuml
+participant "Адміністратор 1\n(анкета А)" as A1
+participant "Адміністратор 2\n(анкета Б)" as A2
+participant "ApplicationWorkflow" as W
+database "PostgreSQL" as DB
+A1 -> W : adopt(А)
+W -> DB : BEGIN; SELECT тварина FOR UPDATE
+DB --> W : рядок заблоковано для А1
+A2 -> W : adopt(Б)
+W -> DB : BEGIN; SELECT тварина FOR UPDATE
+note right of DB : запит А2 чекає\nна зняття блокування
+W -> DB : А → «Прилаштовано»; тварина → «Знайшла дім»;\nБ → «Закрито»; COMMIT
+DB --> W : блокування зняте
+W --> A1 : успіх, святкування
+DB --> W : (А2) рядок тварини:\nстатус «Знайшла дім»
+W -> DB : ROLLBACK
+W --> A2 : «Тварина вже не шукає дім»
+note over W, DB
+  Якщо перевірку обійдено, другу «Прилаштовано»
+  відхиляє частковий унікальний індекс
+  adoption_applications_one_adopted_per_animal
+end note
+@enduml
