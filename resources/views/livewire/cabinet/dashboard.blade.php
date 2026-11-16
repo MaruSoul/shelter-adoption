@@ -6,6 +6,7 @@
         </div>
         <div class="flex flex-wrap gap-2">
             <a href="{{ route('cabinet.animals.create') }}" class="btn-sun">Розмістити тварину</a>
+            <a href="{{ route('cabinet.profile') }}" class="btn-outline">Мій профіль</a>
             <form method="POST" action="{{ route('logout') }}">@csrf<button type="submit" class="btn-ghost">Вийти</button></form>
         </div>
     </div>

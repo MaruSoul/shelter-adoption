@@ -28,6 +28,7 @@ Route::get('/sitemap.xml', SitemapController::class)->name('sitemap');
 
 Route::middleware(['auth', 'verified'])->prefix('kabinet')->name('cabinet')->group(function () {
     Route::get('/', Cabinet\Dashboard::class);
+    Route::get('/profil', Cabinet\Profile::class)->name('.profile');
     Route::get('/tvaryny/nova', Cabinet\AnimalForm::class)->name('.animals.create');
     Route::get('/tvaryny/{animal}/redaguvaty', Cabinet\AnimalForm::class)->name('.animals.edit');
 });

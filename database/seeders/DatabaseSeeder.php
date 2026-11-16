@@ -10,6 +10,7 @@ use App\Models\Animal;
 use App\Models\ApplicationStatusChange;
 use App\Models\Post;
 use App\Models\PostCategory;
+use App\Models\Region;
 use App\Models\ShelterSetting;
 use App\Models\Species;
 use App\Models\User;
@@ -55,6 +56,9 @@ class DatabaseSeeder extends Seeder
             'name' => 'Олена Волонтерка',
             'email' => 'volunteer@domivka.local',
             'password' => 'user-password',
+            // Профіль заповнено – в анкеті все підставиться автоматично
+            'phone' => '+380671234567',
+            'region_id' => Region::firstWhere('name', 'Одеська')?->id,
         ]);
 
         $otherUser = User::factory()->create([

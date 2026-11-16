@@ -8,6 +8,7 @@ use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Attributes\Hidden;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
@@ -16,7 +17,7 @@ use Illuminate\Notifications\Notifiable;
  * Поле role навмисно не входить у Fillable: роль адміністратора
  * неможливо отримати через форму реєстрації (FR-09).
  */
-#[Fillable(['name', 'email', 'password', 'phone'])]
+#[Fillable(['name', 'email', 'password', 'phone', 'region_id'])]
 #[Hidden(['password', 'remember_token'])]
 class User extends Authenticatable implements MustVerifyEmail
 {
@@ -43,6 +44,11 @@ class User extends Authenticatable implements MustVerifyEmail
     }
 
     /** Анкети, привʼязані до акаунта (після підтвердження e-mail). */
+    public function region(): BelongsTo
+    {
+        return $this->belongsTo(Region::class);
+    }
+
     public function applications(): HasMany
     {
         return $this->hasMany(AdoptionApplication::class);

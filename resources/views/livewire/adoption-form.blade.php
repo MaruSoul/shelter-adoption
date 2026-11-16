@@ -77,8 +77,15 @@
                     @error('comment')<span class="error">{{ $message }}</span>@enderror
                 </label>
 
+                @auth
+                    <label class="flex items-start gap-2.5">
+                        <input type="checkbox" wire:model="rememberContacts" class="mt-1 size-4.5 shrink-0 accent-primary">
+                        <span>Запамʼятати телефон і область у <a href="{{ route('cabinet.profile') }}" target="_blank" class="text-primary underline">моєму профілі</a> для наступних анкет</span>
+                    </label>
+                @endauth
+
                 <label class="flex items-start gap-2.5">
-                    <input type="checkbox" wire:model="consent" class="mt-1 size-4.5 accent-primary">
+                    <input type="checkbox" wire:model="consent" class="mt-1 size-4.5 shrink-0 accent-primary">
                     <span>Я погоджуюсь з <a href="{{ route('privacy') }}" target="_blank" class="text-primary underline">політикою конфіденційності</a> і даю згоду на обробку моїх персональних даних притулком *</span>
                 </label>
                 @error('consent')<span class="error -mt-3">{{ $message }}</span>@enderror

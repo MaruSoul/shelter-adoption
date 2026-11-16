@@ -7,6 +7,7 @@ use App\Exceptions\DuplicateApplicationException;
 use App\Models\Animal;
 use App\Models\Region;
 use App\Services\SubmitAdoptionApplication;
+use App\Support\Phone;
 use Illuminate\Support\Facades\RateLimiter;
 use Illuminate\Validation\Rule;
 use Livewire\Attributes\Locked;
@@ -39,6 +40,9 @@ class AdoptionForm extends Component
 
     public bool $consent = false;
 
+    /** Для користувача, який увійшов: зберегти телефон і область у профілі для наступних анкет. */
+    public bool $rememberContacts = false;
+
     /** Поле-пастка для ботів: людина його не бачить і не заповнює. */
     public string $website = '';
 
@@ -61,6 +65,9 @@ class AdoptionForm extends Component
             $this->name = $user->name;
             $this->email = $user->email;
             $this->phone = $user->phone ?? '+380';
+            $this->region_id = (string) ($user->region_id ?? '');
+            // Якщо в профілі ще порожньо – пропонуємо запамʼятати; якщо дані вже є, не перезаписуємо без згоди
+            $this->rememberContacts = ! $user->phone || ! $user->region_id;
         }
     }
 
@@ -99,12 +106,7 @@ class AdoptionForm extends Component
 
     public function updatedPhone(): void
     {
-        // Прибираємо пробіли, дужки й дефіси, які люди часто вводять у номері
-        $digits = preg_replace('/\D+/', '', $this->phone);
-        if (str_starts_with($digits, '0') && strlen($digits) === 10) {
-            $digits = '38'.$digits;
-        }
-        $this->phone = '+'.$digits;
+        $this->phone = Phone::normalize($this->phone);
     }
 
     public function submit(SubmitAdoptionApplication $service): void
@@ -150,6 +152,11 @@ class AdoptionForm extends Component
         }
 
         RateLimiter::hit($key, 3600);
+
+        if ($this->rememberContacts && ($user = auth()->user())) {
+            $user->forceFill(['phone' => $data['phone'], 'region_id' => (int) $data['region_id']])->save();
+        }
+
         $this->submitted = true;
     }
 
