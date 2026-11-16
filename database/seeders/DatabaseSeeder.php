@@ -12,10 +12,8 @@ use App\Models\Post;
 use App\Models\PostCategory;
 use App\Models\Region;
 use App\Models\ShelterSetting;
-use App\Models\Species;
 use App\Models\User;
-use Database\Factories\AnimalFactory;
-use Database\Seeders\Support\PetPhotoLibrary;
+use Database\Seeders\Support\DemoPets;
 use Database\Seeders\Support\PlaceholderPhoto;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Str;
@@ -67,42 +65,39 @@ class DatabaseSeeder extends Seeder
             'password' => 'user-password',
         ]);
 
-        // Порівну котів і собак, щоб кожна тварина отримала власне фото свого виду
-        $cat = Species::firstWhere('slug', 'cat')->id;
-        $dog = Species::firstWhere('slug', 'dog')->id;
-        // Унікальні клички: беремо з перемішаного списку окремо для хлопчиків і дівчаток
-        $names = collect(AnimalFactory::NAMES)->map(fn ($list) => collect($list)->shuffle()->values()->all())->all();
-        $volunteerNames = ['male' => ['Пиріжок', 'Вафлик', 'Сніжок']];
-        foreach ($volunteerNames['male'] as $reserved) {
-            $names['male'] = array_values(array_diff($names['male'], [$reserved]));
+        // 40 демо-тварин з анкет і серій фото (database/seeders/photos/pets)
+        $adoptedKeys = ['cats/17', 'cats/18', 'dogs/17', 'dogs/18', 'dogs/19'];
+        $volunteerKeys = ['dogs/20' => AnimalStatus::Available, 'cats/19' => AnimalStatus::Moderation, 'cats/20' => AnimalStatus::Rejected];
+
+        $available = collect();
+        $adopted = collect();
+        $volunteerAnimals = collect();
+
+        // Коти й собаки впереміш, щоб на головній і в каталозі було різноманіття
+        $pets = collect(DemoPets::all())->groupBy('species');
+        $mixed = $pets['cat']->zip($pets['dog'])->flatten(1)->filter()->values();
+
+        foreach ($mixed as $i => $pet) {
+            $attributes = DemoPets::attributes($pet);
+
+            if (isset($volunteerKeys[$pet['key']])) {
+                $status = $volunteerKeys[$pet['key']];
+                $animal = Animal::factory()->fromVolunteer($volunteer, $status)->create($attributes + [
+                    'published_at' => $status === AnimalStatus::Available ? now()->subDays($i + 1) : null,
+                ]);
+                $volunteerAnimals->push($animal);
+            } elseif (in_array($pet['key'], $adoptedKeys, true)) {
+                $animal = Animal::factory()->adopted()->create($attributes + ['published_at' => now()->subDays(60 + $i)]);
+                $adopted->push($animal);
+            } else {
+                $animal = Animal::factory()->create($attributes + ['published_at' => now()->subDays($i + 1)]);
+                $available->push($animal);
+            }
+
+            DemoPets::attachPhotos($animal, $pet);
         }
-        $bySpecies = function ($sequence) use ($cat, $dog, &$names) {
-            $sex = intdiv($sequence->index, 2) % 2 === 0 ? 'male' : 'female';
 
-            return [
-                'species_id' => $sequence->index % 2 === 0 ? $cat : $dog,
-                'sex' => $sex,
-                'name' => array_shift($names[$sex]),
-            ];
-        };
-
-        // 30 тварин шукають дім, 5 – вже знайшли
-        $available = Animal::factory()->count(30)->sequence($bySpecies)->create();
-        $adopted = Animal::factory()->count(5)->sequence($bySpecies)->adopted()->create();
-
-        // Картки волонтера в різних станах модерації
-        $volunteerAnimals = collect([
-            Animal::factory()->fromVolunteer($volunteer, AnimalStatus::Available)->create(['name' => 'Пиріжок', 'sex' => 'male', 'species_id' => $dog]),
-            Animal::factory()->fromVolunteer($volunteer, AnimalStatus::Moderation)->create(['name' => 'Вафлик', 'sex' => 'male', 'species_id' => $cat]),
-            Animal::factory()->fromVolunteer($volunteer, AnimalStatus::Rejected)->create(['name' => 'Сніжок', 'sex' => 'male', 'species_id' => $dog]),
-        ]);
-        $volunteerAnimals[2]->forceFill(['moderation_note' => 'Додайте, будь ласка, хоча б одне чітке фото і контакти перетримки.'])->save();
-
-        $photos = new PetPhotoLibrary;
-        $all = collect([...$available, ...$adopted, ...$volunteerAnimals]);
-        foreach ($all as $animal) {
-            $photos->attach($animal);
-        }
+        $volunteerAnimals->last()->forceFill(['moderation_note' => 'Додайте, будь ласка, контакти перетримки і кілька слів про характер.'])->save();
 
         // Анкети: кілька на одну тварину, у різних статусах, з історією переходів
         $popular = $available->first();
