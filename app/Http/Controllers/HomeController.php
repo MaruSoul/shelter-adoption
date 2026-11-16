@@ -40,6 +40,7 @@ class HomeController extends Controller
             ->with('coverPhoto')
             ->get()
             ->map(fn (Animal $a) => [
+                'id' => $a->id,
                 'name' => $a->name,
                 'meta' => $a->sex->label().', '.$a->ageLabel(),
                 'photo' => $a->coverPhoto->url(),
