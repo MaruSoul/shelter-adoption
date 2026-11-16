@@ -1,8 +1,8 @@
 @props(['animal'])
-<a href="{{ route('animals.show', $animal) }}" {{ $attributes->merge(['class' => 'card overflow-hidden flex flex-col hover:shadow-lg hover:shadow-primary/5 transition-shadow group']) }}>
-    <div class="relative aspect-[4/3] bg-tint-1">
+<a href="{{ route('animals.show', $animal) }}" {{ $attributes->merge(['class' => 'card card-lift overflow-hidden flex flex-col group', 'data-reveal' => true]) }}>
+    <div class="relative aspect-[4/3] bg-tint-1 overflow-hidden">
         @if ($animal->coverPhoto)
-            <img src="{{ $animal->coverPhoto->thumbUrl() }}" alt="{{ $animal->coverPhoto->alt ?? $animal->name }}" loading="lazy" decoding="async" width="600" height="450" class="size-full object-cover">
+            <img src="{{ $animal->coverPhoto->thumbUrl() }}" alt="{{ $animal->coverPhoto->alt ?? $animal->name }}" loading="lazy" decoding="async" width="600" height="450" class="size-full object-cover card-photo">
         @endif
         @if ($animal->isFromVolunteer())
             <span class="chip absolute left-3 top-3 bg-sun-soft text-accent text-xs border border-sun/60">Розміщено волонтером</span>

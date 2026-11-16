@@ -98,3 +98,35 @@
 @media (prefers-reduced-motion: reduce) {
     .lottery-spinning, .lottery-pop { animation: none; }
 }
+
+/* Картки: при наведенні трохи піднімаються, фото злегка наближається */
+.card-lift {
+    transition: transform .2s ease-out, box-shadow .2s ease-out;
+}
+.card-photo {
+    transition: transform .35s ease-out;
+}
+@media (hover: hover) {
+    .card-lift:hover { transform: translateY(-4px); box-shadow: 0 16px 32px -12px rgb(85 70 184 / .22); }
+    .card-lift:hover .card-photo { transform: scale(1.05); }
+}
+.card-lift:focus-visible { transform: translateY(-4px); }
+
+/* Поява під час скролу: один раз, без руху разом із прокруткою */
+.reveal [data-reveal] {
+    opacity: 0;
+    transform: translateY(16px);
+    transition: opacity .45s ease-out, transform .45s ease-out;
+    transition-delay: var(--reveal-delay, 0ms);
+}
+.reveal [data-reveal].is-visible {
+    opacity: 1;
+    transform: none;
+}
+/* Після появи картка знову реагує на наведення без затримки */
+.reveal .card-lift.is-visible { transition: transform .2s ease-out, box-shadow .2s ease-out, opacity .45s ease-out; transition-delay: 0ms; }
+
+@media (prefers-reduced-motion: reduce) {
+    .card-lift, .card-photo { transition: none; }
+    .card-lift:hover, .card-lift:focus-visible, .card-lift:hover .card-photo { transform: none; }
+}

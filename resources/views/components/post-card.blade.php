@@ -1,8 +1,8 @@
 @props(['post'])
-<a href="{{ route('blog.show', $post) }}" class="card overflow-hidden flex flex-col group">
-    <div class="aspect-[1200/630] bg-surface">
+<a href="{{ route('blog.show', $post) }}" class="card card-lift overflow-hidden flex flex-col group" data-reveal>
+    <div class="aspect-[1200/630] bg-surface overflow-hidden">
         @if ($post->coverUrl())
-            <img src="{{ $post->coverUrl() }}" alt="" loading="lazy" class="size-full object-cover">
+            <img src="{{ $post->coverUrl() }}" alt="" loading="lazy" class="size-full object-cover card-photo">
         @endif
     </div>
     <div class="p-5 flex flex-col gap-2">

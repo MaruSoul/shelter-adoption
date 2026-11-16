@@ -43,7 +43,7 @@
 
     <section class="mx-auto max-w-6xl px-6 pb-16 flex flex-col gap-7">
         <div class="flex flex-wrap items-end justify-between gap-3">
-            <h2 class="text-4xl">Вони шукають дім</h2>
+            <h2 class="text-4xl" data-reveal>Вони шукають дім</h2>
             <a href="{{ route('animals.index') }}" class="font-semibold text-primary hover:underline">Дивитися всіх →</a>
         </div>
         <div class="grid gap-6 grid-cols-[repeat(auto-fill,minmax(240px,1fr))]">
@@ -55,21 +55,21 @@
 
     <section id="help" class="bg-surface">
         <div class="mx-auto max-w-6xl px-6 py-16 flex flex-col gap-8">
-            <h2 class="text-4xl">Як забрати друга додому</h2>
+            <h2 class="text-4xl" data-reveal>Як забрати друга додому</h2>
             <ol class="grid gap-6 grid-cols-[repeat(auto-fit,minmax(260px,1fr))]">
                 @foreach ([
                     ['Оберіть друга', 'Скористайтесь фільтрами за видом, віком і характером, перегляньте фото та історію тварини.'],
                     ['Заповніть анкету', 'Реєстрація не потрібна: залиште контакти й зручний спосіб звʼязку.'],
                     ['Познайомтесь', 'Ми зателефонуємо, домовимось про зустріч у притулку і допоможемо з адаптацією.'],
                 ] as $i => [$title, $text])
-                    <li class="bg-card rounded-3xl p-7 flex flex-col gap-3">
+                    <li class="bg-card rounded-3xl p-7 flex flex-col gap-3" data-reveal>
                         <span class="size-11 rounded-full bg-sun-soft text-accent flex items-center justify-center font-display font-extrabold text-xl" aria-hidden="true">{{ $i + 1 }}</span>
                         <h3 class="text-2xl">{{ $title }}</h3>
                         <p class="text-muted">{{ $text }}</p>
                     </li>
                 @endforeach
             </ol>
-            <div class="rounded-3xl bg-card p-7 flex flex-wrap items-center justify-between gap-4">
+            <div class="rounded-3xl bg-card p-7 flex flex-wrap items-center justify-between gap-4" data-reveal>
                 <div class="flex flex-col gap-1 max-w-2xl">
                     <h3 class="text-2xl">Знайшли тварину на вулиці?</h3>
                     <p class="text-muted">Зареєструйтесь і розмістіть її картку. Після перевірки адміністратором вона зʼявиться в каталозі з позначкою «Розміщено волонтером».</p>
@@ -82,7 +82,7 @@
     @if ($posts->isNotEmpty())
         <section class="mx-auto max-w-6xl px-6 py-16 flex flex-col gap-7">
             <div class="flex flex-wrap items-end justify-between gap-3">
-                <h2 class="text-4xl">Корисне з блогу</h2>
+                <h2 class="text-4xl" data-reveal>Корисне з блогу</h2>
                 <a href="{{ route('blog.index') }}" class="font-semibold text-primary hover:underline">Усі статті →</a>
             </div>
             <div class="grid gap-6 grid-cols-[repeat(auto-fit,minmax(280px,1fr))]">

@@ -26,6 +26,14 @@
     @endif
     <link rel="icon" href="/favicon.svg" type="image/svg+xml">
     {{ $head ?? '' }}
+    <script>
+        // М'яка поява блоків під час скролу: лише якщо людина не просила зменшити рух
+        if (matchMedia('(prefers-reduced-motion: no-preference)').matches) {
+            document.documentElement.classList.add('reveal');
+            // Запобіжник: якщо скрипт сайту не завантажився, показуємо все
+            setTimeout(() => window.__revealReady || document.documentElement.classList.remove('reveal'), 2500);
+        }
+    </script>
     @vite(['resources/css/app.css', 'resources/js/app.js'])
     @livewireStyles
 </head>
