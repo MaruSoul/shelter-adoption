@@ -26,9 +26,10 @@
     }"
     {{ $attributes->merge(['class' => 'relative']) }}
 >
-    <div class="relative mx-auto w-full max-w-[520px] aspect-square">
+    {{-- Коло і картка лежать в одній клітинці сітки: блок бере висоту більшого з них, тож картка не налазить на сусідні секції --}}
+    <div class="relative mx-auto w-full max-w-[520px] grid place-items-center">
         {{-- Коло з кнопкою --}}
-        <div x-show="!current" class="absolute inset-0 rounded-full bg-sun overflow-hidden shadow-xl shadow-sun/30">
+        <div x-show="!current" class="col-start-1 row-start-1 relative w-full aspect-square rounded-full bg-sun overflow-hidden shadow-xl shadow-sun/30">
             <svg viewBox="0 0 200 200" class="absolute inset-0 size-full" :class="spinning && 'lottery-spinning'" aria-hidden="true">
                 <defs><path id="lottery-ring" d="M26.7 126.7 A 78 78 0 1 1 173.3 126.7"/></defs>
                 <text font-family="Nunito, sans-serif" font-weight="800" font-size="15" fill="#1E1A2E" letter-spacing="1">
@@ -45,9 +46,9 @@
         </div>
 
         {{-- Результат --}}
-        <div class="absolute inset-0 flex items-center justify-center" aria-live="polite">
+        <div class="col-start-1 row-start-1 w-full flex items-center justify-center" aria-live="polite">
             <template x-if="current">
-                <div class="lottery-pop relative w-[80%]">
+                <div class="lottery-pop relative w-[82%] sm:w-[80%] mt-16 mb-10">
                     <div class="card overflow-hidden shadow-2xl shadow-primary/15 -rotate-2">
                         <a :href="current.url" class="block aspect-[4/3] bg-tint-1">
                             <img :src="current.photo" :alt="current.name" class="size-full object-cover">
