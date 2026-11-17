@@ -1,0 +1,35 @@
+# Доповнення до compose.yaml для сервера (VPS):
+#   docker compose -f compose.yaml -f compose.prod.yaml up -d --build
+#
+# Що змінюється порівняно з локальним запуском:
+#   - перед сайтом стоїть Caddy з HTTPS (порти 80 і 443), сертифікат отримується автоматично;
+#   - контейнер web більше не відкриває порт назовні – лише через Caddy;
+#   - Mailpit доступний тільки з самого сервера (127.0.0.1:8025), бо в листах персональні дані.
+#     Переглянути його з ноутбука: ssh -L 8025:localhost:8025 користувач@сервер → http://localhost:8025
+services:
+  web:
+    ports: !reset []
+
+  mailpit:
+    ports: !override
+      - "127.0.0.1:${MAILPIT_PORT:-8025}:8025"
+
+  caddy:
+    image: caddy:2-alpine
+    restart: unless-stopped
+    ports:
+      - "80:80"
+      - "443:443"
+      - "443:443/udp"
+    environment:
+      SITE_DOMAIN: ${SITE_DOMAIN:?Вкажіть SITE_DOMAIN у .env}
+    volumes:
+      - ./docker/caddy/Caddyfile:/etc/caddy/Caddyfile:ro
+      - caddy_data:/data
+      - caddy_config:/config
+    depends_on:
+      - web
+
+volumes:
+  caddy_data:
+  caddy_config:

@@ -160,13 +160,54 @@ tests/            автотести Pest
 
 ## Розгортання на сервері
 
-На VPS з Docker достатньо тих самих кроків, що й локально, але в `.env`:
+Робоча копія: **https://pet.tinycdn.cloud**. На сервері потрібні лише Docker і Git; HTTPS забезпечує Caddy
+(`docker/caddy/Caddyfile`), сертифікат Let's Encrypt він отримує й поновлює сам.
 
-```
-APP_ENV=production
-APP_DEBUG=false
-APP_URL=https://ваш-домен
-MAIL_MAILER=smtp        # і реквізити транзакційного поштового сервісу
+**1. DNS.** Запис `A` для `pet.tinycdn.cloud` → IP сервера. Порти 80 і 443 мають бути відкриті.
+
+**2. Код.** Репозиторій приватний, тому на сервері створіть ключ і додайте його в GitHub
+(Settings → Deploy keys, лише читання):
+
+```bash
+ssh-keygen -t ed25519 -f ~/.ssh/shelter -N ""
+cat ~/.ssh/shelter.pub          # вставити в Deploy keys
+GIT_SSH_COMMAND="ssh -i ~/.ssh/shelter" git clone git@github.com:MaruSoul/shelter-adoption.git
+cd shelter-adoption
+git config core.sshCommand "ssh -i ~/.ssh/shelter"
 ```
 
-HTTPS зручно забезпечити зворотним проксі (наприклад, Caddy) перед контейнером `web`.
+**3. Налаштування.**
+
+```bash
+cp .env.production.example .env
+sed -i "s|^APP_KEY=.*|APP_KEY=base64:$(openssl rand -base64 32)|" .env
+sed -i "s|^DB_PASSWORD=.*|DB_PASSWORD=$(openssl rand -hex 24)|" .env
+```
+
+**4. Запуск і демо-дані.**
+
+```bash
+docker compose -f compose.yaml -f compose.prod.yaml up -d --build
+docker compose -f compose.yaml -f compose.prod.yaml exec app php artisan db:seed --force
+```
+
+Міграції виконуються автоматично під час старту контейнера. Демо-акаунти з таблиці вище після захисту варто
+змінити або видалити: паролі опубліковані в цьому README.
+
+**Оновлення** до нової версії:
+
+```bash
+git pull
+docker compose -f compose.yaml -f compose.prod.yaml up -d --build
+```
+
+**Пошта.** За замовчуванням листи потрапляють у Mailpit, який на сервері доступний лише локально
+(в листах персональні дані з анкет). Подивитися з ноутбука:
+`ssh -L 8025:localhost:8025 користувач@сервер`, далі http://localhost:8025. Щоб листи доходили до людей,
+вкажіть у `.env` реквізити SMTP-сервісу (`MAIL_HOST`, `MAIL_PORT`, `MAIL_USERNAME`, `MAIL_PASSWORD`) і перезапустіть.
+
+**Резервна копія бази:**
+
+```bash
+docker compose exec -T db pg_dump -U shelter shelter | gzip > backup-$(date +%F).sql.gz
+```

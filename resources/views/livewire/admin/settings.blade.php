@@ -7,7 +7,7 @@
             <fieldset class="flex flex-col gap-5">
                 <legend class="font-display font-extrabold text-2xl pb-1">Як притулок підписаний на сайті</legend>
                 <x-translation-meter class="-mt-2" />
-                <x-bilingual label="Назва" model="form.name" required translit hint="у шапці, підвалі й заголовку вкладки" en-placeholder="Наприклад, Domivka" />
+                <x-bilingual label="Назва" model="form.name" required translit hint="у шапці, підвалі й заголовку вкладки" en-placeholder="Наприклад, Tails Club" />
                 <x-bilingual label="Підзаголовок" model="form.tagline" hint="під назвою в шапці" />
                 <x-bilingual label="Адреса" model="form.address" translit hint="у підвалі сайту" />
             </fieldset>

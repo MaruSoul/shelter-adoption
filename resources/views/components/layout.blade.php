@@ -24,10 +24,11 @@
     <meta property="og:title" content="{{ $pageTitle }}">
     <meta property="og:description" content="{{ $pageDescription }}">
     <meta property="og:url" content="{{ url()->current() }}">
-    @if ($image)
-        <meta property="og:image" content="{{ url($image) }}">
-    @endif
+    {{-- Без власного зображення сторінки соцмережі показують логотип притулку --}}
+    <meta property="og:image" content="{{ url($image ?? '/og-default.jpg') }}">
+    <link rel="icon" href="/favicon.ico" sizes="32x32">
     <link rel="icon" href="/favicon.svg" type="image/svg+xml">
+    <link rel="apple-touch-icon" href="/apple-touch-icon.png">
     <meta name="csrf-token" content="{{ csrf_token() }}">
     @auth
         <meta name="favorites" content="{{ json_encode(auth()->user()->favorites()->pluck('animals.id')) }}" data-sync="{{ route('favorites.sync') }}" data-toggle="{{ url('/obrani') }}">
@@ -57,7 +58,7 @@
     <div class="mx-auto max-w-6xl px-6 py-4 flex flex-wrap items-center justify-between gap-4">
         {{-- Логотип: велика лапка, назва капсом і підпис притулку одним блоком --}}
         <a href="{{ route('home') }}" class="flex items-center gap-3 group" aria-label="{{ $brand }} – {{ __('на головну') }}">
-            <x-icon.paw class="size-12 shrink-0" />
+            <img src="/logo-mark.svg" alt="" width="40" height="50" class="h-14 w-auto shrink-0">
             <span class="flex flex-col leading-tight">
                 <span class="font-display font-extrabold text-2xl uppercase tracking-wider text-primary">{{ $brand }}</span>
                 @if ($tagline)
@@ -107,6 +108,7 @@
 <footer class="bg-ink text-bg mt-16">
     <div class="mx-auto max-w-6xl px-6 py-12 flex flex-wrap justify-between gap-8">
         <div class="flex flex-col gap-2 max-w-sm">
+            <span class="size-32 rounded-full bg-bg p-1 mb-2"><img src="/logo.png" alt="{{ __('Логотип притулку') }}" width="480" height="505" loading="lazy" class="size-full object-contain"></span>
             <span class="font-display font-extrabold text-xl uppercase tracking-wider">{{ $brand }}</span>
             @if ($tagline)<span class="opacity-85">{{ $tagline }}</span>@endif
             <span class="opacity-85">

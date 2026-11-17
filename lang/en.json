@@ -63,7 +63,6 @@
     "Панель": "Dashboard",
     "Кабінет": "My account",
     "Увійти": "Log in",
-    "Лапа – маскот «Домівки»": "Lapa, the Domivka mascot",
     "Відновлення пароля": "Password recovery",
     "Вкажіть пошту – ми надішлемо посилання для встановлення нового пароля.": "Enter your email and we will send you a link to set a new password.",
     "Електронна пошта": "Email",
@@ -417,5 +416,8 @@
     "Англійський переклад необовʼязковий: якщо ви його не додасте, це зробить адміністратор притулку.": "An English translation is optional: if you don’t add one, the shelter administrator will.",
     ":name, фото :n": ":name, photo :n",
     "Частину опису притулок написав лише англійською.": "Part of the description is available in English only.",
-    "для карток волонтерів показується на сайті": "shown on the site for volunteer cards"
+    "для карток волонтерів показується на сайті": "shown on the site for volunteer cards",
+    "Лапа – маскот притулку": "Lapa, the shelter mascot",
+    "Клуб хвостики": "Tails Club",
+    "Логотип притулку": "Shelter logo"
 }

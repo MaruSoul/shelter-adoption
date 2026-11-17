@@ -30,7 +30,7 @@ class DatabaseSeeder extends Seeder
         $this->call(DictionarySeeder::class);
 
         ShelterSetting::query()->firstOrCreate([], [
-            'name' => 'Домівка',
+            'name' => 'Клуб хвостики',
             'tagline' => 'Притулок для котів і собак · Одеса',
             'address' => 'м. Одеса, вул. [адреса притулку]',
             'phone' => '+380 00 000 00 00',

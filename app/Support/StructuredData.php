@@ -21,7 +21,7 @@ final class StructuredData
             'name' => $shelter->tr('name'),
             'description' => $shelter->tr('tagline'),
             'url' => route('home'),
-            'logo' => url('/favicon.svg'),
+            'logo' => url('/logo.png'),
             'telephone' => $shelter->phone,
             'email' => $shelter->email,
             'address' => $shelter->address ? ['@type' => 'PostalAddress', 'streetAddress' => $shelter->tr('address'), 'addressCountry' => 'UA'] : null,
@@ -55,7 +55,7 @@ final class StructuredData
 
     public static function article(Post $post, ShelterSetting $shelter): array
     {
-        $publisher = ['@type' => 'Organization', 'name' => $shelter->tr('name'), 'logo' => ['@type' => 'ImageObject', 'url' => url('/favicon.svg')]];
+        $publisher = ['@type' => 'Organization', 'name' => $shelter->tr('name'), 'logo' => ['@type' => 'ImageObject', 'url' => url('/logo.png')]];
 
         return array_filter([
             '@context' => 'https://schema.org',

@@ -60,7 +60,7 @@ class DemoTranslationsSeeder extends Seeder
             return;
         }
 
-        $settings->name_en ??= 'Domivka';
+        $settings->name_en ??= 'Tails Club';
         $settings->tagline_en ??= 'Shelter for cats and dogs · Odesa';
         $settings->address_en ??= 'Odesa, [shelter address]';
         $settings->save();
