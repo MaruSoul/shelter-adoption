@@ -43,9 +43,9 @@ class Profile extends Component
             'phone' => ['nullable', 'regex:'.Phone::PATTERN],
             'region_id' => ['nullable', 'integer', Rule::exists('regions', 'id')],
         ], [
-            'phone.regex' => 'Вкажіть номер у форматі +380XXXXXXXXX.',
+            'phone.regex' => __('Вкажіть номер у форматі +380XXXXXXXXX.'),
         ], [
-            'name' => 'імʼя', 'phone' => 'телефон', 'region_id' => 'область',
+            'name' => __('імʼя'), 'phone' => __('телефон'), 'region_id' => __('область'),
         ]);
 
         auth()->user()->forceFill([
@@ -55,7 +55,7 @@ class Profile extends Component
         ])->save();
 
         $this->phone = $this->phone ?: '+380';
-        $this->flash = 'Профіль збережено. Ці дані підставлятимуться в анкети.';
+        $this->flash = __('Профіль збережено. Ці дані підставлятимуться в анкети.');
     }
 
     public function render()

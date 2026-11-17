@@ -56,7 +56,7 @@ class AdoptionForm extends Component
         $this->animal = $animal;
 
         if (! $animal->acceptsApplications()) {
-            session()->flash('status', $animal->foundHomePhrase().'. Подивіться інших тварин, які чекають на вас.');
+            session()->flash('status', $animal->foundHomePhrase().'. '.__('Подивіться інших тварин, які чекають на вас.'));
             $this->redirectRoute('animals.show', $animal);
 
             return;
@@ -90,18 +90,18 @@ class AdoptionForm extends Component
     protected function messages(): array
     {
         return [
-            'phone.regex' => 'Вкажіть номер у форматі +380XXXXXXXXX.',
-            'contact_channels.required' => 'Оберіть хоча б один спосіб звʼязку.',
-            'contact_channels.min' => 'Оберіть хоча б один спосіб звʼязку.',
-            'consent.accepted' => 'Без згоди на обробку даних ми не зможемо звʼязатися з вами.',
+            'phone.regex' => __('Вкажіть номер у форматі +380XXXXXXXXX.'),
+            'contact_channels.required' => __('Оберіть хоча б один спосіб звʼязку.'),
+            'contact_channels.min' => __('Оберіть хоча б один спосіб звʼязку.'),
+            'consent.accepted' => __('Без згоди на обробку даних ми не зможемо звʼязатися з вами.'),
         ];
     }
 
     protected function validationAttributes(): array
     {
         return [
-            'name' => 'імʼя', 'email' => 'електронна пошта', 'phone' => 'телефон',
-            'region_id' => 'область', 'social_url' => 'посилання на соцмережі', 'comment' => 'коментар',
+            'name' => __('імʼя'), 'email' => __('електронна пошта'), 'phone' => __('телефон'),
+            'region_id' => __('область'), 'social_url' => __('посилання на соцмережі'), 'comment' => __('коментар'),
         ];
     }
 
@@ -123,7 +123,7 @@ class AdoptionForm extends Component
 
         $this->animal->refresh();
         if (! $this->animal->acceptsApplications()) {
-            $this->addError('form', 'На жаль, '.$this->animal->foundHomePhrase().'. Подивіться інших тварин у каталозі.');
+            $this->addError('form', __('На жаль, :phrase. Подивіться інших тварин у каталозі.', ['phrase' => $this->animal->foundHomePhrase()]));
 
             return;
         }
@@ -131,7 +131,7 @@ class AdoptionForm extends Component
         $key = 'adoption-form:'.request()->ip();
         if (RateLimiter::tooManyAttempts($key, (int) config('shelter.adoption_max_per_hour', self::MAX_PER_HOUR))) {
             $minutes = (int) ceil(RateLimiter::availableIn($key) / 60);
-            $this->addError('form', "Забагато анкет за короткий час. Спробуйте ще раз через {$minutes} хв.");
+            $this->addError('form', __('Забагато анкет за короткий час. Спробуйте ще раз через :minutes хв.', ['minutes' => $minutes]));
 
             return;
         }
@@ -147,7 +147,7 @@ class AdoptionForm extends Component
                 'comment' => trim($data['comment']) ?: null,
             ], auth()->user(), request()->ip());
         } catch (DuplicateApplicationException) {
-            $this->addError('form', 'Ви вже надіслали анкету на '.$this->animal->name.' з цієї адреси – вона в роботі. Ми обовʼязково звʼяжемося з вами.');
+            $this->addError('form', __('Ви вже надіслали анкету на :name з цієї адреси – вона в роботі. Ми обовʼязково звʼяжемося з вами.', ['name' => $this->animal->name]));
 
             return;
         }
@@ -166,6 +166,6 @@ class AdoptionForm extends Component
         return view('livewire.adoption-form', [
             'regions' => Region::alphabetical()->get(),
             'channels' => ContactChannel::cases(),
-        ])->title('Взяти додому '.$this->animal->name);
+        ])->title(__('Взяти додому :name', ['name' => $this->animal->name]));
     }
 }

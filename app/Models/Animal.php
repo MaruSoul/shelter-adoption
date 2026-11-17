@@ -120,7 +120,9 @@ class Animal extends Model
     /** «Ліра вже знайшла дім» / «Граф вже знайшов дім». */
     public function foundHomePhrase(): string
     {
-        return $this->name.' вже '.($this->sex === Sex::Female ? 'знайшла' : 'знайшов').' дім';
+        return $this->sex === Sex::Female
+            ? __(':name вже знайшла дім', ['name' => $this->name])
+            : __(':name вже знайшов дім', ['name' => $this->name]);
     }
 
     public function ageLabel(): string

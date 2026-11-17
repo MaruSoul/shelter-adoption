@@ -49,7 +49,7 @@ class AnimalForm extends Component
         $this->form->applyTo($this->animal);
 
         if ($isNew && count($this->uploads) === 0) {
-            $this->addError('uploads', 'Додайте хоча б одне фото тварини.');
+            $this->addError('uploads', __('Додайте хоча б одне фото тварини.'));
 
             return null;
         }
@@ -73,8 +73,8 @@ class AnimalForm extends Component
         }
 
         session()->flash('status', $isNew
-            ? 'Дякуємо! Картку надіслано на перевірку. Після схвалення вона зʼявиться в каталозі.'
-            : 'Зміни збережено. Картка знову на перевірці у модератора.');
+            ? __('Дякуємо! Картку надіслано на перевірку. Після схвалення вона зʼявиться в каталозі.')
+            : __('Зміни збережено. Картка знову на перевірці у модератора.'));
 
         return $this->redirectRoute('cabinet', navigate: false);
     }
@@ -87,6 +87,6 @@ class AnimalForm extends Component
             'regions' => Region::alphabetical()->get(),
             'existingPhotos' => $this->animal->exists ? $this->animal->photos : collect(),
             'maxPhotos' => self::MAX_PHOTOS,
-        ])->title($this->animal->exists ? 'Редагування картки' : 'Розмістити тварину');
+        ])->title($this->animal->exists ? __('Редагування картки') : __('Розмістити тварину'));
     }
 }

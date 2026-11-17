@@ -65,10 +65,10 @@ class AnimalFields extends Form
     protected function validationAttributes(): array
     {
         return [
-            'name' => 'кличка', 'species_id' => 'вид', 'breed_id' => 'порода', 'color_id' => 'забарвлення',
-            'region_id' => 'область', 'locality_id' => 'населений пункт', 'sex' => 'стать',
-            'birth_date' => 'дата народження', 'story' => 'коротка історія', 'behavior' => 'особливості поведінки',
-            'adoption_terms' => 'умови прилаштування', 'current_location' => 'де тварина зараз',
+            'name' => __('кличка'), 'species_id' => __('вид'), 'breed_id' => __('порода'), 'color_id' => __('забарвлення'),
+            'region_id' => __('область'), 'locality_id' => __('населений пункт'), 'sex' => __('стать'),
+            'birth_date' => __('дата народження'), 'story' => __('коротка історія'), 'behavior' => __('особливості поведінки'),
+            'adoption_terms' => __('умови прилаштування'), 'current_location' => __('де тварина зараз'),
         ];
     }
 

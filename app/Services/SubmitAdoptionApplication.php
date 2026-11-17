@@ -96,9 +96,10 @@ class SubmitAdoptionApplication
         $recipient = ShelterSetting::current()->notification_email;
 
         if ($recipient) {
-            Mail::to($recipient)->queue(new NewApplicationMail($application));
+            Mail::to($recipient)->locale('uk')->queue(new NewApplicationMail($application));
         }
 
-        Mail::to($application->email)->queue(new ApplicationReceivedMail($application));
+        // Лист заявнику – мовою, якою подано анкету
+        Mail::to($application->email)->locale(app()->getLocale())->queue(new ApplicationReceivedMail($application));
     }
 }

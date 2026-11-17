@@ -6,10 +6,10 @@
             @endif
         </div>
         <div class="p-5 flex flex-col gap-1.5">
-            <span class="text-sm text-muted">Ви подаєте анкету на</span>
+            <span class="text-sm text-muted">{{ __('Ви подаєте анкету на') }}</span>
             <span class="font-display font-extrabold text-2xl">{{ $animal->name }}</span>
-            <span class="text-sm text-muted">{{ $animal->species->name }} · {{ $animal->ageLabel() }} · {{ $animal->locality->name }}</span>
-            <a href="{{ route('animals.show', $animal) }}" class="mt-2 font-semibold text-primary hover:underline">← Повернутися до сторінки</a>
+            <span class="text-sm text-muted">{{ __($animal->species->name) }} · {{ $animal->ageLabel() }} · {{ \App\Support\Ukrainian::place($animal->locality->name) }}</span>
+            <a href="{{ route('animals.show', $animal) }}" class="mt-2 font-semibold text-primary hover:underline">{{ __('← Повернутися до сторінки') }}</a>
         </div>
     </aside>
 
@@ -17,8 +17,8 @@
         @if (! $submitted)
             <form wire:submit="submit" class="flex flex-col gap-5" novalidate>
                 <div class="flex flex-col gap-1.5">
-                    <h1 class="text-4xl">Взяти додому</h1>
-                    <p class="text-muted">Реєстрація не потрібна. Залиште контакти – адміністратор притулку звʼяжеться з вами обраним способом.</p>
+                    <h1 class="text-4xl">{{ __('Взяти додому') }}</h1>
+                    <p class="text-muted">{{ __('Реєстрація не потрібна. Залиште контакти – адміністратор притулку звʼяжеться з вами обраним способом.') }}</p>
                 </div>
 
                 @error('form')
@@ -27,38 +27,38 @@
 
                 {{-- Пастка для ботів: прихована від людей і від програм зчитування екрана --}}
                 <div class="hidden" aria-hidden="true">
-                    <label>Ваш сайт <input type="text" wire:model="website" tabindex="-1" autocomplete="off"></label>
+                    <label>{{ __('Ваш сайт') }} <input type="text" wire:model="website" tabindex="-1" autocomplete="off"></label>
                 </div>
 
                 <div class="grid gap-4 grid-cols-[repeat(auto-fit,minmax(220px,1fr))]">
-                    <label class="label">Ваше імʼя *
+                    <label class="label">{{ __('Ваше імʼя *') }}
                         <input type="text" wire:model="name" autocomplete="name" class="field font-normal" @error('name') aria-invalid="true" @enderror>
                         @error('name')<span class="error">{{ $message }}</span>@enderror
                     </label>
-                    <label class="label">Телефон *
+                    <label class="label">{{ __('Телефон *') }}
                         <input type="tel" wire:model.blur="phone" autocomplete="tel" inputmode="tel" class="field font-normal" @error('phone') aria-invalid="true" @enderror>
                         @error('phone')<span class="error">{{ $message }}</span>@enderror
                     </label>
-                    <label class="label">Електронна пошта *
+                    <label class="label">{{ __('Електронна пошта *') }}
                         <input type="email" wire:model="email" autocomplete="email" class="field font-normal" @error('email') aria-invalid="true" @enderror>
                         @error('email')<span class="error">{{ $message }}</span>@enderror
                     </label>
-                    <label class="label">Область *
+                    <label class="label">{{ __('Область *') }}
                         <select wire:model="region_id" class="field font-normal" @error('region_id') aria-invalid="true" @enderror>
-                            <option value="">Оберіть область</option>
-                            @foreach ($regions as $r)<option value="{{ $r->id }}">{{ $r->name }}</option>@endforeach
+                            <option value="">{{ __('Оберіть область') }}</option>
+                            @foreach ($regions as $r)<option value="{{ $r->id }}">{{ __($r->name) }}</option>@endforeach
                         </select>
                         @error('region_id')<span class="error">{{ $message }}</span>@enderror
                     </label>
                 </div>
 
-                <label class="label">Посилання на соцмережі <span class="font-normal text-sm text-muted">необовʼязково</span>
+                <label class="label">{{ __('Посилання на соцмережі') }} <span class="font-normal text-sm text-muted">{{ __('необовʼязково') }}</span>
                     <input type="url" wire:model="social_url" placeholder="https://" class="field font-normal">
                     @error('social_url')<span class="error">{{ $message }}</span>@enderror
                 </label>
 
                 <fieldset class="flex flex-col gap-2">
-                    <legend class="font-semibold mb-2">Зручний спосіб звʼязку * <span class="font-normal text-sm text-muted">можна декілька</span></legend>
+                    <legend class="font-semibold mb-2">{{ __('Зручний спосіб звʼязку *') }} <span class="font-normal text-sm text-muted">{{ __('можна декілька') }}</span></legend>
                     <div class="flex flex-wrap gap-2">
                         @foreach ($channels as $ch)
                             <label @class(['btn border-[1.5px] cursor-pointer has-[:focus-visible]:outline-2 has-[:focus-visible]:outline-primary',
@@ -72,27 +72,27 @@
                     @error('contact_channels')<span class="error">{{ $message }}</span>@enderror
                 </fieldset>
 
-                <label class="label">Коментар
-                    <textarea wire:model="comment" rows="4" maxlength="2000" class="field font-normal py-3 resize-y" placeholder="Розкажіть трохи про себе: житло, досвід з тваринами, хто живе з вами"></textarea>
+                <label class="label">{{ __('Коментар') }}
+                    <textarea wire:model="comment" rows="4" maxlength="2000" class="field font-normal py-3 resize-y" placeholder="{{ __('Розкажіть трохи про себе: житло, досвід з тваринами, хто живе з вами') }}"></textarea>
                     @error('comment')<span class="error">{{ $message }}</span>@enderror
                 </label>
 
                 @auth
                     <label class="flex items-start gap-2.5">
                         <input type="checkbox" wire:model="rememberContacts" class="mt-1 size-4.5 shrink-0 accent-primary">
-                        <span>Запамʼятати телефон і область у <a href="{{ route('cabinet.profile') }}" target="_blank" class="text-primary underline">моєму профілі</a> для наступних анкет</span>
+                        <span>{{ __('Запамʼятати телефон і область у') }} <a href="{{ route('cabinet.profile') }}" target="_blank" class="text-primary underline">{{ __('моєму профілі') }}</a> {{ __('для наступних анкет') }}</span>
                     </label>
                 @endauth
 
                 <label class="flex items-start gap-2.5">
                     <input type="checkbox" wire:model="consent" class="mt-1 size-4.5 shrink-0 accent-primary">
-                    <span>Я погоджуюсь з <a href="{{ route('privacy') }}" target="_blank" class="text-primary underline">політикою конфіденційності</a> і даю згоду на обробку моїх персональних даних притулком *</span>
+                    <span>{{ __('Я погоджуюсь з') }} <a href="{{ route('privacy') }}" target="_blank" class="text-primary underline">{{ __('політикою конфіденційності') }}</a> {{ __('і даю згоду на обробку моїх персональних даних притулком *') }}</span>
                 </label>
                 @error('consent')<span class="error -mt-3">{{ $message }}</span>@enderror
 
                 <button type="submit" class="btn-primary self-start min-h-14 px-9 text-lg" wire:loading.attr="disabled">
-                    <span wire:loading.remove wire:target="submit">Відправити анкету</span>
-                    <span wire:loading wire:target="submit">Надсилаємо…</span>
+                    <span wire:loading.remove wire:target="submit">{{ __('Відправити анкету') }}</span>
+                    <span wire:loading wire:target="submit">{{ __('Надсилаємо…') }}</span>
                 </button>
             </form>
         @else
@@ -101,24 +101,24 @@
                 <div class="relative size-52 flex items-center justify-center">
                     <span class="absolute inset-4 rounded-full bg-sun-soft" aria-hidden="true"></span>
                     <x-confetti :count="26" />
-                    <x-mascot.cheer class="lapa-pop relative w-44" label="Лапа радіє разом із вами" />
+                    <x-mascot.cheer class="lapa-pop relative w-44" label="{{ __('Лапа радіє разом із вами') }}" />
                 </div>
-                <h1 class="text-3xl md:text-4xl">Дякуємо! Анкету отримано</h1>
-                <p class="text-lg max-w-md"><strong>{{ $animal->name }}</strong> уже чекає на знайомство з вами.</p>
-                <p class="text-muted max-w-md">Адміністратор притулку звʼяжеться з вами найближчим часом обраним способом. Копію анкети ми надіслали на {{ $email }}.</p>
+                <h1 class="text-3xl md:text-4xl">{{ __('Дякуємо! Анкету отримано') }}</h1>
+                <p class="text-lg max-w-md"><strong>{{ $animal->name }}</strong> {{ __('уже чекає на знайомство з вами.') }}</p>
+                <p class="text-muted max-w-md">{{ __('Адміністратор притулку звʼяжеться з вами найближчим часом обраним способом. Копію анкети ми надіслали на :email.', ['email' => $email]) }}</p>
                 @guest
                     <div class="rounded-2xl bg-sun-soft p-5 flex flex-col items-center gap-2.5 max-w-md w-full mt-2">
-                        <span class="font-semibold">Хочете стежити за статусом анкети?</span>
-                        <span class="text-muted text-sm">Увійдіть в акаунт з цією ж поштою – анкета вже чекатиме у вашому кабінеті. Акаунта ще немає? Створіть його: після підтвердження адреси анкета зʼявиться там автоматично.</span>
+                        <span class="font-semibold">{{ __('Хочете стежити за статусом анкети?') }}</span>
+                        <span class="text-muted text-sm">{{ __('Увійдіть в акаунт з цією ж поштою – анкета вже чекатиме у вашому кабінеті. Акаунта ще немає? Створіть його: після підтвердження адреси анкета зʼявиться там автоматично.') }}</span>
                         <div class="flex flex-wrap justify-center gap-2">
-                            <a href="{{ route('login') }}" class="btn-primary">Увійти</a>
-                            <a href="{{ route('register') }}" class="btn-outline">Створити акаунт</a>
+                            <a href="{{ route('login') }}" class="btn-primary">{{ __('Увійти') }}</a>
+                            <a href="{{ route('register') }}" class="btn-outline">{{ __('Створити акаунт') }}</a>
                         </div>
                     </div>
                 @else
-                    <a href="{{ route('cabinet') }}" class="btn-primary min-h-12 px-8 mt-2">Перейти до кабінету</a>
+                    <a href="{{ route('cabinet') }}" class="btn-primary min-h-12 px-8 mt-2">{{ __('Перейти до кабінету') }}</a>
                 @endguest
-                <a href="{{ route('animals.index') }}" class="font-semibold text-primary hover:underline">← До каталогу</a>
+                <a href="{{ route('animals.index') }}" class="font-semibold text-primary hover:underline">{{ __('← До каталогу') }}</a>
             </div>
         @endif
     </section>

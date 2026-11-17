@@ -15,13 +15,11 @@ class ApplicationReceivedMail extends Mailable implements ShouldQueue
 {
     use Queueable, SerializesModels;
 
-    public function __construct(public AdoptionApplication $application)
-    {
-    }
+    public function __construct(public AdoptionApplication $application) {}
 
     public function envelope(): Envelope
     {
-        return new Envelope(subject: 'Ми отримали вашу анкету на '.$this->application->animal->name);
+        return new Envelope(subject: __('Ми отримали вашу анкету на :name', ['name' => $this->application->animal->name]));
     }
 
     public function content(): Content

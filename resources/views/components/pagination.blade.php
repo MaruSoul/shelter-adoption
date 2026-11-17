@@ -1,7 +1,7 @@
 @if ($paginator->hasPages())
-    <nav aria-label="Сторінки" class="flex flex-wrap justify-center gap-2 pt-3">
+    <nav aria-label="{{ __('Сторінки') }}" class="flex flex-wrap justify-center gap-2 pt-3">
         @if (! $paginator->onFirstPage())
-            <button type="button" wire:click="previousPage" class="size-11 rounded-xl border border-line bg-card font-semibold" aria-label="Попередня сторінка">←</button>
+            <button type="button" wire:click="previousPage" class="size-11 rounded-xl border border-line bg-card font-semibold" aria-label="{{ __('Попередня сторінка') }}">←</button>
         @endif
         @foreach ($elements as $element)
             @if (is_string($element))
@@ -18,7 +18,7 @@
             @endif
         @endforeach
         @if ($paginator->hasMorePages())
-            <button type="button" wire:click="nextPage" class="size-11 rounded-xl border border-line bg-card font-semibold" aria-label="Наступна сторінка">→</button>
+            <button type="button" wire:click="nextPage" class="size-11 rounded-xl border border-line bg-card font-semibold" aria-label="{{ __('Наступна сторінка') }}">→</button>
         @endif
     </nav>
 @endif

@@ -1,8 +1,8 @@
 <div class="mx-auto max-w-2xl px-6 py-10 flex flex-col gap-6">
-    <a href="{{ route('cabinet') }}" class="font-semibold text-primary hover:underline">← До кабінету</a>
+    <a href="{{ route('cabinet') }}" class="font-semibold text-primary hover:underline">{{ __('← До кабінету') }}</a>
     <div class="flex flex-col gap-1">
-        <h1 class="text-4xl">Мій профіль</h1>
-        <p class="text-muted">Ці дані автоматично підставляються в анкету «Взяти додому». В анкеті їх завжди можна змінити.</p>
+        <h1 class="text-4xl">{{ __('Мій профіль') }}</h1>
+        <p class="text-muted">{{ __('Ці дані автоматично підставляються в анкету «Взяти додому». В анкеті їх завжди можна змінити.') }}</p>
     </div>
 
     @if ($flash)
@@ -10,25 +10,25 @@
     @endif
 
     <form wire:submit="save" class="card p-6 md:p-8 flex flex-col gap-5" novalidate>
-        <label class="label">Імʼя *
+        <label class="label">{{ __('Імʼя *') }}
             <input type="text" wire:model="name" autocomplete="name" class="field font-normal">
             @error('name')<span class="error">{{ $message }}</span>@enderror
         </label>
-        <label class="label">Телефон
+        <label class="label">{{ __('Телефон') }}
             <input type="tel" wire:model.blur="phone" autocomplete="tel" inputmode="tel" class="field font-normal">
             @error('phone')<span class="error">{{ $message }}</span>@enderror
         </label>
-        <label class="label">Область
+        <label class="label">{{ __('Область') }}
             <select wire:model="region_id" class="field font-normal">
-                <option value="">Не вказано</option>
-                @foreach ($regions as $region)<option value="{{ $region->id }}">{{ $region->name }}</option>@endforeach
+                <option value="">{{ __('Не вказано') }}</option>
+                @foreach ($regions as $region)<option value="{{ $region->id }}">{{ __($region->name) }}</option>@endforeach
             </select>
             @error('region_id')<span class="error">{{ $message }}</span>@enderror
         </label>
-        <div class="label">Електронна пошта
+        <div class="label">{{ __('Електронна пошта') }}
             <span class="field font-normal flex items-center bg-surface text-muted">{{ auth()->user()->email }}</span>
-            <span class="text-sm font-normal text-muted">Пошта привʼязана до ваших анкет, тому змінити її тут не можна.</span>
+            <span class="text-sm font-normal text-muted">{{ __('Пошта привʼязана до ваших анкет, тому змінити її тут не можна.') }}</span>
         </div>
-        <button type="submit" class="btn-primary self-start min-h-12 px-8">Зберегти</button>
+        <button type="submit" class="btn-primary self-start min-h-12 px-8">{{ __('Зберегти') }}</button>
     </form>
 </div>

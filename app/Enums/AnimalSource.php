@@ -10,8 +10,8 @@ enum AnimalSource: string
     public function label(): string
     {
         return match ($this) {
-            self::Shelter => 'Притулок',
-            self::Volunteer => 'Розміщено волонтером',
+            self::Shelter => __('Притулок'),
+            self::Volunteer => __('Розміщено волонтером'),
         };
     }
 }

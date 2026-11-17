@@ -13,11 +13,11 @@ enum AnimalStatus: string
     public function label(): string
     {
         return match ($this) {
-            self::Moderation => 'На модерації',
-            self::Available => 'Шукає дім',
-            self::Adopted => 'Знайшла дім',
-            self::Rejected => 'Відхилена',
-            self::Archived => 'В архіві',
+            self::Moderation => __('На модерації'),
+            self::Available => __('Шукає дім'),
+            self::Adopted => __('Знайшла дім'),
+            self::Rejected => __('Відхилена'),
+            self::Archived => __('В архіві'),
         };
     }
 

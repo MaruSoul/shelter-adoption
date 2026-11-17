@@ -5,6 +5,7 @@ use App\Http\Controllers\BlogController;
 use App\Http\Controllers\FavoriteController;
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\SitemapController;
+use App\Http\Middleware\SetLocale;
 use App\Livewire\Admin;
 use App\Livewire\AdoptionForm;
 use App\Livewire\AnimalCatalog;
@@ -31,6 +32,16 @@ Route::get('/blog/{post}', [BlogController::class, 'show'])->name('blog.show');
 
 Route::view('/polityka-konfidentsiinosti', 'pages.privacy')->name('privacy');
 Route::get('/sitemap.xml', SitemapController::class)->name('sitemap');
+// Перемикач мови: запамʼятовує вибір на рік і повертає на ту саму сторінку
+Route::get('/mova/{locale}', function (string $locale) {
+    abort_unless(in_array($locale, SetLocale::SUPPORTED, true), 404);
+    $back = url()->previous();
+    if (! str_starts_with($back, url('/')) || str_contains($back, '/mova/')) {
+        $back = route('home');
+    }
+
+    return redirect($back)->withCookie(cookie()->forever(SetLocale::COOKIE, $locale, httpOnly: false));
+})->name('locale.switch');
 // robots.txt формується застосунком, бо адреса sitemap має бути абсолютною (з доменом сайту)
 Route::get('/robots.txt', fn () => response(implode("\n", [
     'User-agent: *',

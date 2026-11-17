@@ -39,13 +39,44 @@ final class Ukrainian
         $months = $diff->m;
 
         $parts = [];
+        $english = app()->getLocale() === 'en';
         if ($years > 0) {
-            $parts[] = $years.' '.self::plural($years, ['рік', 'роки', 'років']);
+            $parts[] = $years.' '.($english ? ($years === 1 ? 'year' : 'years') : self::plural($years, ['рік', 'роки', 'років']));
         }
         if ($months > 0) {
-            $parts[] = $months.' '.self::plural($months, ['місяць', 'місяці', 'місяців']);
+            $parts[] = $months.' '.($english ? ($months === 1 ? 'month' : 'months') : self::plural($months, ['місяць', 'місяці', 'місяців']));
         }
 
-        return $parts === [] ? 'менше місяця' : implode(' ', $parts);
+        return $parts === [] ? ($english ? 'under a month' : 'менше місяця') : implode(' ', $parts);
+    }
+
+    /**
+     * Назва населеного пункту для поточної мови: в англійській версії – латиницею
+     * за офіційною транслітерацією (постанова КМУ № 55 від 27.01.2010).
+     */
+    public static function place(string $name): string
+    {
+        return app()->getLocale() === 'en' ? self::transliterate($name) : $name;
+    }
+
+    public static function transliterate(string $text): string
+    {
+        // Літери, що на початку слова передаються інакше, ніж усередині
+        $initial = ['Є' => 'Ye', 'Ї' => 'Yi', 'Й' => 'Y', 'Ю' => 'Yu', 'Я' => 'Ya', 'є' => 'ye', 'ї' => 'yi', 'й' => 'y', 'ю' => 'yu', 'я' => 'ya'];
+        $map = [
+            'А' => 'A', 'Б' => 'B', 'В' => 'V', 'Г' => 'H', 'Ґ' => 'G', 'Д' => 'D', 'Е' => 'E', 'Є' => 'Ie', 'Ж' => 'Zh', 'З' => 'Z',
+            'И' => 'Y', 'І' => 'I', 'Ї' => 'I', 'Й' => 'I', 'К' => 'K', 'Л' => 'L', 'М' => 'M', 'Н' => 'N', 'О' => 'O', 'П' => 'P',
+            'Р' => 'R', 'С' => 'S', 'Т' => 'T', 'У' => 'U', 'Ф' => 'F', 'Х' => 'Kh', 'Ц' => 'Ts', 'Ч' => 'Ch', 'Ш' => 'Sh', 'Щ' => 'Shch',
+            'Ь' => '', 'Ю' => 'Iu', 'Я' => 'Ia',
+            'а' => 'a', 'б' => 'b', 'в' => 'v', 'г' => 'h', 'ґ' => 'g', 'д' => 'd', 'е' => 'e', 'є' => 'ie', 'ж' => 'zh', 'з' => 'z',
+            'и' => 'y', 'і' => 'i', 'ї' => 'i', 'й' => 'i', 'к' => 'k', 'л' => 'l', 'м' => 'm', 'н' => 'n', 'о' => 'o', 'п' => 'p',
+            'р' => 'r', 'с' => 's', 'т' => 't', 'у' => 'u', 'ф' => 'f', 'х' => 'kh', 'ц' => 'ts', 'ч' => 'ch', 'ш' => 'sh', 'щ' => 'shch',
+            'ь' => '', 'ю' => 'iu', 'я' => 'ia', 'ʼ' => '', '’' => '', "'" => '',
+        ];
+        $text = str_replace(['Зг', 'зг'], ['Zgh', 'zgh'], $text);
+
+        $text = preg_replace_callback('/(?<![\\p{L}ʼ’\'])[ЄЇЙЮЯєїйюя]/u', fn (array $m) => $initial[$m[0]], $text);
+
+        return strtr($text, $map);
     }
 }

@@ -47,8 +47,8 @@ final class StructuredData
     public static function animalBreadcrumbs(Animal $animal): array
     {
         return self::breadcrumbs([
-            'Головна' => route('home'),
-            $animal->species->name_plural => route('animals.index', ['species' => $animal->species->slug]),
+            __('Головна') => route('home'),
+            __($animal->species->name_plural) => route('animals.index', ['species' => $animal->species->slug]),
             $animal->name => route('animals.show', $animal),
         ]);
     }

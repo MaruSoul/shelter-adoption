@@ -11,7 +11,7 @@ enum ContactChannel: string
     public function label(): string
     {
         return match ($this) {
-            self::Phone => 'Телефон',
+            self::Phone => __('Телефон'),
             self::Telegram => 'Telegram',
             self::Viber => 'Viber',
         };
@@ -30,9 +30,9 @@ enum ContactChannel: string
     public function actionLabel(): string
     {
         return match ($this) {
-            self::Phone => 'Подзвонити',
-            self::Telegram => 'Написати в Telegram',
-            self::Viber => 'Написати у Viber',
+            self::Phone => __('Подзвонити'),
+            self::Telegram => __('Написати в Telegram'),
+            self::Viber => __('Написати у Viber'),
         };
     }
 }

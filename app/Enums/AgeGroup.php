@@ -18,10 +18,10 @@ enum AgeGroup: string
     public function label(): string
     {
         return match ($this) {
-            self::UpToOne => 'До 1 року',
-            self::OneToTwo => '1–2 роки',
-            self::TwoToFive => '2–5 років',
-            self::OverFive => 'Понад 5 років',
+            self::UpToOne => __('До 1 року'),
+            self::OneToTwo => __('1–2 роки'),
+            self::TwoToFive => __('2–5 років'),
+            self::OverFive => __('Понад 5 років'),
         };
     }
 

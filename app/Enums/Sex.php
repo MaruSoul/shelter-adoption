@@ -10,16 +10,16 @@ enum Sex: string
     public function label(): string
     {
         return match ($this) {
-            self::Male => 'Хлопчик',
-            self::Female => 'Дівчинка',
+            self::Male => __('Хлопчик'),
+            self::Female => __('Дівчинка'),
         };
     }
 
     public function pluralLabel(): string
     {
         return match ($this) {
-            self::Male => 'Хлопчики',
-            self::Female => 'Дівчатка',
+            self::Male => __('Хлопчики'),
+            self::Female => __('Дівчатка'),
         };
     }
 }

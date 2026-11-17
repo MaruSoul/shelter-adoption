@@ -1,11 +1,12 @@
-@props(['animalId', 'name' => 'тварину', 'large' => false])
+@props(['animalId', 'name' => null, 'large' => false])
+@php($name ??= __('тварину'))
 {{-- Сердечко «в обрані». Стан береться зі сховища Alpine $store.favorites (браузер для гостя, база для користувача). --}}
 <button type="button"
         x-data
         x-on:click.prevent.stop="$store.favorites.toggle({{ $animalId }})"
         x-bind:aria-pressed="$store.favorites.has({{ $animalId }}) ? 'true' : 'false'"
-        x-bind:aria-label="$store.favorites.has({{ $animalId }}) ? 'Прибрати {{ $name }} з обраних' : 'Додати {{ $name }} в обрані'"
-        x-bind:title="$store.favorites.has({{ $animalId }}) ? 'В обраних' : 'Додати в обрані'"
+        x-bind:aria-label="$store.favorites.has({{ $animalId }}) ? @js(__('Прибрати :name з обраних', ['name' => $name])) : @js(__('Додати :name в обрані', ['name' => $name]))"
+        x-bind:title="$store.favorites.has({{ $animalId }}) ? @js(__('В обраних')) : @js(__('Додати в обрані'))"
         {{ $attributes->class([
             'fav-btn inline-flex items-center justify-center gap-2 font-semibold transition-transform active:scale-90',
             'size-11 rounded-full bg-card/85 backdrop-blur shadow hover:bg-card' => ! $large,
@@ -17,6 +18,6 @@
               x-bind:fill="$store.favorites.has({{ $animalId }}) ? 'currentColor' : 'none'"/>
     </svg>
     @if ($large)
-        <span x-text="$store.favorites.has({{ $animalId }}) ? 'В обраних' : 'В обрані'">В обрані</span>
+        <span x-text="$store.favorites.has({{ $animalId }}) ? @js(__('В обраних')) : @js(__('В обрані'))">{{ __('В обрані') }}</span>
     @endif
 </button>

@@ -5,11 +5,12 @@
 ])
 @php
     $shelter = \App\Models\ShelterSetting::current();
-    $pageTitle = $title ? $title.' – '.$shelter->name : $shelter->name.' – '.($shelter->tagline ?? 'притулок для тварин');
-    $pageDescription = $description ?? 'Знайдіть друга в притулку «'.$shelter->name.'»: каталог котів і собак, які шукають дім, та анкета на прилаштування без реєстрації.';
+    $brand = __($shelter->name);
+    $pageTitle = $title ? $title.' – '.$brand : $brand.' – '.__($shelter->tagline ?? 'притулок для тварин');
+    $pageDescription = $description ?? __('Знайдіть друга в притулку «:name»: каталог котів і собак, які шукають дім, та анкета на прилаштування без реєстрації.', ['name' => $brand]);
 @endphp
 <!DOCTYPE html>
-<html lang="uk">
+<html lang="{{ app()->getLocale() }}">
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -17,7 +18,8 @@
     <meta name="description" content="{{ $pageDescription }}">
     <link rel="canonical" href="{{ url()->current() }}">
     <meta property="og:type" content="website">
-    <meta property="og:site_name" content="{{ $shelter->name }}">
+    <meta property="og:locale" content="{{ app()->getLocale() === 'en' ? 'en_US' : 'uk_UA' }}">
+    <meta property="og:site_name" content="{{ $brand }}">
     <meta property="og:title" content="{{ $pageTitle }}">
     <meta property="og:description" content="{{ $pageDescription }}">
     <meta property="og:url" content="{{ url()->current() }}">
@@ -48,33 +50,33 @@
     @livewireStyles
 </head>
 <body class="min-h-screen flex flex-col">
-<a href="#main" class="sr-only focus:not-sr-only focus:absolute focus:top-2 focus:left-2 btn-primary">Перейти до змісту</a>
+<a href="#main" class="sr-only focus:not-sr-only focus:absolute focus:top-2 focus:left-2 btn-primary">{{ __('Перейти до змісту') }}</a>
 
 <header class="border-b border-line bg-bg" x-data="{ open: false }">
     <div class="mx-auto max-w-6xl px-6 py-4 flex flex-wrap items-center justify-between gap-4">
         {{-- Логотип: велика лапка, назва капсом і підпис притулку одним блоком --}}
-        <a href="{{ route('home') }}" class="flex items-center gap-3 group" aria-label="{{ $shelter->name }} – на головну">
+        <a href="{{ route('home') }}" class="flex items-center gap-3 group" aria-label="{{ $brand }} – {{ __('на головну') }}">
             <x-icon.paw class="size-12 shrink-0" />
             <span class="flex flex-col leading-tight">
-                <span class="font-display font-extrabold text-2xl uppercase tracking-wider text-primary">{{ $shelter->name }}</span>
+                <span class="font-display font-extrabold text-2xl uppercase tracking-wider text-primary">{{ $brand }}</span>
                 @if ($shelter->tagline)
-                    <span class="hidden sm:block lg:hidden xl:block text-sm text-muted">{{ $shelter->tagline }}</span>
+                    <span class="hidden sm:block lg:hidden xl:block text-sm text-muted">{{ __($shelter->tagline) }}</span>
                 @endif
             </span>
         </a>
 
-        <button type="button" class="lg:hidden btn-ghost px-3" x-on:click="open = !open" x-bind:aria-expanded="open" aria-controls="main-nav" aria-label="Меню">
+        <button type="button" class="lg:hidden btn-ghost px-3" x-on:click="open = !open" x-bind:aria-expanded="open" aria-controls="main-nav" aria-label="{{ __('Меню') }}">
             <svg class="size-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M4 7h16M4 12h16M4 17h16"/></svg>
         </button>
 
-        <nav id="main-nav" aria-label="Головне меню"
+        <nav id="main-nav" aria-label="{{ __('Головне меню') }}"
              class="w-full lg:w-auto hidden lg:flex flex-col lg:flex-row gap-1 lg:gap-5 xl:gap-6 font-medium"
              x-bind:class="open && 'max-lg:flex'">
-            <a href="{{ route('animals.index') }}" @class(['py-2', 'text-primary font-semibold' => request()->routeIs('animals.*') && ! request('species')])>Знайти друга</a>
-            <a href="{{ route('animals.index', ['species' => 'cat']) }}" @class(['py-2', 'text-primary font-semibold' => request('species') === 'cat'])>Котики</a>
-            <a href="{{ route('animals.index', ['species' => 'dog']) }}" @class(['py-2', 'text-primary font-semibold' => request('species') === 'dog'])>Песики</a>
-            <a href="{{ route('blog.index') }}" @class(['py-2', 'text-primary font-semibold' => request()->routeIs('blog.*')])>Блог</a>
-            <a href="{{ route('home') }}#help" class="py-2">Як допомогти</a>
+            <a href="{{ route('animals.index') }}" @class(['py-2', 'text-primary font-semibold' => request()->routeIs('animals.*') && ! request('species')])>{{ __('Знайти друга') }}</a>
+            <a href="{{ route('animals.index', ['species' => 'cat']) }}" @class(['py-2', 'text-primary font-semibold' => request('species') === 'cat'])>{{ __('Котики') }}</a>
+            <a href="{{ route('animals.index', ['species' => 'dog']) }}" @class(['py-2', 'text-primary font-semibold' => request('species') === 'dog'])>{{ __('Песики') }}</a>
+            <a href="{{ route('blog.index') }}" @class(['py-2', 'text-primary font-semibold' => request()->routeIs('blog.*')])>{{ __('Блог') }}</a>
+            <a href="{{ route('home') }}#help" class="py-2">{{ __('Як допомогти') }}</a>
             <div class="flex flex-wrap gap-2 pt-2 lg:hidden">
                 @include('components.partials.auth-links')
             </div>
@@ -90,7 +92,7 @@
     <div role="status" class="mx-auto max-w-6xl w-full px-6 pt-6">
         @if (session('celebrate'))
             <div class="relative rounded-2xl bg-success-soft text-success px-5 py-3 font-medium flex items-center gap-4">
-                <span class="relative size-16 shrink-0"><x-confetti :count="14" /><x-mascot.cheer class="lapa-pop relative size-full" label="Лапа радіє" /></span>
+                <span class="relative size-16 shrink-0"><x-confetti :count="14" /><x-mascot.cheer class="lapa-pop relative size-full" label="{{ __('Лапа радіє') }}" /></span>
                 <span>{{ session('status') }}</span>
             </div>
         @else
@@ -106,27 +108,27 @@
 <footer class="bg-ink text-bg mt-16">
     <div class="mx-auto max-w-6xl px-6 py-12 flex flex-wrap justify-between gap-8">
         <div class="flex flex-col gap-2 max-w-sm">
-            <span class="font-display font-extrabold text-xl uppercase tracking-wider">{{ $shelter->name }}</span>
-            @if ($shelter->tagline)<span class="opacity-85">{{ $shelter->tagline }}</span>@endif
+            <span class="font-display font-extrabold text-xl uppercase tracking-wider">{{ $brand }}</span>
+            @if ($shelter->tagline)<span class="opacity-85">{{ __($shelter->tagline) }}</span>@endif
             <span class="opacity-85">
-                @if ($shelter->address){{ $shelter->address }}<br>@endif
+                @if ($shelter->address){{ __($shelter->address) }}<br>@endif
                 @if ($shelter->phone)<a href="tel:{{ preg_replace('/\s+/', '', $shelter->phone) }}" class="hover:underline">{{ $shelter->phone }}</a>@endif
                 @if ($shelter->email) · <a href="mailto:{{ $shelter->email }}" class="hover:underline">{{ $shelter->email }}</a>@endif
             </span>
         </div>
         <div class="flex flex-col gap-8">
-            <nav aria-label="Нижнє меню" class="flex flex-wrap gap-6">
-                <a href="{{ route('animals.index') }}" class="hover:underline">Знайти друга</a>
-                <a href="{{ route('blog.index') }}" class="hover:underline">Блог</a>
-                <a href="{{ route('privacy') }}" class="hover:underline">Політика конфіденційності</a>
+            <nav aria-label="{{ __('Нижнє меню') }}" class="flex flex-wrap gap-6">
+                <a href="{{ route('animals.index') }}" class="hover:underline">{{ __('Знайти друга') }}</a>
+                <a href="{{ route('blog.index') }}" class="hover:underline">{{ __('Блог') }}</a>
+                <a href="{{ route('privacy') }}" class="hover:underline">{{ __('Політика конфіденційності') }}</a>
             </nav>
             @if ($socials = $shelter->socialLinks())
                 <div class="flex flex-col gap-3">
-                    <span class="font-semibold">Слідкуй за нами</span>
+                    <span class="font-semibold">{{ __('Слідкуй за нами') }}</span>
                     <ul class="flex flex-wrap gap-3">
                         @foreach ($socials as $network => $link)
                             <li>
-                                <a href="{{ $link['url'] }}" target="_blank" rel="noopener" aria-label="{{ $link['label'] }} притулку"
+                                <a href="{{ $link['url'] }}" target="_blank" rel="noopener" aria-label="{{ $link['label'] }} {{ __('притулку') }}"
                                    class="size-12 rounded-full bg-sun text-ink flex items-center justify-center transition-transform hover:-translate-y-0.5 hover:bg-card">
                                     <x-icon.social :network="$network" class="size-6" />
                                 </a>

@@ -17,12 +17,12 @@ enum ApplicationStatus: string
     public function label(): string
     {
         return match ($this) {
-            self::New => 'Нова',
-            self::InProgress => 'В роботі',
-            self::MeetingScheduled => 'Знайомство призначено',
-            self::Adopted => 'Прилаштовано',
-            self::Declined => 'Відмовлено',
-            self::Closed => 'Закрито',
+            self::New => __('Нова'),
+            self::InProgress => __('В роботі'),
+            self::MeetingScheduled => __('Знайомство призначено'),
+            self::Adopted => __('Прилаштовано'),
+            self::Declined => __('Відмовлено'),
+            self::Closed => __('Закрито'),
         };
     }
 

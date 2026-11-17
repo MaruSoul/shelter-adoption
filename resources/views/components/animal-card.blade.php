@@ -6,18 +6,18 @@
             <img src="{{ $animal->coverPhoto->thumbUrl() }}" alt="{{ $animal->coverPhoto->alt ?? $animal->name }}" loading="lazy" decoding="async" width="600" height="450" class="size-full object-cover card-photo">
         @endif
         @if ($animal->isFromVolunteer())
-            <span class="chip absolute left-2 top-2 sm:left-3 sm:top-3 max-w-[calc(100%-3.5rem)] px-2 sm:px-3 bg-sun-soft text-accent text-[11px] sm:text-xs border border-sun/60"><span class="sm:hidden">Від волонтера</span><span class="hidden sm:inline">Розміщено волонтером</span></span>
+            <span class="chip absolute left-2 top-2 sm:left-3 sm:top-3 max-w-[calc(100%-3.5rem)] px-2 sm:px-3 bg-sun-soft text-accent text-[11px] sm:text-xs border border-sun/60"><span class="sm:hidden">{{ __('Від волонтера') }}</span><span class="hidden sm:inline">{{ __('Розміщено волонтером') }}</span></span>
         @endif
         @if ($animal->status === \App\Enums\AnimalStatus::Adopted)
-            <span class="chip absolute left-2 top-2 sm:left-3 sm:top-3 px-2 sm:px-3 bg-success-soft text-success text-[11px] sm:text-xs">Вже вдома</span>
+            <span class="chip absolute left-2 top-2 sm:left-3 sm:top-3 px-2 sm:px-3 bg-success-soft text-success text-[11px] sm:text-xs">{{ __('Вже вдома') }}</span>
         @endif
     </div>
     <div class="p-3 pb-4 sm:p-4 sm:pb-5 flex flex-col gap-1 sm:gap-2">
         <div class="flex items-center justify-between gap-2">
             <span class="font-display font-extrabold text-lg sm:text-xl leading-tight group-hover:text-primary truncate">{{ $animal->name }}</span>
-            <span class="chip bg-surface text-xs hidden sm:inline-flex">{{ $animal->species->name }}</span>
+            <span class="chip bg-surface text-xs hidden sm:inline-flex">{{ __($animal->species->name) }}</span>
         </div>
-        <span class="text-xs sm:text-sm text-muted">{{ $animal->ageLabel() }} · {{ $animal->sex->label() }}<span class="hidden sm:inline"> · {{ $animal->locality->name }}</span></span>
+        <span class="text-xs sm:text-sm text-muted">{{ $animal->ageLabel() }} · {{ $animal->sex->label() }}<span class="hidden sm:inline"> · {{ \App\Support\Ukrainian::place($animal->locality->name) }}</span></span>
     </div>
 </a>
 @if ($animal->isPublic())

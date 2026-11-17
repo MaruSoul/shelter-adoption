@@ -42,10 +42,10 @@ trait ManagesAnimalPhotos
             'newUploads' => ['array', 'max:'.$left],
             'newUploads.*' => ['image', 'mimes:jpeg,jpg,png,webp', 'max:10240'],
         ], [
-            'newUploads.max' => $left === 0 ? 'Більше фото додати не можна.' : 'Можна додати ще не більше :max фото.',
-            'newUploads.*.max' => 'Кожне фото має бути не більшим за 10 МБ.',
-            'newUploads.*.mimes' => 'Підтримуються лише JPEG, PNG і WebP.',
-            'newUploads.*.image' => 'Файл має бути зображенням.',
+            'newUploads.max' => $left === 0 ? __('Більше фото додати не можна.') : __('Можна додати ще не більше :max фото.'),
+            'newUploads.*.max' => __('Кожне фото має бути не більшим за 10 МБ.'),
+            'newUploads.*.mimes' => __('Підтримуються лише JPEG, PNG і WebP.'),
+            'newUploads.*.image' => __('Файл має бути зображенням.'),
         ]);
 
         $this->uploads = [...$this->uploads, ...$this->newUploads];
@@ -62,10 +62,10 @@ trait ManagesAnimalPhotos
     public function updatedUploads(): void
     {
         $this->validate($this->photoRules(), [
-            'uploads.max' => 'Можна додати ще не більше :max фото.',
-            'uploads.*.max' => 'Кожне фото має бути не більшим за 10 МБ.',
-            'uploads.*.mimes' => 'Підтримуються лише JPEG, PNG і WebP.',
-            'uploads.*.image' => 'Файл має бути зображенням.',
+            'uploads.max' => __('Можна додати ще не більше :max фото.'),
+            'uploads.*.max' => __('Кожне фото має бути не більшим за 10 МБ.'),
+            'uploads.*.mimes' => __('Підтримуються лише JPEG, PNG і WebP.'),
+            'uploads.*.image' => __('Файл має бути зображенням.'),
         ]);
     }
 
