@@ -5,8 +5,9 @@
 ])
 @php
     $shelter = \App\Models\ShelterSetting::current();
-    $brand = __($shelter->name);
-    $pageTitle = $title ? $title.' – '.$brand : $brand.' – '.__($shelter->tagline ?? 'притулок для тварин');
+    $brand = $shelter->tr('name');
+    $tagline = $shelter->tr('tagline');
+    $pageTitle = $title ? $title.' – '.$brand : $brand.' – '.($tagline ?? __('притулок для тварин'));
     $pageDescription = $description ?? __('Знайдіть друга в притулку «:name»: каталог котів і собак, які шукають дім, та анкета на прилаштування без реєстрації.', ['name' => $brand]);
 @endphp
 <!DOCTYPE html>
@@ -59,8 +60,8 @@
             <x-icon.paw class="size-12 shrink-0" />
             <span class="flex flex-col leading-tight">
                 <span class="font-display font-extrabold text-2xl uppercase tracking-wider text-primary">{{ $brand }}</span>
-                @if ($shelter->tagline)
-                    <span class="hidden sm:block lg:hidden xl:block text-sm text-muted">{{ __($shelter->tagline) }}</span>
+                @if ($tagline)
+                    <span class="hidden sm:block lg:hidden xl:block text-sm text-muted">{{ $tagline }}</span>
                 @endif
             </span>
         </a>
@@ -72,9 +73,7 @@
         <nav id="main-nav" aria-label="{{ __('Головне меню') }}"
              class="w-full lg:w-auto hidden lg:flex flex-col lg:flex-row gap-1 lg:gap-5 xl:gap-6 font-medium"
              x-bind:class="open && 'max-lg:flex'">
-            <a href="{{ route('animals.index') }}" @class(['py-2', 'text-primary font-semibold' => request()->routeIs('animals.*') && ! request('species')])>{{ __('Знайти друга') }}</a>
-            <a href="{{ route('animals.index', ['species' => 'cat']) }}" @class(['py-2', 'text-primary font-semibold' => request('species') === 'cat'])>{{ __('Котики') }}</a>
-            <a href="{{ route('animals.index', ['species' => 'dog']) }}" @class(['py-2', 'text-primary font-semibold' => request('species') === 'dog'])>{{ __('Песики') }}</a>
+            <a href="{{ route('animals.index') }}" @class(['py-2', 'text-primary font-semibold' => request()->routeIs('animals.*')])>{{ __('Знайти друга') }}</a>
             <a href="{{ route('blog.index') }}" @class(['py-2', 'text-primary font-semibold' => request()->routeIs('blog.*')])>{{ __('Блог') }}</a>
             <a href="{{ route('home') }}#help" class="py-2">{{ __('Як допомогти') }}</a>
             <div class="flex flex-wrap gap-2 pt-2 lg:hidden">
@@ -109,9 +108,9 @@
     <div class="mx-auto max-w-6xl px-6 py-12 flex flex-wrap justify-between gap-8">
         <div class="flex flex-col gap-2 max-w-sm">
             <span class="font-display font-extrabold text-xl uppercase tracking-wider">{{ $brand }}</span>
-            @if ($shelter->tagline)<span class="opacity-85">{{ __($shelter->tagline) }}</span>@endif
+            @if ($tagline)<span class="opacity-85">{{ $tagline }}</span>@endif
             <span class="opacity-85">
-                @if ($shelter->address){{ __($shelter->address) }}<br>@endif
+                @if ($address = $shelter->tr('address')){{ $address }}<br>@endif
                 @if ($shelter->phone)<a href="tel:{{ preg_replace('/\s+/', '', $shelter->phone) }}" class="hover:underline">{{ $shelter->phone }}</a>@endif
                 @if ($shelter->email) · <a href="mailto:{{ $shelter->email }}" class="hover:underline">{{ $shelter->email }}</a>@endif
             </span>

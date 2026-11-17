@@ -3,8 +3,9 @@
         <a href="{{ route('cabinet') }}" class="font-semibold text-primary hover:underline">{{ __('← Кабінет') }}</a>
         <h1 class="text-4xl">{{ $animal->exists ? __('Редагування картки') : __('Розмістити знайдену тварину') }}</h1>
         <p class="text-muted">{{ __('Картка зʼявиться в каталозі з позначкою «Розміщено волонтером» після перевірки адміністратором притулку.') }}</p>
+        <p class="text-sm text-muted">{{ __('Англійський переклад необовʼязковий: якщо ви його не додасте, це зробить адміністратор притулку.') }}</p>
     </div>
-    <form wire:submit="save" class="card p-6 md:p-8 flex flex-col gap-5" novalidate>
+    <form wire:submit="save" class="card p-6 md:p-8 flex flex-col gap-5" novalidate data-bi-scope>
         @include('livewire.partials.animal-fields')
         @include('livewire.partials.photo-manager')
         <button type="submit" class="btn-primary self-start min-h-12 px-8" wire:loading.attr="disabled">

@@ -19,7 +19,7 @@ class ApplicationReceivedMail extends Mailable implements ShouldQueue
 
     public function envelope(): Envelope
     {
-        return new Envelope(subject: __('Ми отримали вашу анкету на :name', ['name' => $this->application->animal->name]));
+        return new Envelope(subject: __('Ми отримали вашу анкету на :name', ['name' => $this->application->animal->display_name]));
     }
 
     public function content(): Content

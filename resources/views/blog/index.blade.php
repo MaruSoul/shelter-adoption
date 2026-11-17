@@ -10,9 +10,6 @@
                 <a href="{{ route('blog.index', ['rubric' => $category->slug]) }}" @class(['btn border-[1.5px]', 'bg-primary text-primary-ink border-primary' => $current?->is($category), 'bg-card border-line' => ! $current?->is($category)]) @if($current?->is($category)) aria-current="page" @endif>{{ __($category->name) }}</a>
             @endforeach
         </nav>
-        @if (app()->getLocale() !== 'uk' && $posts->isNotEmpty())
-            <p class="text-sm text-muted">{{ __('Articles are available in Ukrainian only.') }}</p>
-        @endif
         @if ($posts->isEmpty())
             <p class="card p-8 text-muted">{{ __('У цій рубриці поки немає статей.') }}</p>
         @else

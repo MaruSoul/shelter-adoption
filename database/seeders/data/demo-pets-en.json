@@ -1,0 +1,216 @@
+{
+    "_note": "Англійська версія демонстраційних тварин (ключ – папка в database/seeders/photos/pets). Умови прилаштування в демо-даних складені з кількох типових речень, тому перекладаються за таблицею adoption_sentences.",
+    "adoption_sentences": {
+        "Прилаштування після знайомства та співбесіди з опікуном.": "Adoption follows a meeting and an interview with the foster carer.",
+        "Утримання вдома, без самовигулу; захисні сітки на вікнах, кігтеточка й переноска.": "Indoor living only, no unsupervised outdoor access; safety nets on the windows, a scratching post and a carrier.",
+        "Проживання в оселі, без ланцюга; щоденні прогулянки, надійна амуніція та гуманне навчання.": "Living indoors, never on a chain; daily walks, secure gear and humane training.",
+        "Готовність до ветеринарного догляду та погодження подальшого зв’язку.": "Willingness to provide veterinary care and to keep in touch with the shelter afterwards.",
+        "Потрібен регулярний догляд за довгою шерстю.": "Regular grooming of the long coat is required.",
+        "Потрібен час на активні прогулянки та розумові заняття.": "Time for active walks and mental exercise is required."
+    },
+    "pets": {
+        "cats/1": {
+            "name": "Felix",
+            "story": "After his previous carers moved away, Felix found a temporary home with a volunteer. We are looking for a permanent home for him with room to play and rest.",
+            "behavior": "Sociable and curious, he likes watching people and playing with a teaser wand. He gets used to a new home gradually."
+        },
+        "cats/2": {
+            "name": "Leo",
+            "story": "Leo went into foster care when his family could no longer look after him. Now he is waiting to meet his new carers.",
+            "behavior": "Calm and attentive to people, he loves high perches and unhurried play. Needs regular brushing."
+        },
+        "cats/3": {
+            "name": "Mango",
+            "story": "Mango was spotted near an apartment block entrance and taken off the street. In this demo story, the search for his previous owners led nowhere.",
+            "behavior": "Lively and playful, he is fascinated by boxes and toys. After an active game he happily rests next to a person."
+        },
+        "cats/4": {
+            "name": "Pearl",
+            "story": "Pearl lives in foster care after her carer asked for help finding her a new family. We are looking for a cosy home for her.",
+            "behavior": "Gentle, she enjoys quiet company and a sleeping spot of her own. She doesn’t like being picked up before she has got to know someone."
+        },
+        "cats/5": {
+            "name": "Fudge",
+            "story": "Neighbours in a courtyard used to feed Fudge, and later a temporary shelter was found for her. The next step is a permanent family.",
+            "behavior": "Curious, she likes watching the world through the window and exploring new toys. She keeps her distance from strangers at first."
+        },
+        "cats/6": {
+            "name": "Martin",
+            "story": "Martin was taken from a courtyard into a foster flat. Now we are looking for a home with enough time for daily play.",
+            "behavior": "Active and eager to interact with people, he loves chasing a ball. Needs play breaks throughout the day."
+        },
+        "cats/7": {
+            "name": "Peach",
+            "story": "Peach is temporarily staying with friends of his previous family. Volunteers are helping to find him permanent owners.",
+            "behavior": "Even-tempered, he likes a predictable routine and quiet evenings together. Introductions to other animals should be gradual."
+        },
+        "cats/8": {
+            "name": "Bun",
+            "story": "Bun ended up in foster care after changes in her carers’ lives. We are looking for a home with a steady routine and attentive people.",
+            "behavior": "Affectionate, she loves soft beds and short play sessions. She is happy to spend time nearby but sometimes needs to be alone."
+        },
+        "cats/9": {
+            "name": "Sky",
+            "story": "Sky was found near a residential building and taken into temporary care. We are looking for a family ready for a patient introduction.",
+            "behavior": "Observant and sensitive to loud noises. Once settled, he is happy to socialise and enjoys interactive toys."
+        },
+        "cats/10": {
+            "name": "Malva",
+            "story": "Malva lives with a volunteer who is helping her find a new family. Her future home needs time to look after her long coat.",
+            "behavior": "Calm, she likes resting near people and choosing cosy spots. Needs gentle, regular brushing."
+        },
+        "cats/11": {
+            "name": "Plush",
+            "story": "Plush went to a foster family because his previous carers could no longer keep him. He is waiting for a cosy home of his own.",
+            "behavior": "Unhurried, he loves hiding places and watching the world from the windowsill. He feels more comfortable without sudden movements or forced cuddles."
+        },
+        "cats/12": {
+            "name": "Rudy",
+            "story": "Rudy was taken from a courtyard where he was looking for food and human attention. Now we are looking for a permanent home with a safe space to play.",
+            "behavior": "Energetic, he loves stretching, running and exploring the home. Responds well to shared play and attention."
+        },
+        "cats/13": {
+            "name": "Patch",
+            "story": "Patch turned up near a building where caring residents noticed her. Her foster carer is helping her find a family.",
+            "behavior": "Playful, she loves batting small toys around and lying on a soft blanket. She approaches new people at her own pace."
+        },
+        "cats/14": {
+            "name": "Mia",
+            "story": "Mia was taken into foster care from the courtyard of a high-rise. We are looking for a family who will give her a calm adjustment and daily attention.",
+            "behavior": "Attentive and curious, she likes sitting nearby and watching the household routine. Loves playing with a teaser wand."
+        },
+        "cats/15": {
+            "name": "Tiger",
+            "story": "Tiger came into volunteers’ care after living in a courtyard. Now we are looking for a safe home and a permanent family for him.",
+            "behavior": "Lively, he loves climbing and exploring new places. Needs a scratching post, toys and a chance to burn off energy."
+        },
+        "cats/16": {
+            "name": "Smoky",
+            "story": "Smoky was given temporary shelter after residents of a nearby building asked for help. We are looking for attentive carers and a calm home rhythm for her.",
+            "behavior": "Gentle but cautious with strangers at first. She loves cosy corners and short petting sessions."
+        },
+        "cats/17": {
+            "name": "Toffee",
+            "story": "Toffee is in home foster care while volunteers look for permanent carers. She needs a family ready to look after her fluffy coat.",
+            "behavior": "Calm and attentive, she happily rests near people. Enjoys unhurried play and quiet company."
+        },
+        "cats/18": {
+            "name": "Snowflake",
+            "story": "Snowflake is temporarily living with a carer after family changes for her previous owners. We are looking for a stable and cosy home for her.",
+            "behavior": "Reserved at first meeting, she values her personal space. Likes quiet places and a predictable routine."
+        },
+        "cats/19": {
+            "name": "Amber",
+            "story": "Amber was taken into foster care from a courtyard where people had been feeding him for a while. He is waiting for a family to share quiet evenings with.",
+            "behavior": "Unhurried, he likes dozing somewhere warm and watching people. Happy to join in short games."
+        },
+        "cats/20": {
+            "name": "Oscar",
+            "story": "Oscar was left in the temporary care of acquaintances, who asked for help finding him a home. We are looking for attentive permanent carers.",
+            "behavior": "Outgoing, he is curious about new things and happily greets people. Needs daily play and a quiet place to rest."
+        },
+        "dogs/1": {
+            "name": "Cookie",
+            "story": "Cookie is temporarily living with a carer after his previous family moved away. We are looking for people who will have time for walks and company.",
+            "behavior": "Lively, he loves exploring new routes and working for treats. Needs consistent training and daily activity."
+        },
+        "dogs/2": {
+            "name": "Luna",
+            "story": "Luna went into foster care after her previous carers’ circumstances changed. We are looking for an active family for her.",
+            "behavior": "Attentive to people and interested in games and training. Needs mental challenges and plenty of time for walks."
+        },
+        "dogs/3": {
+            "name": "Winston",
+            "story": "Winston was taken in temporarily by friends of a family who could no longer look after him. Now we are looking for a permanent home.",
+            "behavior": "Unhurried, he likes resting nearby and walking at a calm pace. Responds best to gentle, consistent training."
+        },
+        "dogs/4": {
+            "name": "Bruno",
+            "story": "Bruno is in home foster care while we look for new carers for him. It is important that the family has time for daily company.",
+            "behavior": "Friendly, he is interested in toys and loves being close to people. Needs moderate walks and quiet rest."
+        },
+        "dogs/5": {
+            "name": "Berta",
+            "story": "Berta was taken into care after her temporary carers asked for help. We are looking for a family who values calm companionship.",
+            "behavior": "Even-tempered, she loves unhurried walks and human attention. Meets new animals gradually."
+        },
+        "dogs/6": {
+            "name": "Fox",
+            "story": "Fox went into foster care when his previous carers asked for help finding him a new home. He needs active owners.",
+            "behavior": "Energetic, he loves ball games and walks in nature. Needs activities that combine movement and training."
+        },
+        "dogs/7": {
+            "name": "Ray",
+            "story": "Volunteers took Ray in temporarily after caring people reached out. Now we are looking for a family with time for an active lifestyle.",
+            "behavior": "Attentive and quick to join in shared activities. Loves scent games and needs regular mental stimulation."
+        },
+        "dogs/8": {
+            "name": "Nora",
+            "story": "Nora lives with a foster family who are helping her find permanent carers. She needs a home with a clear and friendly routine.",
+            "behavior": "Loves contact with people and active games. Her reaction to other animals should be checked during a supervised introduction."
+        },
+        "dogs/9": {
+            "name": "Jack",
+            "story": "Jack was taken into foster care after residents of a courtyard asked for help. We are looking for a family who loves being active together.",
+            "behavior": "Curious and lively, he loves following scents. Needs on-lead walks and training in calm behaviour."
+        },
+        "dogs/10": {
+            "name": "Cloudy",
+            "story": "Cloudy was given temporary shelter after she was spotted near residential buildings. Now we are looking for attentive permanent carers for her.",
+            "behavior": "Friendly and curious, she loves walks and playing with soft toys. Needs regular coat care."
+        },
+        "dogs/11": {
+            "name": "Bailey",
+            "story": "Bailey ended up in foster care because his previous family could no longer keep him. We are looking for a new home with daily walks.",
+            "behavior": "Friendly with people, he is passionate about scents and search games. Needs a secure lead on walks."
+        },
+        "dogs/12": {
+            "name": "Daisy",
+            "story": "Daisy was taken into temporary care after a family who couldn’t keep her asked for help. Now she is waiting to meet her future owners.",
+            "behavior": "Curious and active, she loves exploring new routes. Needs consistent training and treat-search games."
+        },
+        "dogs/13": {
+            "name": "Goldie",
+            "story": "Goldie is temporarily living with a volunteer who is helping her find a permanent family. Her new home will need time for company and coat care.",
+            "behavior": "Lively, she loves attention, walks and playing together. When meeting new people, she responds best without rush or pressure."
+        },
+        "dogs/14": {
+            "name": "Bagel",
+            "story": "Bagel stayed in temporary care after his carers’ circumstances changed. He is looking for a family for a calm home life.",
+            "behavior": "Loves being close to people, resting on his bed and playing in short bursts. Needs walks at a moderate pace."
+        },
+        "dogs/15": {
+            "name": "Archie",
+            "story": "Archie is staying with a foster carer while we look for a permanent family. He needs people ready to devote time to training and activity.",
+            "behavior": "Active and observant, he loves shared tasks and exploring the area. Needs a balance of activity and rest."
+        },
+        "dogs/16": {
+            "name": "Teddy",
+            "story": "Teddy went into home foster care after his previous carers asked for help. We are looking for calm and consistent carers for him.",
+            "behavior": "Independent, he values his personal space and an unhurried introduction. Needs regular brushing and calm handling."
+        },
+        "dogs/17": {
+            "name": "Pixel",
+            "story": "Pixel is temporarily living with a volunteer family. We are looking for active owners ready for training and daily activities.",
+            "behavior": "Playful and curious, he loves short training games. Needs a gradual introduction to new situations and enough rest."
+        },
+        "dogs/18": {
+            "name": "Sunny",
+            "story": "Sunny went into foster care when the search for a permanent family began. Her future owners will need time for training and adjustment.",
+            "behavior": "Curious, she happily plays and explores her surroundings. Needs consistent training, toys and a clear routine."
+        },
+        "dogs/19": {
+            "name": "Millie",
+            "story": "Millie is temporarily staying with a carer who asked for help finding her a home. She is looking for an attentive family for home life.",
+            "behavior": "Affectionate, she likes staying close to people and resting somewhere cosy. Settles into a new home with the help of a calm routine."
+        },
+        "dogs/20": {
+            "name": "Tosha",
+            "story": "Tosha went into foster care after the people looking after him temporarily asked for help. We are looking for a home with a gentle approach.",
+            "behavior": "Cautious at first meeting, he later happily stays close. Needs calm contact and gradual exposure to city sounds."
+        }
+    },
+    "locations": {
+        "Домашня перетримка у волонтера, Овідіополь.": "Home foster care with a volunteer, Ovidiopol."
+    }
+}

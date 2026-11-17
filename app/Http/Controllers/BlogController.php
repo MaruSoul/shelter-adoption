@@ -41,7 +41,7 @@ class BlogController extends Controller
 
         return view('blog.show', [
             'post' => $post,
-            'blocks' => app(PostBlocks::class)->forRender($post->blocks ?? []),
+            'blocks' => app(PostBlocks::class)->forRender($post->localizedBlocks()),
             'related' => $this->related($post),
         ]);
     }

@@ -6,7 +6,7 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>{{ __('Сторінку не знайдено') }} – {{ __($shelter->name) }}</title>
+    <title>{{ __('Сторінку не знайдено') }} – {{ $shelter->tr('name') }}</title>
     <meta name="robots" content="noindex">
     <link rel="icon" href="/favicon.svg" type="image/svg+xml">
     @vite(['resources/css/app.css'])
@@ -14,9 +14,9 @@
 <body class="min-h-screen flex flex-col">
     <header class="border-b border-line">
         <div class="mx-auto max-w-6xl px-6 py-4">
-            <a href="{{ route('home') }}" class="flex items-center gap-3" aria-label="{{ __($shelter->name) }} – {{ __('на головну') }}">
+            <a href="{{ route('home') }}" class="flex items-center gap-3" aria-label="{{ $shelter->tr('name') }} – {{ __('на головну') }}">
                 <x-icon.paw class="size-12 shrink-0" />
-                <span class="font-display font-extrabold text-2xl uppercase tracking-wider text-primary">{{ __($shelter->name) }}</span>
+                <span class="font-display font-extrabold text-2xl uppercase tracking-wider text-primary">{{ $shelter->tr('name') }}</span>
             </a>
         </div>
     </header>

@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Models\Concerns\HasTranslations;
 use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\Cache;
@@ -9,14 +10,35 @@ use Illuminate\Support\Facades\Cache;
 /**
  * Налаштування притулку зберігаються одним рядком і кешуються (FR-16).
  */
-#[Fillable(['name', 'tagline', 'address', 'phone', 'email', 'notification_email', 'instagram_url', 'facebook_url', 'telegram_url', 'tiktok_url', 'youtube_url'])]
+#[Fillable(['name', 'name_en', 'tagline', 'tagline_en', 'address', 'address_en', 'phone', 'email', 'notification_email', 'instagram_url', 'facebook_url', 'telegram_url', 'tiktok_url', 'youtube_url'])]
 class ShelterSetting extends Model
 {
+    use HasTranslations {
+        tr as private translated;
+    }
+
+    /** Публічні тексти, які мають англійську пару. */
+    public const TRANSLATABLE = ['name', 'tagline', 'address'];
+
     private const CACHE_KEY = 'shelter_settings';
 
     protected static function booted(): void
     {
         static::saved(fn () => Cache::forget(self::CACHE_KEY));
+    }
+
+    /**
+     * Як у трейті, але для англійської без власного перекладу ще пробуємо файл перекладів lang/en.json:
+     * так сайт показує «Domivka», навіть поки адміністратор не заповнив англійські поля налаштувань.
+     */
+    public function tr(string $field, ?string $locale = null): ?string
+    {
+        $locale ??= app()->getLocale();
+        if ($locale === 'en' && blank($this->getAttribute($field.'_en')) && filled($this->getAttribute($field))) {
+            return __($this->getAttribute($field), [], 'en');
+        }
+
+        return $this->translated($field, $locale);
     }
 
     /** Мережі для блоку «Слідкуй за нами»: поле → назва. Порядок тут = порядок кнопок. */

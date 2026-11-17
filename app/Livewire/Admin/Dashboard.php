@@ -19,6 +19,8 @@ class Dashboard extends Component
                 ['На модерації', Animal::where('status', AnimalStatus::Moderation)->count(), route('admin.moderation'), true],
                 ['Шукають дім', Animal::where('status', AnimalStatus::Available)->count(), route('admin.animals.index', ['status' => 'available']), false],
                 ['Прилаштовано за 30 днів', Animal::where('status', AnimalStatus::Adopted)->where('adopted_at', '>=', now()->subDays(30))->count(), route('admin.animals.index', ['status' => 'adopted']), false],
+                // Картки в каталозі й на модерації, які англійська версія сайту показала б українською
+                ['Без англійського перекладу', Animal::whereIn('status', [AnimalStatus::Available, AnimalStatus::Moderation])->missingTranslation()->count(), route('admin.animals.index', ['translation' => 'missing']), false],
             ],
             'latest' => AdoptionApplication::with('animal')->where('status', ApplicationStatus::New)->latest()->take(6)->get(),
         ])->title('Панель притулку');

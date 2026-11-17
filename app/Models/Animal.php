@@ -7,9 +7,11 @@ use App\Enums\AnimalSource;
 use App\Enums\AnimalStatus;
 use App\Enums\ApplicationStatus;
 use App\Enums\Sex;
+use App\Models\Concerns\HasTranslations;
 use App\Support\Ukrainian;
 use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -19,12 +21,16 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Support\Str;
 
 #[Fillable([
-    'species_id', 'breed_id', 'color_id', 'locality_id', 'name', 'sex', 'birth_date',
-    'is_sterilized', 'is_vaccinated', 'story', 'behavior', 'adoption_terms', 'current_location',
+    'species_id', 'breed_id', 'color_id', 'locality_id', 'name', 'name_en', 'sex', 'birth_date',
+    'is_sterilized', 'is_vaccinated', 'story', 'story_en', 'behavior', 'behavior_en',
+    'adoption_terms', 'adoption_terms_en', 'current_location', 'current_location_en',
 ])]
 class Animal extends Model
 {
-    use HasFactory, SoftDeletes;
+    use HasFactory, HasTranslations, SoftDeletes;
+
+    /** Тексти картки, які адміністратор заповнює двома мовами. Кличка має окремий запасний варіант – транслітерацію. */
+    public const TRANSLATABLE = ['story', 'behavior', 'adoption_terms'];
 
     protected function casts(): array
     {
@@ -117,12 +123,44 @@ class Animal extends Model
         return $this->source === AnimalSource::Volunteer;
     }
 
+    /**
+     * Кличка мовою відвідувача: англійська, якщо адміністратор її вписав,
+     * інакше – транслітерація української (Фелікс → Feliks).
+     */
+    protected function displayName(): Attribute
+    {
+        return Attribute::get(function (): string {
+            if (app()->getLocale() !== 'en') {
+                return (string) $this->name;
+            }
+
+            return filled($this->name_en) ? $this->name_en : Ukrainian::transliterate((string) $this->name);
+        });
+    }
+
+    /** Чи є в картці текст, який ще не перекладено англійською. */
+    public function needsTranslation(): bool
+    {
+        return $this->missingTranslations() !== [];
+    }
+
+    /** Картки, де є український текст без англійського (фільтр в адмінці). */
+    public function scopeMissingTranslation(Builder $query): void
+    {
+        $query->where(function ($q) {
+            foreach (self::TRANSLATABLE as $field) {
+                $q->orWhere(fn ($q) => $q->whereNotNull($field)->where($field, '!=', '')
+                    ->where(fn ($q) => $q->whereNull($field.'_en')->orWhere($field.'_en', '')));
+            }
+        });
+    }
+
     /** «Ліра вже знайшла дім» / «Граф вже знайшов дім». */
     public function foundHomePhrase(): string
     {
         return $this->sex === Sex::Female
-            ? __(':name вже знайшла дім', ['name' => $this->name])
-            : __(':name вже знайшов дім', ['name' => $this->name]);
+            ? __(':name вже знайшла дім', ['name' => $this->display_name])
+            : __(':name вже знайшов дім', ['name' => $this->display_name]);
     }
 
     public function ageLabel(): string

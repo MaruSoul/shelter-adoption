@@ -2,12 +2,12 @@
     <aside class="card overflow-hidden grow basis-72 max-w-sm">
         <div class="aspect-[4/3] bg-tint-1">
             @if ($animal->coverPhoto)
-                <img src="{{ $animal->coverPhoto->thumbUrl() }}" alt="{{ $animal->coverPhoto->alt ?? $animal->name }}" class="size-full object-cover">
+                <img src="{{ $animal->coverPhoto->thumbUrl() }}" alt="{{ $animal->coverPhoto->altFor($animal) }}" class="size-full object-cover">
             @endif
         </div>
         <div class="p-5 flex flex-col gap-1.5">
             <span class="text-sm text-muted">{{ __('Ви подаєте анкету на') }}</span>
-            <span class="font-display font-extrabold text-2xl">{{ $animal->name }}</span>
+            <span class="font-display font-extrabold text-2xl">{{ $animal->display_name }}</span>
             <span class="text-sm text-muted">{{ __($animal->species->name) }} · {{ $animal->ageLabel() }} · {{ \App\Support\Ukrainian::place($animal->locality->name) }}</span>
             <a href="{{ route('animals.show', $animal) }}" class="mt-2 font-semibold text-primary hover:underline">{{ __('← Повернутися до сторінки') }}</a>
         </div>
@@ -104,7 +104,7 @@
                     <x-mascot.cheer class="lapa-pop relative w-44" label="{{ __('Лапа радіє разом із вами') }}" />
                 </div>
                 <h1 class="text-3xl md:text-4xl">{{ __('Дякуємо! Анкету отримано') }}</h1>
-                <p class="text-lg max-w-md"><strong>{{ $animal->name }}</strong> {{ __('уже чекає на знайомство з вами.') }}</p>
+                <p class="text-lg max-w-md"><strong>{{ $animal->display_name }}</strong> {{ __('уже чекає на знайомство з вами.') }}</p>
                 <p class="text-muted max-w-md">{{ __('Адміністратор притулку звʼяжеться з вами найближчим часом обраним способом. Копію анкети ми надіслали на :email.', ['email' => $email]) }}</p>
                 @guest
                     <div class="rounded-2xl bg-sun-soft p-5 flex flex-col items-center gap-2.5 max-w-md w-full mt-2">

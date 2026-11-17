@@ -1,6 +1,6 @@
 <div>
     <x-admin-nav />
-    <div class="mx-auto max-w-4xl px-6 py-8 flex flex-col gap-6">
+    <div class="mx-auto max-w-5xl px-6 py-8 flex flex-col gap-6" data-bi-scope>
         <a href="{{ route('admin.posts.index') }}" class="font-semibold text-primary hover:underline">← Усі статті</a>
         <div class="flex flex-wrap items-center justify-between gap-4">
             <div class="flex items-center gap-3">
@@ -18,16 +18,26 @@
         @endif
 
         @if ($preview)
-            <article class="card p-6 md:p-10 flex flex-col gap-5">
-                <h2 class="text-4xl">{{ $title ?: 'Без заголовка' }}</h2>
-                <x-post-blocks :blocks="$previewBlocks" />
-            </article>
+            <div class="flex flex-wrap items-center gap-3">
+                <span class="font-semibold">Мова перегляду:</span>
+                <div class="flex gap-1 rounded-full bg-surface p-1" role="radiogroup" aria-label="Мова перегляду">
+                    @foreach (['uk' => 'Українська', 'en' => 'English'] as $code => $name)
+                        <button type="button" role="radio" aria-checked="{{ $previewLocale === $code ? 'true' : 'false' }}" wire:click="$set('previewLocale', '{{ $code }}')"
+                                @class(['btn min-h-9', 'bg-card shadow-sm' => $previewLocale === $code, 'text-muted' => $previewLocale !== $code])>{{ $name }}</button>
+                    @endforeach
+                </div>
+                @if ($previewGaps > 0)
+                    <span class="chip bg-sun-soft text-accent">Без перекладу: {{ $previewGaps }} – відвідувачі побачать ці фрагменти українською</span>
+                @endif
+            </div>
+            {!! $previewHtml !!}
         @else
-            <section class="card p-6 flex flex-col gap-4">
-                <label class="label">Заголовок *
-                    <input type="text" wire:model.live.blur="title" class="field font-normal text-lg">
-                    @error('title')<span class="error">{{ $message }}</span>@enderror
-                </label>
+            <section class="card p-6 flex flex-col gap-5">
+                <div class="flex flex-wrap items-center justify-between gap-3">
+                    <p class="text-sm text-muted max-w-xl">Структура статті одна для обох мов: блоки, фото й картки тварин спільні, двома мовами пишеться лише текст.</p>
+                    <x-translation-meter />
+                </div>
+                <x-bilingual label="Заголовок" model="title" required live input-class="text-lg" />
                 <div class="grid gap-4 grid-cols-[repeat(auto-fit,minmax(220px,1fr))]">
                     <label class="label">Адреса сторінки *
                         <span class="flex items-center gap-1 font-normal"><span class="text-muted text-sm">/blog/</span><input type="text" wire:model="slug" class="field font-normal"></span>
@@ -41,10 +51,7 @@
                         @error('post_category_id')<span class="error">{{ $message }}</span>@enderror
                     </label>
                 </div>
-                <label class="label">Анонс <span class="font-normal text-sm text-muted">показується в картці статті й у пошуковиках</span>
-                    <textarea wire:model="excerpt" rows="2" maxlength="300" class="field font-normal py-3"></textarea>
-                    @error('excerpt')<span class="error">{{ $message }}</span>@enderror
-                </label>
+                <x-bilingual label="Анонс" model="excerpt" type="textarea" :rows="2" hint="показується в картці статті й у пошуковиках" />
                 <div class="flex flex-wrap items-center gap-4">
                     {{-- Нова обкладинка показується одразу, до збереження статті --}}
                     @if ($cover && method_exists($cover, 'isPreviewable') && $cover->isPreviewable())
@@ -79,24 +86,26 @@
 
                         @switch($block['type'])
                             @case('heading')
-                                <div class="flex flex-wrap gap-3">
-                                    <input type="text" wire:model="blocks.{{ $i }}.data.text" placeholder="Текст заголовка" class="field grow basis-72 font-display font-bold text-xl" aria-label="Текст заголовка">
-                                    <select wire:model="blocks.{{ $i }}.data.level" class="field w-auto" aria-label="Рівень заголовка"><option value="2">Розділ</option><option value="3">Підрозділ</option></select>
-                                </div>
+                                <x-bilingual model="blocks.{{ $i }}.data.text" placeholder="Текст заголовка" input-class="font-display font-bold text-xl" />
+                                <select wire:model="blocks.{{ $i }}.data.level" class="field w-auto self-start" aria-label="Рівень заголовка"><option value="2">Розділ</option><option value="3">Підрозділ</option></select>
                                 @break
                             @case('paragraph')
-                                <textarea wire:model="blocks.{{ $i }}.data.text" rows="4" placeholder="Текст абзацу" class="field py-3 resize-y" aria-label="Текст абзацу"></textarea>
+                                <x-bilingual model="blocks.{{ $i }}.data.text" type="textarea" :rows="5" placeholder="Текст абзацу" />
                                 @break
                             @case('quote')
-                                <textarea wire:model="blocks.{{ $i }}.data.text" rows="2" placeholder="Цитата" class="field py-3" aria-label="Цитата"></textarea>
-                                <input type="text" wire:model="blocks.{{ $i }}.data.author" placeholder="Автор (необовʼязково)" class="field" aria-label="Автор цитати">
+                                <x-bilingual model="blocks.{{ $i }}.data.text" type="textarea" :rows="2" placeholder="Цитата" />
+                                <x-bilingual model="blocks.{{ $i }}.data.author" placeholder="Автор (необовʼязково)" compact translit optional />
                                 @break
                             @case('list')
                                 <select wire:model="blocks.{{ $i }}.data.style" class="field w-auto self-start" aria-label="Вигляд списку"><option value="bullet">Маркований</option><option value="ordered">Нумерований</option></select>
+                                <div class="hidden md:grid grid-cols-2 gap-3 pr-12 text-sm font-semibold text-muted" aria-hidden="true">
+                                    <span class="bi-tag"><span class="bi-flag">UA</span>Українською</span>
+                                    <span class="bi-tag"><span class="bi-flag bi-flag-en">EN</span>Англійською</span>
+                                </div>
                                 @foreach ($block['data']['items'] as $j => $item)
-                                    <div class="flex gap-2" wire:key="b{{ $i }}-item-{{ $j }}">
-                                        <input type="text" wire:model="blocks.{{ $i }}.data.items.{{ $j }}" class="field" aria-label="Пункт {{ $j + 1 }}">
-                                        <button type="button" wire:click="removeListItem({{ $i }}, {{ $j }})" class="btn-ghost px-3 text-danger" aria-label="Видалити пункт">×</button>
+                                    <div class="flex gap-2 items-start" wire:key="b{{ $i }}-item-{{ $j }}">
+                                        <x-bilingual model="blocks.{{ $i }}.data.items.{{ $j }}" en-model="blocks.{{ $i }}.data.items_en.{{ $j }}" placeholder="Пункт {{ $j + 1 }}" compact class="grow" />
+                                        <button type="button" wire:click="removeListItem({{ $i }}, {{ $j }})" class="btn-ghost px-3 text-danger" aria-label="Видалити пункт {{ $j + 1 }}">×</button>
                                     </div>
                                 @endforeach
                                 <button type="button" wire:click="addListItem({{ $i }})" class="btn-ghost self-start">+ Пункт</button>
@@ -113,19 +122,23 @@
                                     <input type="file" wire:model="blockImages.{{ $i }}" accept="image/jpeg,image/png,image/webp" class="sr-only">
                                 </label>
                                 @error('blockImages.'.$i)<span class="error">{{ $message }}</span>@enderror
-                                <input type="text" wire:model="blocks.{{ $i }}.data.alt" placeholder="Опис зображення для незрячих *" class="field" aria-label="Опис зображення">
-                                <input type="text" wire:model="blocks.{{ $i }}.data.caption" placeholder="Підпис (необовʼязково)" class="field" aria-label="Підпис">
+                                <x-bilingual model="blocks.{{ $i }}.data.alt" placeholder="Опис зображення для незрячих *" compact />
+                                <x-bilingual model="blocks.{{ $i }}.data.caption" placeholder="Підпис (необовʼязково)" compact />
                                 @break
                             @case('animal')
                                 <select wire:model="blocks.{{ $i }}.data.animal_id" class="field" aria-label="Тварина">
                                     <option value="">Оберіть тварину з каталогу</option>
                                     @foreach ($animals as $a)<option value="{{ $a->id }}">{{ $a->name }}</option>@endforeach
                                 </select>
+                                <p class="text-sm text-muted">Картка тварини перекладається автоматично з її сторінки.</p>
                                 @break
                         @endswitch
 
-                        @foreach ($errors->get('blocks.'.$i.'.*') as $messages)
-                            @foreach ((array) $messages as $message)<span class="error">{{ $message }}</span>@endforeach
+                        {{-- Помилки текстових полів показує сама пара UA/EN; тут – решта (зображення, тварина, список) --}}
+                        @foreach ($errors->getMessages() as $key => $messages)
+                            @if (preg_match('/^blocks\.'.$i.'\.data\.(path|animal_id|items|level|style)$/', $key))
+                                @foreach ($messages as $message)<span class="error">{{ $message }}</span>@endforeach
+                            @endif
                         @endforeach
                         @error('blocks.'.$i)<span class="error">{{ $message }}</span>@enderror
                     </div>
@@ -140,7 +153,7 @@
             </section>
         @endif
 
-        <div class="flex flex-wrap gap-3 sticky bottom-0 bg-bg/90 backdrop-blur py-4 border-t border-line">
+        <div class="flex flex-wrap items-center gap-3 sticky bottom-0 bg-bg/90 backdrop-blur py-4 border-t border-line">
             <button type="button" wire:click="save('draft')" class="btn-outline min-h-12">Зберегти чернетку</button>
             @if ($post->exists && $post->isPublished())
                 <button type="button" wire:click="save('publish')" class="btn-primary min-h-12">Зберегти</button>
@@ -149,6 +162,7 @@
             @else
                 <button type="button" wire:click="save('publish')" class="btn-primary min-h-12">Опублікувати</button>
             @endif
+            @unless ($preview)<x-translation-meter class="ml-auto" />@endunless
         </div>
     </div>
 </div>

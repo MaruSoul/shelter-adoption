@@ -7,12 +7,15 @@
     </div>
     <div class="p-5 flex flex-col gap-2">
         <span class="text-sm font-semibold text-accent">{{ __($post->category->name) }}</span>
-        <span class="font-display font-extrabold text-xl leading-tight group-hover:text-primary">{{ $post->title }}</span>
+        <span class="font-display font-extrabold text-xl leading-tight group-hover:text-primary" @unless ($post->isShownInLocale('title')) lang="{{ app()->getLocale() === 'en' ? 'uk' : 'en' }}" @endunless>{{ $post->tr('title') }}</span>
         <span class="text-sm text-muted">
             @if ($post->published_at)
                 <time datetime="{{ $post->published_at->toDateString() }}">{{ $post->published_at->translatedFormat('j F Y') }}</time> ·
             @endif
             {{ __(':n хв', ['n' => $post->readingMinutes()]) }}
+            @if (app()->getLocale() === 'en' && $post->englishState() !== 'full')
+                · <span class="font-semibold">{{ $post->englishState() === 'none' ? __('in Ukrainian') : __('partly in Ukrainian') }}</span>
+            @endif
         </span>
     </div>
 </a>

@@ -29,17 +29,30 @@ class PostBlocks
         'animal' => 'Картка тварини',
     ];
 
+    /**
+     * Текстові поля кожного типу блоку, що мають англійську пару з суфіксом _en.
+     * Структура (порядок блоків, зображення, тварини) у статті одна для обох мов.
+     */
+    public const TEXT_FIELDS = [
+        'heading' => ['text'],
+        'paragraph' => ['text'],
+        'image' => ['alt', 'caption'],
+        'quote' => ['text', 'author'],
+        'list' => ['items'],
+        'animal' => [],
+    ];
+
     /** Порожній блок заданого типу – з нього конструктор починає редагування. */
     public static function blank(string $type): array
     {
         return [
             'type' => $type,
             'data' => match ($type) {
-                'heading' => ['text' => '', 'level' => 2],
-                'paragraph' => ['text' => ''],
-                'image' => ['path' => '', 'alt' => '', 'caption' => ''],
-                'quote' => ['text' => '', 'author' => ''],
-                'list' => ['style' => 'bullet', 'items' => ['']],
+                'heading' => ['text' => '', 'text_en' => '', 'level' => 2],
+                'paragraph' => ['text' => '', 'text_en' => ''],
+                'image' => ['path' => '', 'alt' => '', 'alt_en' => '', 'caption' => '', 'caption_en' => ''],
+                'quote' => ['text' => '', 'text_en' => '', 'author' => '', 'author_en' => ''],
+                'list' => ['style' => 'bullet', 'items' => [''], 'items_en' => ['']],
                 'animal' => ['animal_id' => null],
             },
         ];
@@ -80,6 +93,97 @@ class PostBlocks
         return $clean;
     }
 
+    /**
+     * Доповнює збережені блоки порожніми англійськими полями, щоб конструктор
+     * міг одразу показати пару «UA | EN» (статті, створені до появи англійської версії).
+     */
+    public static function withEnglishKeys(array $blocks): array
+    {
+        return array_map(function (array $block) {
+            foreach (self::TEXT_FIELDS[$block['type']] ?? [] as $field) {
+                if ($field === 'items') {
+                    $items = $block['data']['items'] ?? [];
+                    $en = array_values($block['data']['items_en'] ?? []);
+                    $block['data']['items_en'] = array_map(fn ($i) => (string) ($en[$i] ?? ''), array_keys($items));
+                } else {
+                    $block['data'][$field.'_en'] = (string) ($block['data'][$field.'_en'] ?? '');
+                    $block['data'][$field] = (string) ($block['data'][$field] ?? '');
+                }
+            }
+
+            return $block;
+        }, $blocks);
+    }
+
+    /**
+     * Підставляє в блоки текст потрібною мовою. Якщо перекладу немає, лишається український текст,
+     * а блок отримує позначку lang=uk (для екранних читачів і підказки відвідувачу).
+     */
+    public static function localize(array $blocks, string $locale): array
+    {
+        if ($locale !== 'en') {
+            return $blocks;
+        }
+
+        return array_map(function (array $block) {
+            $untranslated = false;
+            foreach (self::TEXT_FIELDS[$block['type']] ?? [] as $field) {
+                if ($field === 'items') {
+                    $en = $block['data']['items_en'] ?? [];
+                    foreach ($block['data']['items'] ?? [] as $i => $item) {
+                        if (filled($en[$i] ?? null)) {
+                            $block['data']['items'][$i] = $en[$i];
+                        } elseif (filled($item)) {
+                            $untranslated = true;
+                        }
+                    }
+
+                    continue;
+                }
+                if (filled($block['data'][$field.'_en'] ?? null)) {
+                    $block['data'][$field] = $block['data'][$field.'_en'];
+                } elseif (filled($block['data'][$field] ?? null)) {
+                    $untranslated = true;
+                }
+            }
+            if ($untranslated) {
+                $block['lang'] = 'uk';
+            }
+
+            return $block;
+        }, $blocks);
+    }
+
+    /**
+     * Скільки текстових фрагментів блоків має український текст і скільки з них перекладено.
+     *
+     * @return array{0: int, 1: int} [перекладено, усього]
+     */
+    public static function englishCoverage(array $blocks): array
+    {
+        $done = $total = 0;
+        foreach ($blocks as $block) {
+            foreach (self::TEXT_FIELDS[$block['type'] ?? ''] ?? [] as $field) {
+                if ($field === 'items') {
+                    foreach ($block['data']['items'] ?? [] as $i => $item) {
+                        if (filled($item)) {
+                            $total++;
+                            $done += (int) filled($block['data']['items_en'][$i] ?? null);
+                        }
+                    }
+
+                    continue;
+                }
+                if (filled($block['data'][$field] ?? null)) {
+                    $total++;
+                    $done += (int) filled($block['data'][$field.'_en'] ?? null);
+                }
+            }
+        }
+
+        return [$done, $total];
+    }
+
     /** Готує блоки до показу: підставляє адреси зображень і моделі тварин. */
     public function forRender(array $blocks): array
     {
@@ -100,18 +204,26 @@ class PostBlocks
     private function rules(string $type): array
     {
         return match ($type) {
-            'heading' => ['text' => ['required', 'string', 'max:160'], 'level' => ['required', 'integer', Rule::in([2, 3])]],
-            'paragraph' => ['text' => ['required', 'string', 'max:5000']],
+            'heading' => [
+                'text' => ['required', 'string', 'max:160'], 'text_en' => ['nullable', 'string', 'max:160'],
+                'level' => ['required', 'integer', Rule::in([2, 3])],
+            ],
+            'paragraph' => ['text' => ['required', 'string', 'max:5000'], 'text_en' => ['nullable', 'string', 'max:5000']],
             'image' => [
                 'path' => ['required', 'string', 'max:255', 'starts_with:posts/'],
-                'alt' => ['required', 'string', 'max:160'],
-                'caption' => ['nullable', 'string', 'max:200'],
+                'alt' => ['required', 'string', 'max:160'], 'alt_en' => ['nullable', 'string', 'max:160'],
+                'caption' => ['nullable', 'string', 'max:200'], 'caption_en' => ['nullable', 'string', 'max:200'],
             ],
-            'quote' => ['text' => ['required', 'string', 'max:600'], 'author' => ['nullable', 'string', 'max:100']],
+            'quote' => [
+                'text' => ['required', 'string', 'max:600'], 'text_en' => ['nullable', 'string', 'max:600'],
+                'author' => ['nullable', 'string', 'max:100'], 'author_en' => ['nullable', 'string', 'max:100'],
+            ],
             'list' => [
                 'style' => ['required', Rule::in(['bullet', 'ordered'])],
                 'items' => ['required', 'array', 'min:1', 'max:30'],
                 'items.*' => ['required', 'string', 'max:300'],
+                'items_en' => ['nullable', 'array', 'max:30'],
+                'items_en.*' => ['nullable', 'string', 'max:300'],
             ],
             'animal' => ['animal_id' => ['required', 'integer', Rule::exists('animals', 'id')]],
         };
@@ -120,15 +232,33 @@ class PostBlocks
     private function normalize(string $type, array $data): array
     {
         $trim = fn ($v) => is_string($v) ? trim($v) : $v;
+        // Порожній переклад не зберігаємо: на сайті тоді показується український текст
+        $opt = fn ($v) => (is_string($v) && trim($v) !== '') ? trim($v) : null;
 
-        return match ($type) {
-            'heading' => ['text' => $trim($data['text']), 'level' => (int) $data['level']],
-            'paragraph' => ['text' => $trim($data['text'])],
-            'image' => ['path' => $data['path'], 'alt' => $trim($data['alt']), 'caption' => $trim($data['caption'] ?? '') ?: null],
-            'quote' => ['text' => $trim($data['text']), 'author' => $trim($data['author'] ?? '') ?: null],
-            'list' => ['style' => $data['style'], 'items' => array_values(array_map($trim, $data['items']))],
+        $clean = match ($type) {
+            'heading' => ['text' => $trim($data['text']), 'text_en' => $opt($data['text_en'] ?? null), 'level' => (int) $data['level']],
+            'paragraph' => ['text' => $trim($data['text']), 'text_en' => $opt($data['text_en'] ?? null)],
+            'image' => [
+                'path' => $data['path'], 'alt' => $trim($data['alt']), 'alt_en' => $opt($data['alt_en'] ?? null),
+                'caption' => $opt($data['caption'] ?? null), 'caption_en' => $opt($data['caption_en'] ?? null),
+            ],
+            'quote' => [
+                'text' => $trim($data['text']), 'text_en' => $opt($data['text_en'] ?? null),
+                'author' => $opt($data['author'] ?? null), 'author_en' => $opt($data['author_en'] ?? null),
+            ],
+            'list' => (function () use ($data, $trim, $opt) {
+                $items = array_values(array_map($trim, $data['items']));
+                $en = array_values($data['items_en'] ?? []);
+                // Англійський пункт завжди стоїть під тим самим номером, що й український
+                $itemsEn = array_map(fn ($i) => $opt($en[$i] ?? null) ?? '', array_keys($items));
+
+                return ['style' => $data['style'], 'items' => $items, 'items_en' => array_filter($itemsEn) ? $itemsEn : null];
+            })(),
             'animal' => ['animal_id' => (int) $data['animal_id']],
         };
+
+        // Порожні переклади не зберігаємо, щоб JSON статей без англійської лишався таким, як був
+        return array_filter($clean, fn ($v, $k) => $v !== null || ! str_ends_with($k, '_en'), ARRAY_FILTER_USE_BOTH);
     }
 
     private function messages(): array
@@ -144,6 +274,8 @@ class PostBlocks
     private function attributes(): array
     {
         return ['text' => 'текст', 'level' => 'рівень', 'path' => 'зображення', 'alt' => 'опис зображення', 'caption' => 'підпис',
-            'author' => 'автор', 'style' => 'вигляд списку', 'items' => 'пункти', 'items.*' => 'пункт', 'animal_id' => 'тварина'];
+            'author' => 'автор', 'style' => 'вигляд списку', 'items' => 'пункти', 'items.*' => 'пункт', 'animal_id' => 'тварина',
+            'text_en' => 'текст (EN)', 'alt_en' => 'опис зображення (EN)', 'caption_en' => 'підпис (EN)', 'author_en' => 'автор (EN)',
+            'items_en.*' => 'пункт (EN)'];
     }
 }

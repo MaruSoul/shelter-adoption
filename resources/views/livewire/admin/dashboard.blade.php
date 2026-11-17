@@ -2,7 +2,7 @@
     <x-admin-nav />
     <div class="mx-auto max-w-6xl px-6 py-8 flex flex-col gap-8">
         <h1 class="text-4xl">Огляд</h1>
-        <div class="grid gap-4 grid-cols-[repeat(auto-fit,minmax(190px,1fr))]">
+        <div class="grid gap-4 grid-cols-2 sm:grid-cols-3 xl:grid-cols-6">
             @foreach ($stats as [$label, $value, $url, $urgent])
                 <a href="{{ $url }}" @class(['card card-lift p-5 flex flex-col gap-1 group hover:border-primary', 'border-sun bg-sun-soft' => $urgent && $value > 0])>
                     <span class="flex items-center justify-between gap-2 text-sm text-muted">{{ $label }}

@@ -35,9 +35,9 @@
                 <div class="grow basis-64 flex flex-col gap-2">
                     <div class="flex flex-wrap items-center gap-3">
                         @if ($application->animal->trashed())
-                            <span class="font-display font-extrabold text-xl">{{ $application->animal->name }}</span>
+                            <span class="font-display font-extrabold text-xl">{{ $application->animal->display_name }}</span>
                         @else
-                            <a href="{{ route('animals.show', $application->animal) }}" class="font-display font-extrabold text-xl hover:text-primary">{{ $application->animal->name }}</a>
+                            <a href="{{ route('animals.show', $application->animal) }}" class="font-display font-extrabold text-xl hover:text-primary">{{ $application->animal->display_name }}</a>
                         @endif
                         <span class="chip {{ $application->status->badgeClasses() }}">{{ $application->status->label() }}</span>
                     </div>
@@ -66,7 +66,7 @@
                 </div>
                 <div class="grow basis-64 flex flex-col gap-2">
                     <div class="flex flex-wrap items-center gap-3">
-                        <a href="{{ route('animals.show', $animal) }}" class="font-display font-extrabold text-xl hover:text-primary">{{ $animal->name }}</a>
+                        <a href="{{ route('animals.show', $animal) }}" class="font-display font-extrabold text-xl hover:text-primary">{{ $animal->display_name }}</a>
                         <x-animal-status :status="$animal->status" />
                     </div>
                     @if ($animal->status === \App\Enums\AnimalStatus::Rejected && $animal->moderation_note)
@@ -79,7 +79,7 @@
                         @can('delete', $animal)
                             <button type="button" class="font-semibold text-danger hover:underline"
                                     wire:click="deleteAnimal({{ $animal->id }})"
-                                    wire:confirm="{{ __('Видалити картку «:name»? Її буде прибрано з сайту назавжди. Якщо на тварину вже подали анкети, їх буде закрито з поясненням.', ['name' => $animal->name]) }}">
+                                    wire:confirm="{{ __('Видалити картку «:name»? Її буде прибрано з сайту назавжди. Якщо на тварину вже подали анкети, їх буде закрито з поясненням.', ['name' => $animal->display_name]) }}">
                                 {{ __('Видалити') }}
                             </button>
                         @endcan

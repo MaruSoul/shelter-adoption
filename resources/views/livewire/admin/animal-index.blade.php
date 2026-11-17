@@ -13,11 +13,14 @@
             <label class="label text-sm">Джерело
                 <select wire:model.live="source" class="field font-normal"><option value="">Усі</option>@foreach ($sources as $s)<option value="{{ $s->value }}">{{ $s->label() }}</option>@endforeach</select>
             </label>
+            <label class="label text-sm">Англійська версія
+                <select wire:model.live="translation" class="field font-normal"><option value="">Усі</option><option value="missing">Без перекладу</option></select>
+            </label>
         </div>
         <div class="card overflow-x-auto">
             <table class="w-full text-left">
                 <thead class="text-sm text-muted border-b border-line">
-                    <tr><th class="p-4 font-semibold">Тварина</th><th class="p-4 font-semibold">Вид</th><th class="p-4 font-semibold">Джерело</th><th class="p-4 font-semibold">Активні анкети</th><th class="p-4 font-semibold">Статус</th></tr>
+                    <tr><th class="p-4 font-semibold">Тварина</th><th class="p-4 font-semibold">Вид</th><th class="p-4 font-semibold">Джерело</th><th class="p-4 font-semibold">Активні анкети</th><th class="p-4 font-semibold">Статус</th><th class="p-4 font-semibold">EN</th></tr>
                 </thead>
                 <tbody>
                     @forelse ($animals as $animal)
@@ -32,9 +35,10 @@
                             <td class="p-3 text-sm">{{ $animal->source->label() }}</td>
                             <td class="p-3">{{ $animal->active_applications_count }}</td>
                             <td class="p-3"><x-animal-status :status="$animal->status" /></td>
+                            <td class="p-3"><x-translation-chip :state="$animal->needsTranslation() ? 'none' : 'full'" /></td>
                         </tr>
                     @empty
-                        <tr><td colspan="5" class="p-8 text-center text-muted">Тварин за цими умовами немає.</td></tr>
+                        <tr><td colspan="6" class="p-8 text-center text-muted">Тварин за цими умовами немає.</td></tr>
                     @endforelse
                 </tbody>
             </table>

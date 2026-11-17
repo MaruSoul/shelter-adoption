@@ -18,13 +18,13 @@ final class StructuredData
         return array_filter([
             '@context' => 'https://schema.org',
             '@type' => 'AnimalShelter',
-            'name' => $shelter->name,
-            'description' => $shelter->tagline,
+            'name' => $shelter->tr('name'),
+            'description' => $shelter->tr('tagline'),
             'url' => route('home'),
             'logo' => url('/favicon.svg'),
             'telephone' => $shelter->phone,
             'email' => $shelter->email,
-            'address' => $shelter->address ? ['@type' => 'PostalAddress', 'streetAddress' => $shelter->address, 'addressCountry' => 'UA'] : null,
+            'address' => $shelter->address ? ['@type' => 'PostalAddress', 'streetAddress' => $shelter->tr('address'), 'addressCountry' => 'UA'] : null,
             'sameAs' => array_column($shelter->socialLinks(), 'url') ?: null,
         ]);
     }
@@ -49,25 +49,26 @@ final class StructuredData
         return self::breadcrumbs([
             __('Головна') => route('home'),
             __($animal->species->name_plural) => route('animals.index', ['species' => $animal->species->slug]),
-            $animal->name => route('animals.show', $animal),
+            $animal->display_name => route('animals.show', $animal),
         ]);
     }
 
     public static function article(Post $post, ShelterSetting $shelter): array
     {
-        $publisher = ['@type' => 'Organization', 'name' => $shelter->name, 'logo' => ['@type' => 'ImageObject', 'url' => url('/favicon.svg')]];
+        $publisher = ['@type' => 'Organization', 'name' => $shelter->tr('name'), 'logo' => ['@type' => 'ImageObject', 'url' => url('/favicon.svg')]];
 
         return array_filter([
             '@context' => 'https://schema.org',
             '@type' => 'BlogPosting',
-            'headline' => $post->title,
-            'description' => $post->excerpt,
+            'headline' => $post->tr('title'),
+            'description' => $post->tr('excerpt'),
             'image' => $post->coverUrl() ? url($post->coverUrl()) : null,
             'datePublished' => $post->published_at?->toAtomString(),
             'dateModified' => $post->updated_at?->toAtomString(),
-            'articleSection' => $post->category->name,
+            'articleSection' => __($post->category->name),
             'timeRequired' => 'PT'.$post->readingMinutes().'M',
-            'inLanguage' => 'uk',
+            // Мова, якою стаття фактично показана: англійська лише тоді, коли перекладено все
+            'inLanguage' => app()->getLocale() === 'en' && $post->englishState() === 'full' ? 'en' : 'uk',
             'mainEntityOfPage' => route('blog.show', $post),
             'author' => $publisher,
             'publisher' => $publisher,

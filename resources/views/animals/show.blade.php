@@ -1,13 +1,13 @@
 @php($cover = $animal->photos->first())
-<x-layout :title="__(':name – :species шукає дім', ['name' => $animal->name, 'species' => mb_strtolower(__($animal->species->name))])"
-          :description="\Illuminate\Support\Str::limit($animal->story ?? $animal->behavior ?? '', 155)"
+<x-layout :title="__(':name – :species шукає дім', ['name' => $animal->display_name, 'species' => mb_strtolower(__($animal->species->name))])"
+          :description="\Illuminate\Support\Str::limit($animal->tr('story') ?? $animal->tr('behavior') ?? '', 155)"
           :image="$cover?->url()">
     <x-slot:head><x-json-ld :data="\App\Support\StructuredData::animalBreadcrumbs($animal)" /></x-slot:head>
     <div class="mx-auto max-w-6xl px-6 py-7 flex flex-col gap-10">
         <nav aria-label="{{ __('Навігаційний ланцюжок') }}" class="text-sm text-muted flex flex-wrap gap-2">
             <a href="{{ route('home') }}" class="hover:underline">{{ __('Головна') }}</a><span aria-hidden="true">/</span>
             <a href="{{ route('animals.index', ['species' => $animal->species->slug]) }}" class="hover:underline">{{ __($animal->species->name_plural) }}</a><span aria-hidden="true">/</span>
-            <span class="text-ink">{{ $animal->name }}</span>
+            <span class="text-ink">{{ $animal->display_name }}</span>
         </nav>
 
         @unless ($animal->isPublic())
@@ -23,13 +23,13 @@
                  x-data="{
                      active: 0,
                      startX: null,
-                     photos: @js($animal->photos->map(fn ($p) => ['url' => $p->url(), 'srcset' => $p->thumbUrl().' 600w, '.$p->url().' 1400w', 'alt' => $p->alt ?? $animal->name])->values()),
+                     photos: @js($animal->photos->map(fn ($p) => ['url' => $p->url(), 'srcset' => $p->thumbUrl().' 600w, '.$p->url().' 1400w', 'alt' => $p->altFor($animal)])->values()),
                      go(step) { this.active = (this.active + step + this.photos.length) % this.photos.length },
                      swipe(endX) { if (this.startX !== null && Math.abs(endX - this.startX) > 40) this.go(endX < this.startX ? 1 : -1); this.startX = null },
                  }">
                 <div class="group relative aspect-[4/3] rounded-[1.75rem] bg-tint-1 overflow-hidden"
                      @if ($animal->photos->count() > 1)
-                         role="region" aria-roledescription="{{ __('галерея') }}" aria-label="{{ __('Фото :name', ['name' => $animal->name]) }}" tabindex="0"
+                         role="region" aria-roledescription="{{ __('галерея') }}" aria-label="{{ __('Фото :name', ['name' => $animal->display_name]) }}" tabindex="0"
                          x-on:keydown.left.prevent="go(-1)" x-on:keydown.right.prevent="go(1)"
                          x-on:touchstart.passive="startX = $event.touches[0].clientX"
                          x-on:touchend="swipe($event.changedTouches[0].clientX)"
@@ -38,7 +38,7 @@
                     @if ($cover)
                         {{-- На телефоні браузер бере мініатюру 600 px, на великому екрані – повне фото --}}
                         <img src="{{ $cover->url() }}" srcset="{{ $cover->thumbUrl() }} 600w, {{ $cover->url() }} 1400w"
-                             sizes="(min-width: 1024px) 720px, 100vw" alt="{{ $cover->alt ?? $animal->name }}" fetchpriority="high" width="1200" height="900"
+                             sizes="(min-width: 1024px) 720px, 100vw" alt="{{ $cover->altFor($animal) }}" fetchpriority="high" width="1200" height="900"
                              x-bind:src="photos[active].url" x-bind:srcset="photos[active].srcset" x-bind:alt="photos[active].alt" class="size-full object-cover">
                     @endif
                     @if ($animal->photos->count() > 1)
@@ -71,12 +71,12 @@
 
             <aside class="card grow basis-80 min-w-0 p-7 flex flex-col gap-5">
                 <div class="flex flex-col gap-2">
-                    <h1 class="text-5xl leading-tight">{{ $animal->name }}</h1>
-                    <span @class(['chip self-start', 'bg-sun-soft text-accent' => $animal->acceptsApplications(), 'bg-success-soft text-success' => ! $animal->acceptsApplications()])>
+                    <h1 class="text-5xl leading-tight">{{ $animal->display_name }}</h1>
+                    <span @class(['chip self-start', 'bg-sun-soft text-accent' => $animal->acceptsApplications(), 'bg-success-soft text-success' => $animal->status === \App\Enums\AnimalStatus::Adopted, 'bg-surface text-muted' => ! $animal->acceptsApplications() && $animal->status !== \App\Enums\AnimalStatus::Adopted])>
                         {{ __($animal->species->name) }} · {{ mb_strtolower($animal->status->label()) }}
                     </span>
                     @if ($animal->isFromVolunteer())
-                        <span class="text-sm text-muted">{{ __('Розміщено волонтером') }}@if ($animal->current_location) · {{ __('зараз:') }} {{ $animal->current_location }}@endif</span>
+                        <span class="text-sm text-muted">{{ __('Розміщено волонтером') }}@if ($location = $animal->tr('current_location')) · {{ __('зараз:') }} {{ $location }}@endif</span>
                     @endif
                 </div>
                 <dl class="grid grid-cols-2 gap-x-5 gap-y-3.5">
@@ -99,15 +99,14 @@
                        x-init="new IntersectionObserver(([e]) => $dispatch('main-cta', e.isIntersecting)).observe($el)">{{ __('Взяти додому') }}</a>
                 @endif
                 @if ($animal->isPublic())
-                    <x-favorite-button :animal-id="$animal->id" :name="$animal->name" :large="true" />
+                    <x-favorite-button :animal-id="$animal->id" :name="$animal->display_name" :large="true" />
                 @endif
-                @if ($animal->acceptsApplications())
-                @else
+                @if ($animal->status === \App\Enums\AnimalStatus::Adopted)
                     <p class="rounded-2xl bg-success-soft text-success px-4 py-3 font-medium">{{ $animal->foundHomePhrase() }}. {{ __('Подивіться інших тварин, які чекають на вас.') }}</p>
                 @endif
 
                 @php($shareUrl = url()->current())
-                @php($shareText = __(':name шукає дім', ['name' => $animal->name]))
+                @php($shareText = __(':name шукає дім', ['name' => $animal->display_name]))
                 <div class="flex flex-wrap items-center gap-2 text-sm text-muted" x-data="{ copied: false, canShare: !! navigator.share }">
                     <span class="w-full">{{ __('Поділитися:') }}</span>
                     {{-- На телефоні – системне меню «Поділитися» з усіма месенджерами --}}
@@ -133,16 +132,17 @@
             </aside>
         </div>
 
-        @if (app()->getLocale() !== 'uk' && ($animal->story || $animal->behavior || $animal->adoption_terms))
-            {{-- Тексти про тварину пишуть люди українською – чесно попереджаємо англомовного відвідувача --}}
-            <p class="text-sm text-muted -mb-6">{{ __('The animal’s story is written by the shelter in Ukrainian.') }}</p>
+        @php($untranslated = collect(\App\Models\Animal::TRANSLATABLE)->reject(fn ($f) => $animal->isShownInLocale($f))->isNotEmpty())
+        @if ($untranslated)
+            {{-- Притулок ще не переклав частину тексту – чесно попереджаємо відвідувача --}}
+            <p class="text-sm text-muted -mb-6">{{ app()->getLocale() === 'en' ? __('The animal’s story is written by the shelter in Ukrainian.') : __('Частину опису притулок написав лише англійською.') }}</p>
         @endif
         <div class="grid gap-6 grid-cols-[repeat(auto-fit,minmax(300px,1fr))]">
-            @foreach ([__('Коротка історія') => $animal->story, __('Особливості поведінки') => $animal->behavior, __('Умови прилаштування') => $animal->adoption_terms] as $heading => $text)
-                @if ($text)
+            @foreach (['story' => __('Коротка історія'), 'behavior' => __('Особливості поведінки'), 'adoption_terms' => __('Умови прилаштування')] as $field => $heading)
+                @if ($text = $animal->tr($field))
                     <section class="card p-6 flex flex-col gap-2.5">
                         <h2 class="text-2xl">{{ $heading }}</h2>
-                        <p class="text-muted whitespace-pre-line" lang="uk">{{ $text }}</p>
+                        <p class="text-muted whitespace-pre-line" @unless ($animal->isShownInLocale($field)) lang="{{ app()->getLocale() === 'en' ? 'uk' : 'en' }}" @endunless>{{ $text }}</p>
                     </section>
                 @endif
             @endforeach
@@ -171,10 +171,10 @@
              x-on:main-cta.window="cta = $event.detail"
              x-bind:class="hidden ? 'translate-y-full' : 'translate-y-0'" x-bind:aria-hidden="hidden" x-bind:inert="hidden">
             <div class="min-w-0 grow leading-tight">
-                <span class="block font-display font-extrabold truncate">{{ $animal->name }}</span>
+                <span class="block font-display font-extrabold truncate">{{ $animal->display_name }}</span>
                 <span class="block text-xs text-muted truncate">{{ $animal->ageLabel() }} · {{ $animal->sex->label() }}</span>
             </div>
-            <x-favorite-button :animal-id="$animal->id" :name="$animal->name" class="shrink-0 border border-line" />
+            <x-favorite-button :animal-id="$animal->id" :name="$animal->display_name" class="shrink-0 border border-line" />
             <a href="{{ route('animals.adopt', $animal) }}" class="btn-primary shrink-0 min-h-12 px-5">{{ __('Взяти додому') }}</a>
         </div>
     @endif

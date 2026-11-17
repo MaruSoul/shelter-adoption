@@ -1,7 +1,7 @@
-<x-layout :title="$post->title" :description="$post->excerpt" :image="$post->coverUrl()">
+<x-layout :title="$post->tr('title')" :description="$post->tr('excerpt')" :image="$post->coverUrl()">
     <x-slot:head>
         <x-json-ld :data="\App\Support\StructuredData::article($post, \App\Models\ShelterSetting::current())" />
-        <x-json-ld :data="\App\Support\StructuredData::breadcrumbs([__('Блог') => route('blog.index'), __($post->category->name) => route('blog.index', ['rubric' => $post->category->slug]), $post->title => route('blog.show', $post)])" />
+        <x-json-ld :data="\App\Support\StructuredData::breadcrumbs([__('Блог') => route('blog.index'), __($post->category->name) => route('blog.index', ['rubric' => $post->category->slug]), $post->tr('title') => route('blog.show', $post)])" />
     </x-slot:head>
     <article class="mx-auto max-w-3xl px-6 py-10 flex flex-col gap-6">
         <nav aria-label="{{ __('Навігаційний ланцюжок') }}" class="text-sm text-muted flex flex-wrap gap-2">
@@ -12,7 +12,7 @@
             <div role="status" class="rounded-2xl bg-sun-soft px-5 py-3 font-medium">{{ __('Чернетка – цю статтю бачите лише ви як адміністратор.') }}</div>
         @endunless
         <header class="flex flex-col gap-3">
-            <h1 class="text-4xl md:text-5xl leading-tight">{{ $post->title }}</h1>
+            <h1 class="text-4xl md:text-5xl leading-tight" @unless ($post->isShownInLocale('title')) lang="uk" @endunless>{{ $post->tr('title') }}</h1>
             <p class="text-muted flex flex-wrap gap-x-2">
                 @if ($post->published_at)
                     <time datetime="{{ $post->published_at->toDateString() }}">{{ $post->published_at->translatedFormat('j F Y') }}</time><span aria-hidden="true">·</span>
@@ -23,10 +23,10 @@
         @if ($post->coverUrl())
             <img src="{{ $post->coverUrl() }}" alt="" class="w-full rounded-3xl aspect-[1200/630] object-cover">
         @endif
-        @if (app()->getLocale() !== 'uk')
-            <p class="text-sm text-muted">{{ __('This article is available in Ukrainian only.') }}</p>
+        @if (app()->getLocale() === 'en' && ($state = $post->englishState()) !== 'full')
+            <p class="text-sm text-muted">{{ $state === 'none' ? __('This article is available in Ukrainian only.') : __('Some parts of this article are available in Ukrainian only.') }}</p>
         @endif
-        <div lang="uk" class="contents"><x-post-blocks :blocks="$blocks" /></div>
+        <x-post-blocks :blocks="$blocks" />
     </article>
 
     @if ($related->isNotEmpty())

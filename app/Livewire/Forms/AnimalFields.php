@@ -16,6 +16,8 @@ class AnimalFields extends Form
 {
     public string $name = '';
 
+    public string $name_en = '';
+
     public string $species_id = '';
 
     public string $breed_id = '';
@@ -36,16 +38,25 @@ class AnimalFields extends Form
 
     public string $story = '';
 
+    public string $story_en = '';
+
     public string $behavior = '';
+
+    public string $behavior_en = '';
 
     public string $adoption_terms = '';
 
+    public string $adoption_terms_en = '';
+
     public string $current_location = '';
+
+    public string $current_location_en = '';
 
     protected function rules(): array
     {
         return [
             'name' => ['required', 'string', 'min:2', 'max:60'],
+            'name_en' => ['nullable', 'string', 'max:60'],
             'species_id' => ['required', Rule::exists('species', 'id')],
             'breed_id' => ['nullable', Rule::exists('breeds', 'id')->where('species_id', (int) $this->species_id)],
             'color_id' => ['nullable', Rule::exists('colors', 'id')],
@@ -58,7 +69,11 @@ class AnimalFields extends Form
             'story' => ['nullable', 'string', 'max:3000'],
             'behavior' => ['nullable', 'string', 'max:3000'],
             'adoption_terms' => ['nullable', 'string', 'max:3000'],
+            'story_en' => ['nullable', 'string', 'max:3000'],
+            'behavior_en' => ['nullable', 'string', 'max:3000'],
+            'adoption_terms_en' => ['nullable', 'string', 'max:3000'],
             'current_location' => ['nullable', 'string', 'max:255'],
+            'current_location_en' => ['nullable', 'string', 'max:255'],
         ];
     }
 
@@ -69,12 +84,15 @@ class AnimalFields extends Form
             'region_id' => __('область'), 'locality_id' => __('населений пункт'), 'sex' => __('стать'),
             'birth_date' => __('дата народження'), 'story' => __('коротка історія'), 'behavior' => __('особливості поведінки'),
             'adoption_terms' => __('умови прилаштування'), 'current_location' => __('де тварина зараз'),
+            'name_en' => __('кличка англійською'), 'story_en' => __('коротка історія англійською'),
+            'behavior_en' => __('особливості поведінки англійською'), 'adoption_terms_en' => __('умови прилаштування англійською'),
         ];
     }
 
     public function fillFrom(Animal $animal): void
     {
         $this->name = $animal->name;
+        $this->name_en = (string) $animal->name_en;
         $this->species_id = (string) $animal->species_id;
         $this->breed_id = (string) ($animal->breed_id ?? '');
         $this->color_id = (string) ($animal->color_id ?? '');
@@ -87,7 +105,11 @@ class AnimalFields extends Form
         $this->story = (string) $animal->story;
         $this->behavior = (string) $animal->behavior;
         $this->adoption_terms = (string) $animal->adoption_terms;
+        $this->story_en = (string) $animal->story_en;
+        $this->behavior_en = (string) $animal->behavior_en;
+        $this->adoption_terms_en = (string) $animal->adoption_terms_en;
         $this->current_location = (string) $animal->current_location;
+        $this->current_location_en = (string) $animal->current_location_en;
     }
 
     /** Переносить перевірені значення в модель (без збереження). */
@@ -97,6 +119,7 @@ class AnimalFields extends Form
 
         $animal->fill([
             'name' => trim($data['name']),
+            'name_en' => trim($data['name_en']) ?: null,
             'species_id' => (int) $data['species_id'],
             'breed_id' => $data['breed_id'] ?: null,
             'color_id' => $data['color_id'] ?: null,
@@ -108,7 +131,11 @@ class AnimalFields extends Form
             'story' => trim($data['story']) ?: null,
             'behavior' => trim($data['behavior']) ?: null,
             'adoption_terms' => trim($data['adoption_terms']) ?: null,
+            'story_en' => trim($data['story_en']) ?: null,
+            'behavior_en' => trim($data['behavior_en']) ?: null,
+            'adoption_terms_en' => trim($data['adoption_terms_en']) ?: null,
             'current_location' => trim($data['current_location']) ?: null,
+            'current_location_en' => trim($data['current_location_en']) ?: null,
         ]);
     }
 

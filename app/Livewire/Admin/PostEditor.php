@@ -4,10 +4,12 @@ namespace App\Livewire\Admin;
 
 use App\Enums\AnimalStatus;
 use App\Enums\PostStatus;
+use App\Livewire\Concerns\TransliteratesFields;
 use App\Models\Animal;
 use App\Models\Post;
 use App\Models\PostCategory;
 use App\Services\PostBlocks;
+use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
 use Illuminate\Validation\Rule;
 use Illuminate\Validation\ValidationException;
@@ -22,11 +24,13 @@ use Livewire\WithFileUploads;
  */
 class PostEditor extends Component
 {
-    use WithFileUploads;
+    use TransliteratesFields, WithFileUploads;
 
     public ?Post $post = null;
 
     public string $title = '';
+
+    public string $title_en = '';
 
     public string $slug = '';
 
@@ -34,9 +38,14 @@ class PostEditor extends Component
 
     public string $excerpt = '';
 
+    public string $excerpt_en = '';
+
     public array $blocks = [];
 
     public bool $preview = false;
+
+    /** Мова попереднього перегляду: uk або en. */
+    public string $previewLocale = 'uk';
 
     /** Нова обкладинка статті. */
     public $cover;
@@ -52,8 +61,10 @@ class PostEditor extends Component
             $this->title = $this->post->title;
             $this->slug = $this->post->slug;
             $this->post_category_id = (string) $this->post->post_category_id;
+            $this->title_en = (string) $this->post->title_en;
             $this->excerpt = (string) $this->post->excerpt;
-            $this->blocks = $this->post->blocks ?? [];
+            $this->excerpt_en = (string) $this->post->excerpt_en;
+            $this->blocks = PostBlocks::withEnglishKeys($this->post->blocks ?? []);
         } else {
             $this->blocks = [PostBlocks::blank('paragraph')];
         }
@@ -102,12 +113,15 @@ class PostEditor extends Component
     public function addListItem(int $index): void
     {
         $this->blocks[$index]['data']['items'][] = '';
+        $this->blocks[$index]['data']['items_en'][] = '';
     }
 
     public function removeListItem(int $index, int $item): void
     {
-        unset($this->blocks[$index]['data']['items'][$item]);
-        $this->blocks[$index]['data']['items'] = array_values($this->blocks[$index]['data']['items']);
+        foreach (['items', 'items_en'] as $key) {
+            unset($this->blocks[$index]['data'][$key][$item]);
+            $this->blocks[$index]['data'][$key] = array_values($this->blocks[$index]['data'][$key] ?? []);
+        }
     }
 
     /** Зображення блоку зберігається одразу після вибору файлу. */
@@ -129,8 +143,11 @@ class PostEditor extends Component
             'slug' => ['required', 'alpha_dash', 'max:190', Rule::unique('posts', 'slug')->ignore($this->post->id)],
             'post_category_id' => ['required', Rule::exists('post_categories', 'id')],
             'excerpt' => ['nullable', 'string', 'max:300'],
+            'title_en' => ['nullable', 'string', 'max:160'],
+            'excerpt_en' => ['nullable', 'string', 'max:300'],
             'cover' => ['nullable', 'image', 'mimes:jpeg,jpg,png,webp', 'max:10240'],
-        ], [], ['title' => 'заголовок', 'slug' => 'адреса', 'post_category_id' => 'рубрика', 'excerpt' => 'анонс', 'cover' => 'обкладинка']);
+        ], [], ['title' => 'заголовок', 'slug' => 'адреса', 'post_category_id' => 'рубрика', 'excerpt' => 'анонс', 'cover' => 'обкладинка',
+            'title_en' => 'заголовок англійською', 'excerpt_en' => 'анонс англійською']);
 
         try {
             $clean = $schema->validate($this->blocks);
@@ -153,6 +170,8 @@ class PostEditor extends Component
             'slug' => $data['slug'],
             'post_category_id' => (int) $data['post_category_id'],
             'excerpt' => trim($data['excerpt']) ?: null,
+            'title_en' => trim($data['title_en']) ?: null,
+            'excerpt_en' => trim($data['excerpt_en']) ?: null,
             'blocks' => $clean,
         ]);
         if ($this->cover) {
@@ -182,7 +201,7 @@ class PostEditor extends Component
         $image = $coverWidth ? $image->cover($coverWidth, $coverHeight) : $image->scaleDown($maxSide, $maxSide);
 
         $path = 'posts/'.Str::uuid().'.jpg';
-        \Illuminate\Support\Facades\Storage::disk('public')->put($path, (string) $image->encode(new JpegEncoder(quality: 82, strip: true)));
+        Storage::disk('public')->put($path, (string) $image->encode(new JpegEncoder(quality: 82, strip: true)));
 
         return $path;
     }
@@ -193,8 +212,44 @@ class PostEditor extends Component
             'categories' => PostCategory::orderBy('name')->get(),
             'types' => PostBlocks::TYPES,
             'animals' => Animal::where('status', AnimalStatus::Available)->orderBy('name')->get(['id', 'name']),
-            'previewBlocks' => $this->preview ? $schema->forRender($this->blocksForPreview()) : [],
+            'previewHtml' => $this->preview ? $this->renderPreview($schema) : null,
+            'previewGaps' => $this->preview && $this->previewLocale === 'en' ? $this->previewGaps() : 0,
         ])->title($this->post->exists ? 'Редагування статті' : 'Нова стаття');
+    }
+
+    protected function canTransliterate(string $field): bool
+    {
+        return (bool) preg_match('/^blocks\.\d+\.data\.author$/', $field);
+    }
+
+    /**
+     * Попередній перегляд обраною мовою. Рендериться з тимчасово перемкненою мовою застосунку,
+     * щоб і вбудовані картки тварин виглядали так, як їх побачить відвідувач англійської версії.
+     */
+    private function renderPreview(PostBlocks $schema): string
+    {
+        $locale = $this->previewLocale === 'en' ? 'en' : 'uk';
+        $previous = app()->getLocale();
+        app()->setLocale($locale);
+
+        try {
+            $title = $locale === 'en' && trim($this->title_en) !== '' ? $this->title_en : $this->title;
+
+            return view('livewire.admin.post-preview', [
+                'title' => $title,
+                'blocks' => $schema->forRender(PostBlocks::localize($this->blocksForPreview(), $locale)),
+            ])->render();
+        } finally {
+            app()->setLocale($previous);
+        }
+    }
+
+    /** Скільки фрагментів на англійському перегляді ще показано українською. */
+    private function previewGaps(): int
+    {
+        [$done, $total] = PostBlocks::englishCoverage($this->blocksForPreview());
+
+        return ($total - $done) + (int) (trim($this->title) !== '' && trim($this->title_en) === '');
     }
 
     /** Для попереднього перегляду беремо лише заповнені блоки. */

@@ -1,9 +1,9 @@
 {{-- Спільні поля картки тварини. Очікує $species, $colors, $regions і форму $form. --}}
+<x-bilingual :label="__('Кличка')" model="form.name" required translit optional
+             :hint="__('англійською – необовʼязково: якщо не вписати, сайт покаже транслітерацію')"
+             :en-placeholder="__('Наприклад, Felix')" />
+
 <div class="grid gap-4 grid-cols-[repeat(auto-fit,minmax(220px,1fr))]">
-    <label class="label">{{ __('Кличка *') }}
-        <input type="text" wire:model="form.name" class="field font-normal">
-        @error('form.name')<span class="error">{{ $message }}</span>@enderror
-    </label>
     <label class="label">{{ __('Вид *') }}
         <select wire:model.live="form.species_id" class="field font-normal">
             <option value="">{{ __('Оберіть') }}</option>
@@ -56,14 +56,10 @@
     <label class="flex items-center gap-2.5 min-h-8"><input type="checkbox" wire:model="form.is_vaccinated" class="size-4 accent-primary"> {{ __('Вакцинація проведена') }}</label>
 </div>
 
-<label class="label">{{ __('Де тварина зараз') }} <span class="font-normal text-sm text-muted">{{ __('наприклад, «перетримка у волонтера, Одеса, Таїрова»') }}</span>
-    <input type="text" wire:model="form.current_location" class="field font-normal">
-    @error('form.current_location')<span class="error">{{ $message }}</span>@enderror
-</label>
+<x-bilingual :label="__('Де тварина зараз')" model="form.current_location" optional
+             :placeholder="__('наприклад, «перетримка у волонтера, Одеса, Таїрова»')"
+             :hint="__('для карток волонтерів показується на сайті')" />
 
 @foreach (['story' => __('Коротка історія'), 'behavior' => __('Особливості поведінки'), 'adoption_terms' => __('Умови прилаштування')] as $field => $label)
-    <label class="label">{{ $label }}
-        <textarea wire:model="form.{{ $field }}" rows="3" class="field font-normal py-3 resize-y"></textarea>
-        @error('form.'.$field)<span class="error">{{ $message }}</span>@enderror
-    </label>
+    <x-bilingual :label="$label" model="form.{{ $field }}" type="textarea" :rows="4" class="pt-2" />
 @endforeach

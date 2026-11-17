@@ -70,7 +70,7 @@ class HomeController extends Controller
             ->get()
             ->map(fn (Animal $a) => [
                 'id' => $a->id,
-                'name' => $a->name,
+                'name' => $a->display_name,
                 'meta' => $a->sex->label().', '.$a->ageLabel(),
                 'photo' => $a->coverPhoto->url(),
                 'url' => route('animals.show', $a, false),

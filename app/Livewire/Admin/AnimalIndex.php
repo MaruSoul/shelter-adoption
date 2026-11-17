@@ -22,6 +22,10 @@ class AnimalIndex extends Component
     #[Url(except: '')]
     public string $source = '';
 
+    /** Фільтр «Без перекладу»: картки, де є український текст без англійського. */
+    #[Url(except: '')]
+    public string $translation = '';
+
     public function updated(): void
     {
         $this->resetPage();
@@ -32,7 +36,8 @@ class AnimalIndex extends Component
         $animals = Animal::query()
             ->with(['species', 'coverPhoto', 'locality'])
             ->withCount(['applications as active_applications_count' => fn ($q) => $q->active()])
-            ->when($this->q, fn ($q) => $q->where('name', 'ilike', '%'.$this->q.'%'))
+            ->when($this->q, fn ($q) => $q->where(fn ($q) => $q->where('name', 'ilike', '%'.$this->q.'%')->orWhere('name_en', 'ilike', '%'.$this->q.'%')))
+            ->when($this->translation === 'missing', fn ($q) => $q->missingTranslation())
             ->when($this->status, fn ($q) => $q->where('status', $this->status))
             ->when($this->source, fn ($q) => $q->where('source', $this->source))
             ->latest('id')

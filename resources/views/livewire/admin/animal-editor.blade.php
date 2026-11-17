@@ -1,6 +1,6 @@
 <div>
     <x-admin-nav />
-    <div class="mx-auto max-w-4xl px-6 py-8 flex flex-col gap-6">
+    <div class="mx-auto max-w-5xl px-6 py-8 flex flex-col gap-6">
         <a href="{{ route('admin.animals.index') }}" class="font-semibold text-primary hover:underline">← Усі тварини</a>
         <div class="flex flex-wrap items-center gap-4">
             <h1 class="text-4xl">{{ $animal->exists ? $animal->name : 'Нова тварина' }}</h1>
@@ -10,7 +10,11 @@
                 <a href="{{ route('admin.applications.index', ['animal' => $animal->name]) }}" class="font-semibold text-primary hover:underline">Анкети на цю тварину ({{ $animal->applications()->count() }})</a>
             @endif
         </div>
-        <form wire:submit="save" class="card p-6 md:p-8 flex flex-col gap-5" novalidate>
+        <form wire:submit="save" class="card p-6 md:p-8 flex flex-col gap-5" novalidate data-bi-scope>
+            <div class="flex flex-wrap items-center justify-between gap-3 -mt-1 pb-4 border-b border-line">
+                <p class="text-sm text-muted max-w-xl">Тексти картки заповнюються двома мовами. Якщо англійської немає, на англійській версії сайту показується український текст із позначкою.</p>
+                <x-translation-meter />
+            </div>
             @include('livewire.partials.animal-fields')
             @include('livewire.partials.photo-manager')
             @if (! $animal->exists || in_array($animal->status, $statuses, true))
@@ -24,7 +28,10 @@
             @else
                 <p class="rounded-2xl bg-sun-soft px-4 py-3">Картка волонтера – статус змінюється на сторінці <a href="{{ route('admin.moderation') }}" class="text-primary underline">модерації</a>.</p>
             @endif
-            <button type="submit" class="btn-primary self-start min-h-12 px-8" wire:loading.attr="disabled">Зберегти</button>
+            <div class="flex flex-wrap items-center gap-4">
+                <button type="submit" class="btn-primary min-h-12 px-8" wire:loading.attr="disabled">Зберегти</button>
+                <x-translation-meter />
+            </div>
         </form>
     </div>
 </div>

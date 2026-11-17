@@ -28,9 +28,24 @@
         {{-- Коло з кнопкою --}}
         <div x-show="!current" class="col-start-1 row-start-1 relative w-full aspect-square rounded-full bg-sun overflow-hidden shadow-xl shadow-sun/30">
             <svg viewBox="0 0 200 200" class="absolute inset-0 size-full" :class="spinning && 'lottery-spinning'" aria-hidden="true">
-                <defs><path id="lottery-ring" d="M26.7 126.7 A 78 78 0 1 1 173.3 126.7"/></defs>
-                <text font-family="Nunito, sans-serif" font-weight="800" font-size="15" fill="#1E1A2E" letter-spacing="1">
-                    <textPath href="#lottery-ring" textLength="296" lengthAdjust="spacing">{{ __('• ХТО МІЙ ДРУГ? • ГРА-ЗНАЙОМСТВО •') }}</textPath>
+                <defs><path id="lottery-ring" x-ref="ringPath" d="M26.7 126.7 A 78 78 0 1 1 173.3 126.7"/></defs>
+                {{--
+                    Напис має рівно лягти на дугу будь-якою мовою. textLength на textPath Firefox не підтримує
+                    (кінець напису просто обрізається), тому розмір і розрядку підбираємо скриптом за фактичною
+                    довжиною тексту; без скрипта лишається дрібніший шрифт, що вміщається.
+                --}}
+                <text x-ref="ringText" font-family="Nunito, sans-serif" font-weight="800" font-size="11" fill="#1E1A2E" letter-spacing="1"
+                      x-init="
+                        const fit = () => {
+                            const t = $refs.ringText, length = $refs.ringPath.getTotalLength() * 0.985
+                            t.setAttribute('font-size', 15); t.setAttribute('letter-spacing', 0)
+                            let width = t.getComputedTextLength()
+                            if (width > length) { t.setAttribute('font-size', (15 * length / width).toFixed(2)); width = t.getComputedTextLength() }
+                            t.setAttribute('letter-spacing', Math.max(0, (length - width) / t.textContent.trim().length).toFixed(2))
+                        }
+                        document.fonts ? document.fonts.ready.then(fit) : fit()
+                      ">
+                    <textPath href="#lottery-ring">{{ __('• ХТО МІЙ ДРУГ? • ГРА-ЗНАЙОМСТВО •') }}</textPath>
                 </text>
             </svg>
             <div class="absolute inset-0 flex items-start justify-center pt-[30%]">

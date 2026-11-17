@@ -24,7 +24,7 @@ class Dashboard extends Component
         $remover->handle($animal, auth()->user());
 
         $this->tab = 'animals';
-        $this->flash = __('Картку «:name» видалено.', ['name' => $animal->name]);
+        $this->flash = __('Картку «:name» видалено.', ['name' => $animal->display_name]);
     }
 
     public function render()

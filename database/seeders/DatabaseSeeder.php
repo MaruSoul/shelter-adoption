@@ -115,6 +115,9 @@ class DatabaseSeeder extends Seeder
         }
 
         $this->seedBlog($admin, $available->take(2));
+
+        // Англійська версія тварин, статей і налаштувань
+        $this->call(DemoTranslationsSeeder::class);
     }
 
     private function application(Animal $animal, ApplicationStatus $final, ?User $admin, array $attributes = []): void

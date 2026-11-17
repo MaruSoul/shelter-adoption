@@ -147,7 +147,7 @@ class AdoptionForm extends Component
                 'comment' => trim($data['comment']) ?: null,
             ], auth()->user(), request()->ip());
         } catch (DuplicateApplicationException) {
-            $this->addError('form', __('Ви вже надіслали анкету на :name з цієї адреси – вона в роботі. Ми обовʼязково звʼяжемося з вами.', ['name' => $this->animal->name]));
+            $this->addError('form', __('Ви вже надіслали анкету на :name з цієї адреси – вона в роботі. Ми обовʼязково звʼяжемося з вами.', ['name' => $this->animal->display_name]));
 
             return;
         }
@@ -166,6 +166,6 @@ class AdoptionForm extends Component
         return view('livewire.adoption-form', [
             'regions' => Region::alphabetical()->get(),
             'channels' => ContactChannel::cases(),
-        ])->title(__('Взяти додому :name', ['name' => $this->animal->name]));
+        ])->title(__('Взяти додому :name', ['name' => $this->animal->display_name]));
     }
 }

@@ -5,6 +5,7 @@ namespace App\Livewire\Cabinet;
 use App\Enums\AnimalSource;
 use App\Enums\AnimalStatus;
 use App\Livewire\Concerns\ManagesAnimalPhotos;
+use App\Livewire\Concerns\TransliteratesFields;
 use App\Livewire\Forms\AnimalFields;
 use App\Models\Animal;
 use App\Models\Color;
@@ -19,7 +20,12 @@ use Livewire\Component;
  */
 class AnimalForm extends Component
 {
-    use ManagesAnimalPhotos;
+    use ManagesAnimalPhotos, TransliteratesFields;
+
+    protected function canTransliterate(string $field): bool
+    {
+        return $field === 'form.name';
+    }
 
     public const MAX_PHOTOS = 5;
 

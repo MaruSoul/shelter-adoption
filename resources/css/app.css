@@ -182,3 +182,30 @@
     .lapa-pop { animation: none; }
     .confetti { display: none; }
 }
+
+/* ----- Двомовні поля адмінки: пара «UA | EN» ----- */
+.bi-tag {
+    @apply inline-flex items-center gap-2 text-sm font-semibold text-muted;
+}
+@utility bi-flag {
+    @apply inline-flex items-center justify-center min-w-8 h-5 px-1.5 rounded-full bg-surface text-primary text-[11px] font-bold tracking-wider;
+}
+.bi-flag-en {
+    @apply bg-tint-3 text-success;
+}
+/* Компактна пара: мітка мови всередині поля */
+.bi-pill {
+    @apply pointer-events-none absolute left-2.5 top-3.5 bi-flag;
+}
+.bi-missing {
+    @apply hidden items-center gap-1 rounded-full bg-sun-soft text-accent px-2.5 py-0.5 text-xs font-semibold;
+}
+/* Український текст є, англійського немає: позначка й підсвічене поле (без JavaScript, через :has).
+   Необовʼязкові пари (кличка з транслітерацією, автор цитати) не підсвічуються. */
+[data-bi]:not([data-bi-optional]):has(.bi-uk:not(:placeholder-shown)):has(.bi-en:placeholder-shown) .bi-missing {
+    display: inline-flex;
+}
+[data-bi]:not([data-bi-optional]):has(.bi-uk:not(:placeholder-shown)) .bi-en:placeholder-shown {
+    border-color: var(--color-sun);
+    background-color: var(--color-sun-soft);
+}

@@ -15,6 +15,16 @@ class AnimalPhoto extends Model
         return $this->belongsTo(Animal::class);
     }
 
+    /** Опис фото для незрячих мовою відвідувача: «Фелікс, фото 2» / «Feliks, photo 2». */
+    public function altFor(Animal $animal): string
+    {
+        if (app()->getLocale() === 'uk' && filled($this->alt)) {
+            return $this->alt;
+        }
+
+        return __(':name, фото :n', ['name' => $animal->display_name, 'n' => $this->sort_order + 1]);
+    }
+
     public function url(): string
     {
         return Storage::disk('public')->url($this->path);
