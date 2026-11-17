@@ -52,8 +52,12 @@ trait ManagesAnimalPhotos
         $this->newUploads = [];
     }
 
-    /** Прибирає ще не збережене фото зі списку обраних. */
-    public function removeUpload(int $index): void
+    /**
+     * Прибирає ще не збережене фото зі списку обраних.
+     * Не «removeUpload»: це імʼя Livewire резервує під власний механізм файлів,
+     * і виклик із кнопки потрапляв туди замість цього методу (помилка 500).
+     */
+    public function discardUpload(int $index): void
     {
         unset($this->uploads[$index]);
         $this->uploads = array_values($this->uploads);

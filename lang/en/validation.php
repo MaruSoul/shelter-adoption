@@ -198,6 +198,8 @@ return [
     */
 
     'attributes' => [
+        'newUploads' => 'photo',
+        'uploads' => 'photo',
         'name' => 'name',
         'email' => 'email',
         'password' => 'password',

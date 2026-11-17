@@ -111,7 +111,7 @@ it('обрані фото додаються до попередніх, пока
         ->set('newUploads', [UploadedFile::fake()->image('c.jpg')])
         ->assertCount('uploads', 3)
         ->assertSee('Прибрати')
-        ->call('removeUpload', 1)
+        ->call('discardUpload', 1)
         ->assertCount('uploads', 2);
 
     $form->set('newUploads', array_map(fn ($i) => UploadedFile::fake()->image("x$i.jpg"), range(1, 4)))
