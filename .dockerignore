@@ -8,4 +8,5 @@ storage/framework/cache/*
 storage/framework/sessions/*
 storage/framework/views/*
 .env
+.env_prod
 tests/e2e/node_modules
