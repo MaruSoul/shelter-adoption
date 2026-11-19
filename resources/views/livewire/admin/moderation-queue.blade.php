@@ -48,7 +48,11 @@
                                 · {{ $animal->updated_at->format('d.m.Y H:i') }}
                             </p>
                         </div>
-                        <a href="{{ route('animals.show', $animal) }}" target="_blank" class="btn-outline min-h-11 text-sm">Переглянути сторінку ↗</a>
+                        <div class="flex flex-wrap gap-2">
+                            {{-- Дрібну помилку (кличка, порода, опис, фото) адміністратор виправляє сам, а не відхиляє картку --}}
+                            <a href="{{ route('admin.animals.edit', $animal) }}" class="btn-outline min-h-11 text-sm">Редагувати</a>
+                            <a href="{{ route('animals.show', $animal) }}" target="_blank" class="btn-outline min-h-11 text-sm">Переглянути сторінку ↗</a>
+                        </div>
                     </div>
 
                     <dl class="grid grid-cols-[repeat(auto-fill,minmax(150px,1fr))] gap-x-5 gap-y-2.5 text-sm">

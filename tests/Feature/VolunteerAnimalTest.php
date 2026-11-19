@@ -67,6 +67,20 @@ it('адміністратор схвалює картку, і вона зʼяв
     $this->get(route('animals.show', $animal))->assertOk()->assertSee('Розміщено волонтером');
 });
 
+it('адміністратор виправляє картку з черги модерації без зміни статусу й повертається до черги', function () {
+    $animal = Animal::factory()->fromVolunteer(volunteer())->create(['name' => 'Мурчик']);
+
+    $this->actingAs(admin())->get(route('admin.moderation'))->assertSee(route('admin.animals.edit', $animal), false);
+
+    Livewire::actingAs(admin())->test(\App\Livewire\Admin\AnimalEditor::class, ['animal' => $animal])
+        ->set('form.name', 'Мурчик Великий')
+        ->call('save')
+        ->assertHasNoErrors()
+        ->assertRedirect(route('admin.moderation'));
+
+    expect($animal->fresh())->name->toBe('Мурчик Великий')->status->toBe(AnimalStatus::Moderation);
+});
+
 it('відхилення вимагає причину, яку бачить волонтер', function () {
     $author = volunteer();
     $animal = Animal::factory()->fromVolunteer($author)->create();

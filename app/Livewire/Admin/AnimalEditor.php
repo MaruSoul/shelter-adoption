@@ -52,9 +52,13 @@ class AnimalEditor extends Component
 
     public function save()
     {
-        $this->validate($this->photoRules() + [
+        // Статус обирається лише для тварин притулку; у картки волонтера, прилаштованої чи відхиленої тварини
+        // поля статусу у формі немає, тож і перевіряти нічого (інакше таку картку неможливо було зберегти)
+        $statusLocked = $this->animal->exists
+            && in_array($this->animal->status, [AnimalStatus::Adopted, AnimalStatus::Moderation, AnimalStatus::Rejected], true);
+        $this->validate($this->photoRules() + ($statusLocked ? [] : [
             'status' => ['required', 'in:'.implode(',', array_column($this->selectableStatuses(), 'value'))],
-        ]);
+        ]));
         $this->form->applyTo($this->animal);
         $isNew = ! $this->animal->exists;
 
@@ -73,6 +77,13 @@ class AnimalEditor extends Component
             $this->animal->save();
             $this->storeUploads($this->animal);
         });
+
+        // Картку волонтера адміністратор редагує з черги модерації – туди ж і повертаємо, щоб одразу схвалити
+        if ($this->animal->status === AnimalStatus::Moderation) {
+            session()->flash('status', 'Зміни збережено. Тепер картку «'.$this->animal->name.'» можна схвалити.');
+
+            return $this->redirectRoute('admin.moderation');
+        }
 
         session()->flash('status', $isNew ? 'Тварину додано.' : 'Зміни збережено.');
 
