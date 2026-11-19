@@ -55,19 +55,20 @@
 <a href="#main" class="sr-only focus:not-sr-only focus:absolute focus:top-2 focus:left-2 btn-primary">{{ __('Перейти до змісту') }}</a>
 
 <header class="border-b border-line bg-bg" x-data="{ open: false }">
-    <div class="mx-auto max-w-6xl px-6 py-4 flex flex-wrap items-center justify-between gap-4">
+    <div class="mx-auto max-w-6xl px-6 py-4 flex flex-wrap items-center justify-between gap-x-2 gap-y-4 sm:gap-4">
         {{-- Логотип: велика лапка, назва капсом і підпис притулку одним блоком --}}
-        <a href="{{ route('home') }}" class="flex items-center gap-3 group" aria-label="{{ $brand }} – {{ __('на головну') }}">
-            <img src="/logo-mark.svg" alt="" width="40" height="50" class="h-14 w-auto shrink-0">
+        <a href="{{ route('home') }}" class="flex min-w-0 items-center gap-2 sm:gap-3 group" aria-label="{{ $brand }} – {{ __('на головну') }}">
+            <img src="/logo-mark.svg" alt="" width="40" height="50" class="h-11 sm:h-14 w-auto shrink-0">
             <span class="flex flex-col leading-tight">
-                <span class="font-display font-extrabold text-2xl uppercase tracking-wider text-primary">{{ $brand }}</span>
+                {{-- На вузьких телефонах назва дрібніша, щоб поруч умістилася кнопка меню --}}
+                <span class="font-display font-extrabold text-xl sm:text-2xl uppercase tracking-wide sm:tracking-wider text-primary whitespace-nowrap">{{ $brand }}</span>
                 @if ($tagline)
                     <span class="hidden sm:block lg:hidden xl:block text-sm text-muted">{{ $tagline }}</span>
                 @endif
             </span>
         </a>
 
-        <button type="button" class="lg:hidden btn-ghost px-3" x-on:click="open = !open" x-bind:aria-expanded="open" aria-controls="main-nav" aria-label="{{ __('Меню') }}">
+        <button type="button" class="lg:hidden btn-ghost px-3 shrink-0" x-on:click="open = !open" x-bind:aria-expanded="open" aria-controls="main-nav" aria-label="{{ __('Меню') }}">
             <svg class="size-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M4 7h16M4 12h16M4 17h16"/></svg>
         </button>
 
