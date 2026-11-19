@@ -36,7 +36,7 @@ jobs:
         with:
           php-version: '8.5'
           extensions: mbstring, pdo_pgsql, pgsql, gd, intl, zip, exif, bcmath
-          coverage: none
+          coverage: pcov
 
       - name: Node.js 26
         uses: actions/setup-node@v4
@@ -47,8 +47,17 @@ jobs:
       - name: Залежності PHP
         run: composer install --prefer-dist --no-interaction --no-progress
 
+      - name: Стиль коду (Laravel Pint)
+        run: ./vendor/bin/pint --test
+
+      - name: Аудит залежностей
+        run: |
+          composer audit
+          npm ci
+          npm audit --omit=dev --audit-level=high
+
       - name: Збірка фронтенду
-        run: npm ci && npm run build
+        run: npm run build
 
       - name: Середовище
         run: |
@@ -56,5 +65,14 @@ jobs:
           sed -i 's/^DB_HOST=.*/DB_HOST=127.0.0.1/' .env
           php artisan key:generate
 
-      - name: Автотести
-        run: ./vendor/bin/pest
+      # Покриття рядків коду застосунку (app/); поріг погоджено як навчальну ціль, перевіряється на кожному запуску
+      - name: Автотести з покриттям
+        run: ./vendor/bin/pest --coverage --min=85 --coverage-clover coverage.xml
+
+      - name: Звіт про покриття
+        if: always()
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
+        with:
+          name: coverage
+          path: coverage.xml
+          if-no-files-found: ignore
