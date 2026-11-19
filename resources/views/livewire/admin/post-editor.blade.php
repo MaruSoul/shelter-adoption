@@ -93,77 +93,7 @@
                             </div>
                         </div>
 
-                        @switch($block['type'])
-                            @case('heading')
-                                <x-bilingual model="blocks.{{ $i }}.data.text" placeholder="Текст заголовка" input-class="font-display font-bold text-xl" />
-                                <select wire:model="blocks.{{ $i }}.data.level" class="field w-auto self-start" aria-label="Рівень заголовка"><option value="2">Розділ</option><option value="3">Підрозділ</option></select>
-                                @break
-                            @case('paragraph')
-                                <x-bilingual model="blocks.{{ $i }}.data.text" type="textarea" :rows="5" placeholder="Текст абзацу" />
-                                <p class="text-sm text-muted">{{ \App\Support\SimpleMarkup::HINT }}. Внутрішні посилання на тварин і статті допомагають сайту в пошуку.</p>
-                                @break
-                            @case('quote')
-                                <x-bilingual model="blocks.{{ $i }}.data.text" type="textarea" :rows="2" placeholder="Цитата" />
-                                <x-bilingual model="blocks.{{ $i }}.data.author" placeholder="Автор (необовʼязково)" compact translit optional />
-                                @break
-                            @case('list')
-                                <select wire:model="blocks.{{ $i }}.data.style" class="field w-auto self-start" aria-label="Вигляд списку"><option value="bullet">Маркований</option><option value="ordered">Нумерований</option></select>
-                                <div class="hidden md:grid grid-cols-2 gap-3 pr-12 text-sm font-semibold text-muted" aria-hidden="true">
-                                    <span class="bi-tag"><span class="bi-flag">UA</span>Українською</span>
-                                    <span class="bi-tag"><span class="bi-flag bi-flag-en">EN</span>Англійською</span>
-                                </div>
-                                @foreach ($block['data']['items'] as $j => $item)
-                                    <div class="flex gap-2 items-start" wire:key="b{{ $i }}-item-{{ $j }}">
-                                        <x-bilingual model="blocks.{{ $i }}.data.items.{{ $j }}" en-model="blocks.{{ $i }}.data.items_en.{{ $j }}" placeholder="Пункт {{ $j + 1 }}" compact class="grow" />
-                                        <button type="button" wire:click="removeListItem({{ $i }}, {{ $j }})" class="btn-ghost px-3 text-danger" aria-label="Видалити пункт {{ $j + 1 }}">×</button>
-                                    </div>
-                                @endforeach
-                                <button type="button" wire:click="addListItem({{ $i }})" class="btn-ghost self-start">+ Пункт</button>
-                                @break
-                            @case('image')
-                                @php($pending = $blockImages[$i] ?? null)
-                                @if ($pending && method_exists($pending, 'isPreviewable') && $pending->isPreviewable())
-                                    <img src="{{ $pending->temporaryUrl() }}" alt="" class="max-h-64 rounded-2xl self-start border-2 border-dashed border-primary/40">
-                                @elseif (! empty($block['data']['path']))
-                                    <img src="{{ \Illuminate\Support\Facades\Storage::disk('public')->url($block['data']['path']) }}" alt="" class="max-h-64 rounded-2xl self-start">
-                                @endif
-                                <span wire:loading wire:target="blockImages.{{ $i }}" class="text-sm text-muted">Завантажуємо…</span>
-                                <label class="btn-outline cursor-pointer self-start">{{ empty($block['data']['path']) ? 'Обрати зображення' : 'Замінити' }}
-                                    <input type="file" wire:model="blockImages.{{ $i }}" accept="image/jpeg,image/png,image/webp" class="sr-only">
-                                </label>
-                                @error('blockImages.'.$i)<span class="error">{{ $message }}</span>@enderror
-                                <x-bilingual model="blocks.{{ $i }}.data.alt" placeholder="Опис зображення для незрячих *" compact />
-                                <x-bilingual model="blocks.{{ $i }}.data.caption" placeholder="Підпис (необовʼязково)" compact />
-                                @break
-                            @case('animal')
-                                <select wire:model="blocks.{{ $i }}.data.animal_id" class="field" aria-label="Тварина">
-                                    <option value="">Оберіть тварину з каталогу</option>
-                                    @foreach ($animals as $a)<option value="{{ $a->id }}">{{ $a->name }}</option>@endforeach
-                                </select>
-                                <p class="text-sm text-muted">Картка тварини перекладається автоматично з її сторінки.</p>
-                                @break
-                            @case('video')
-                                <p class="text-sm text-muted">Скопіюйте адресу відео з YouTube (звичайне відео або Shorts) чи Vimeo – вставку сайт зробить сам.
-                                    Англійське посилання необовʼязкове: якщо його немає, англійська версія статті покаже те саме відео.</p>
-                                <div class="grid gap-3 md:grid-cols-2">
-                                    @foreach (['url' => ['UA', 'Посилання на відео – українська версія', ''], 'url_en' => ['EN', 'Посилання на відео – англійська версія', 'bi-flag-en']] as $field => [$flag, $label, $flagClass])
-                                        <div class="flex flex-col gap-2">
-                                            <div class="relative">
-                                                <span class="bi-pill {{ $flagClass }}" aria-hidden="true">{{ $flag }}</span>
-                                                <input type="url" wire:model.live.blur="blocks.{{ $i }}.data.{{ $field }}" class="field pl-12" inputmode="url"
-                                                       placeholder="{{ $field === 'url' ? 'https://www.youtube.com/watch?v=…' : 'Те саме відео, що й українською' }}" aria-label="{{ $label }}"
-                                                       @if ($field === 'url_en') lang="en" @endif>
-                                            </div>
-                                            @error('blocks.'.$i.'.data.'.$field)<span class="error">{{ $message }}</span>@enderror
-                                            @if (($video = \App\Services\PostBlocks::parseVideo($block['data'][$field] ?? '')) && $video['thumb'])
-                                                <img src="{{ $video['thumb'] }}" alt="" class="max-h-32 rounded-2xl self-start">
-                                            @endif
-                                        </div>
-                                    @endforeach
-                                </div>
-                                <x-bilingual model="blocks.{{ $i }}.data.caption" placeholder="Підпис (необовʼязково)" compact />
-                                @break
-                        @endswitch
+                        @include('livewire.admin.post-editor.blocks.'.$block['type'])
 
                         {{-- Помилки текстових полів показує сама пара UA/EN; тут – решта (зображення, тварина, список) --}}
                         @foreach ($errors->getMessages() as $key => $messages)

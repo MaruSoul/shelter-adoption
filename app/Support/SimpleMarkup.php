@@ -61,8 +61,9 @@ class SimpleMarkup
     {
         $escaped = e($text);
 
-        // Посилання: лише адреси сайту (/...) або http(s); javascript: та інші схеми не розпізнаються
-        $escaped = preg_replace_callback('~\[([^\]\n]{1,200})\]\(((?:https?://|/)[^\s)]{0,500})\)~u', function (array $m) {
+        // Посилання: лише адреси сайту (/...) або http(s); javascript: та інші схеми не розпізнаються.
+        // «//домен» – це адреса іншого сайту без схеми, тому як внутрішнє посилання її не приймаємо.
+        $escaped = preg_replace_callback('~\[([^\]\n]{1,200})\]\(((?:https?://|/(?!/))[^\s)]{0,500})\)~u', function (array $m) {
             $href = $m[2];
             $external = str_starts_with($href, 'http') && ! str_starts_with($href, rtrim(config('app.url'), '/'));
 

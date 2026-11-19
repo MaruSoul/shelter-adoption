@@ -2,6 +2,7 @@
 
 use App\Enums\AnimalSource;
 use App\Enums\AnimalStatus;
+use App\Livewire\Admin\AnimalEditor;
 use App\Livewire\Admin\ModerationQueue;
 use App\Livewire\Cabinet\AnimalForm;
 use App\Models\Animal;
@@ -72,7 +73,7 @@ it('адміністратор виправляє картку з черги м�
 
     $this->actingAs(admin())->get(route('admin.moderation'))->assertSee(route('admin.animals.edit', $animal), false);
 
-    Livewire::actingAs(admin())->test(\App\Livewire\Admin\AnimalEditor::class, ['animal' => $animal])
+    Livewire::actingAs(admin())->test(AnimalEditor::class, ['animal' => $animal])
         ->set('form.name', 'Мурчик Великий')
         ->call('save')
         ->assertHasNoErrors()

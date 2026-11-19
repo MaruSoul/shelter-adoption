@@ -1,17 +1,4 @@
-@php
-    $newCount = \App\Models\AdoptionApplication::where('status', \App\Enums\ApplicationStatus::New)->count();
-    $moderationCount = \App\Models\Animal::where('status', \App\Enums\AnimalStatus::Moderation)->count();
-    $items = [
-        ['admin.dashboard', 'Огляд', null],
-        ['admin.applications.index', 'Анкети', $newCount],
-        ['admin.animals.index', 'Тварини', null],
-        ['admin.moderation', 'Модерація', $moderationCount],
-        ['admin.posts.index', 'Статті', null],
-        ['admin.dictionaries', 'Довідники', null],
-        ['admin.seo', 'SEO', null],
-        ['admin.settings', 'Налаштування', null],
-    ];
-@endphp
+{{-- Меню панелі притулку; пункти й лічильники готує App\View\Components\AdminNav. --}}
 <nav aria-label="Панель притулку" class="bg-surface border-b border-line">
     <div class="mx-auto max-w-6xl px-6 flex flex-wrap gap-1">
         @foreach ($items as [$route, $label, $badge])

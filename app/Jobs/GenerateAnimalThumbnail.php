@@ -19,9 +19,7 @@ class GenerateAnimalThumbnail implements ShouldQueue
 
     public int $tries = 3;
 
-    public function __construct(public AnimalPhoto $photo)
-    {
-    }
+    public function __construct(public AnimalPhoto $photo) {}
 
     public function handle(): void
     {

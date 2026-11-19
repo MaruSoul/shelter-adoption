@@ -15,9 +15,7 @@ class NewApplicationMail extends Mailable implements ShouldQueue
 {
     use Queueable, SerializesModels;
 
-    public function __construct(public AdoptionApplication $application)
-    {
-    }
+    public function __construct(public AdoptionApplication $application) {}
 
     public function envelope(): Envelope
     {
