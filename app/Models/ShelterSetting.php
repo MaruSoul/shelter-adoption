@@ -10,7 +10,7 @@ use Illuminate\Support\Facades\Cache;
 /**
  * Налаштування притулку зберігаються одним рядком і кешуються (FR-16).
  */
-#[Fillable(['name', 'name_en', 'tagline', 'tagline_en', 'address', 'address_en', 'phone', 'email', 'notification_email', 'instagram_url', 'facebook_url', 'telegram_url', 'tiktok_url', 'youtube_url', 'help_text', 'help_text_en', 'default_adoption_terms', 'default_adoption_terms_en'])]
+#[Fillable(['name', 'name_en', 'tagline', 'tagline_en', 'address', 'address_en', 'phone', 'email', 'notification_email', 'instagram_url', 'facebook_url', 'telegram_url', 'tiktok_url', 'youtube_url', 'help_text', 'help_text_en', 'default_adoption_terms', 'default_adoption_terms_en', 'google_site_verification', 'google_analytics_id'])]
 class ShelterSetting extends Model
 {
     use HasTranslations {

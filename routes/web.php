@@ -104,5 +104,6 @@ Route::middleware(['auth', 'verified', 'can:admin'])->prefix('admin')->name('adm
     Route::get('/statti/{post}', Admin\PostEditor::class)->name('posts.edit');
 
     Route::get('/dovidnyky', Admin\Dictionaries::class)->name('dictionaries');
+    Route::get('/seo', Admin\Seo::class)->name('seo');
     Route::get('/nalashtuvannia', Admin\Settings::class)->name('settings');
 });

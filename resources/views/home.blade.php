@@ -1,8 +1,9 @@
-<x-layout>
+@php($seo = \App\Models\SeoPage::for('home'))
+<x-layout :seo-title="$seo->tr('title')" :description="$seo->tr('description')">
     <x-slot:head><x-json-ld :data="\App\Support\StructuredData::shelter(\App\Models\ShelterSetting::current())" /></x-slot:head>
     <section class="mx-auto max-w-6xl px-6 pt-14 pb-10 flex flex-wrap items-center gap-12">
         <div class="grow basis-[440px] min-w-0 flex flex-col gap-6">
-            <h1 class="text-5xl md:text-6xl leading-[1.08]">{{ __('Знайдіть друга, який чекає саме на вас') }}</h1>
+            <h1 class="text-5xl md:text-6xl leading-[1.08]">{{ $seo->tr('h1') ?: __('Знайдіть друга, який чекає саме на вас') }}</h1>
             <p class="text-lg text-muted max-w-xl">{{ __('Кожна тварина в нашому каталозі оглянута ветеринаром і готова до нового дому. Оберіть за характером, залиште анкету – ми зателефонуємо самі.') }}</p>
             <div class="flex flex-wrap gap-3">
                 <a href="{{ route('animals.index') }}" class="btn-primary min-h-13 px-7 text-lg">{{ __('Знайти друга') }}</a>
@@ -95,4 +96,6 @@
             </div>
         </section>
     @endif
+
+    <x-seo-text :seo="$seo" />
 </x-layout>

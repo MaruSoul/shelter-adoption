@@ -52,6 +52,15 @@
                     </label>
                 </div>
                 <x-bilingual label="Анонс" model="excerpt" type="textarea" :rows="2" hint="показується в картці статті й у пошуковиках" />
+                {{-- Для пошуку: необовʼязково, без них Google бачить заголовок і анонс --}}
+                <details class="rounded-2xl border border-line p-4 flex flex-col gap-4" @if ($meta_title || $meta_description || $errors->has('meta_*')) open @endif>
+                    <summary class="font-semibold cursor-pointer">Для пошуку (Title і Description) <span class="font-normal text-sm text-muted">– необовʼязково</span></summary>
+                    <div class="flex flex-col gap-4 pt-4">
+                        <p class="text-sm text-muted">Якщо порожньо, Google покаже заголовок і анонс статті. Title – до 60 символів, ключова фраза ближче до початку; Description – до 160 символів.</p>
+                        <x-bilingual label="Title" model="meta_title" optional />
+                        <x-bilingual label="Description" model="meta_description" type="textarea" :rows="2" optional />
+                    </div>
+                </details>
                 <div class="flex flex-wrap items-center gap-4">
                     {{-- Нова обкладинка показується одразу, до збереження статті --}}
                     @if ($cover && method_exists($cover, 'isPreviewable') && $cover->isPreviewable())

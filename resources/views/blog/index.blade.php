@@ -1,7 +1,11 @@
-<x-layout :title="$current ? $current->label() : __('Блог')" :description="__('Поради з підготовки до появи тварини вдома, здоровʼя, виховання та новини притулку.')">
+{{-- SEO-налаштування блогу діють на головній сторінці блогу; рубрики й наступні сторінки – з типовими заголовками --}}
+@php($seo = \App\Models\SeoPage::for('blog'))
+@php($mainBlogPage = ! $current && ! request()->has('page'))
+<x-layout :title="$current ? $current->label() : __('Блог')" :seo-title="$mainBlogPage ? $seo->tr('title') : null"
+          :description="($mainBlogPage ? $seo->tr('description') : null) ?: __('Поради з підготовки до появи тварини вдома, здоровʼя, виховання та новини притулку.')">
     <div class="mx-auto max-w-6xl px-6 py-10 flex flex-col gap-8">
         <div class="flex flex-col gap-2">
-            <h1 class="text-4xl md:text-5xl">{{ __('Блог') }}</h1>
+            <h1 class="text-4xl md:text-5xl">{{ ($mainBlogPage ? $seo->tr('h1') : null) ?: __('Блог') }}</h1>
             <p class="text-muted">{{ __('Поради від волонтерів і ветеринарів притулку.') }}</p>
         </div>
         <nav aria-label="{{ __('Рубрики') }}" class="flex flex-wrap gap-2">
@@ -21,4 +25,7 @@
             {{ $posts->links() }}
         @endif
     </div>
+    @if ($mainBlogPage)
+        <x-seo-text :seo="$seo" />
+    @endif
 </x-layout>

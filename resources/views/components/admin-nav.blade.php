@@ -8,6 +8,7 @@
         ['admin.moderation', 'Модерація', $moderationCount],
         ['admin.posts.index', 'Статті', null],
         ['admin.dictionaries', 'Довідники', null],
+        ['admin.seo', 'SEO', null],
         ['admin.settings', 'Налаштування', null],
     ];
 @endphp

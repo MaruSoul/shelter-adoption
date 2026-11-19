@@ -40,6 +40,15 @@ class PostEditor extends Component
 
     public string $excerpt_en = '';
 
+    /** Title і Description для пошуку; порожні – беруться заголовок і анонс статті. */
+    public string $meta_title = '';
+
+    public string $meta_title_en = '';
+
+    public string $meta_description = '';
+
+    public string $meta_description_en = '';
+
     public array $blocks = [];
 
     public bool $preview = false;
@@ -64,6 +73,9 @@ class PostEditor extends Component
             $this->title_en = (string) $this->post->title_en;
             $this->excerpt = (string) $this->post->excerpt;
             $this->excerpt_en = (string) $this->post->excerpt_en;
+            foreach (['meta_title', 'meta_title_en', 'meta_description', 'meta_description_en'] as $field) {
+                $this->{$field} = (string) $this->post->{$field};
+            }
             $this->blocks = PostBlocks::withEnglishKeys($this->post->blocks ?? []);
         } else {
             $this->blocks = [PostBlocks::blank('paragraph')];
@@ -145,9 +157,11 @@ class PostEditor extends Component
             'excerpt' => ['nullable', 'string', 'max:300'],
             'title_en' => ['nullable', 'string', 'max:160'],
             'excerpt_en' => ['nullable', 'string', 'max:300'],
+            'meta_title' => ['nullable', 'string', 'max:160'], 'meta_title_en' => ['nullable', 'string', 'max:160'],
+            'meta_description' => ['nullable', 'string', 'max:300'], 'meta_description_en' => ['nullable', 'string', 'max:300'],
             'cover' => ['nullable', 'image', 'mimes:jpeg,jpg,png,webp', 'max:10240'],
         ], [], ['title' => 'заголовок', 'slug' => 'адреса', 'post_category_id' => 'рубрика', 'excerpt' => 'анонс', 'cover' => 'обкладинка',
-            'title_en' => 'заголовок англійською', 'excerpt_en' => 'анонс англійською']);
+            'title_en' => 'заголовок англійською', 'excerpt_en' => 'анонс англійською', 'meta_title' => 'Title', 'meta_description' => 'Description']);
 
         try {
             $clean = $schema->validate($this->blocks);
@@ -172,6 +186,10 @@ class PostEditor extends Component
             'excerpt' => trim($data['excerpt']) ?: null,
             'title_en' => trim($data['title_en']) ?: null,
             'excerpt_en' => trim($data['excerpt_en']) ?: null,
+            'meta_title' => trim($data['meta_title']) ?: null,
+            'meta_title_en' => trim($data['meta_title_en']) ?: null,
+            'meta_description' => trim($data['meta_description']) ?: null,
+            'meta_description_en' => trim($data['meta_description_en']) ?: null,
             'blocks' => $clean,
         ]);
         if ($this->cover) {

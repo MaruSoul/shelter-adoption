@@ -123,3 +123,12 @@ it('не публікує статтю з помилкою в блоці', funct
 
     expect(Post::count())->toBe(0);
 });
+
+it('стаття може мати власні Title і Description для пошуку', function () {
+    $post = makePost(['title' => 'Довга назва статті', 'excerpt' => 'Анонс', 'meta_title' => 'Коротко для Google', 'meta_description' => 'Опис для пошуку']);
+
+    $this->get(route('blog.show', $post))
+        ->assertSee('<title>Коротко для Google</title>', false)
+        ->assertSee('content="Опис для пошуку"', false)
+        ->assertSee('Довга назва статті');
+});

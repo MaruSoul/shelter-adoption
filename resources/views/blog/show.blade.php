@@ -1,5 +1,5 @@
 {{-- Стаття без англійського заголовка англійською версією показувала б український текст – таку сторінку не індексуємо --}}
-<x-layout :title="$post->tr('title')" :description="$post->tr('excerpt')" :image="$post->coverUrl()"
+<x-layout :title="$post->tr('title')" :seo-title="$post->seo('title')" :description="$post->seo('description') ?: $post->tr('excerpt')" :image="$post->coverUrl()"
           :alternates="filled($post->title_en)" :robots="app()->getLocale() === 'en' && blank($post->title_en) ? 'noindex, follow' : null">
     <x-slot:head>
         <x-json-ld :data="\App\Support\StructuredData::article($post, \App\Models\ShelterSetting::current())" />

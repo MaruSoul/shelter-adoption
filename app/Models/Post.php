@@ -12,13 +12,21 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Support\Facades\Storage;
 
-#[Fillable(['post_category_id', 'title', 'title_en', 'slug', 'excerpt', 'excerpt_en', 'cover_path', 'blocks'])]
+#[Fillable(['post_category_id', 'title', 'title_en', 'slug', 'excerpt', 'excerpt_en', 'cover_path', 'blocks', 'meta_title', 'meta_title_en', 'meta_description', 'meta_description_en'])]
 class Post extends Model
 {
     use HasFactory, HasTranslations;
 
     /** Поля статті з англійською парою; текст блоків перекладається всередині JSON (див. PostBlocks). */
     public const TRANSLATABLE = ['title', 'excerpt'];
+
+    /** Title чи Description для пошуку мовою сторінки; без запасної мови – тоді діють заголовок і анонс. */
+    public function seo(string $field, ?string $locale = null): ?string
+    {
+        $value = $this->getAttribute(($locale ?? app()->getLocale()) === 'en' ? 'meta_'.$field.'_en' : 'meta_'.$field);
+
+        return filled($value) ? $value : null;
+    }
 
     protected function casts(): array
     {

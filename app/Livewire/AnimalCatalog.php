@@ -9,6 +9,7 @@ use App\Models\Breed;
 use App\Models\Color;
 use App\Models\Locality;
 use App\Models\Region;
+use App\Models\SeoPage;
 use App\Models\Species;
 use Illuminate\Http\Exceptions\HttpResponseException;
 use Livewire\Attributes\Computed;
@@ -119,6 +120,8 @@ class AnimalCatalog extends Component
     public function render()
     {
         $speciesModel = $this->species ? Species::firstWhere('slug', $this->species) : null;
+        $seo = SeoPage::for($speciesModel ? 'species:'.$speciesModel->slug : 'animals');
+        $defaultTitle = $speciesModel ? __(':species шукають дім', ['species' => $speciesModel->label('name_plural')]) : __('Знайти друга');
 
         return view('livewire.animal-catalog', [
             'speciesList' => Species::orderBy('id')->get(),
@@ -129,7 +132,9 @@ class AnimalCatalog extends Component
             'breeds' => $speciesModel ? Breed::where('species_id', $speciesModel->id)->orderBy('name')->get() : collect(),
             'colors' => Color::orderBy('name')->get(),
             'activeCount' => $this->activeFiltersCount(),
-        ])->title($speciesModel ? __(':species шукають дім', ['species' => $speciesModel->label('name_plural')]) : __('Знайти друга'));
+            'seo' => $seo,
+            'heading' => $seo->tr('h1') ?: $defaultTitle,
+        ])->title($defaultTitle)->layoutData(['seoTitle' => $seo->tr('title'), 'description' => $seo->tr('description')]);
     }
 
     private function activeFiltersCount(): int

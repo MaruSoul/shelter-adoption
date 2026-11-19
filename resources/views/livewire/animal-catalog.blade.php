@@ -1,6 +1,6 @@
 <div class="mx-auto max-w-6xl px-6 py-10 flex flex-col gap-7">
     <div class="flex flex-col gap-2">
-        <h1 class="text-4xl md:text-5xl">{{ $species ? __(':species шукають дім', ['species' => $speciesList->firstWhere('slug', $species)?->label('name_plural')]) : __('Знайти друга') }}</h1>
+        <h1 class="text-4xl md:text-5xl">{{ $heading }}</h1>
         <p class="text-muted">{{ __('Усі тварини оглянуті ветеринаром. Фільтри зберігаються в адресі сторінки – нею можна поділитися.') }}</p>
     </div>
 
@@ -118,4 +118,9 @@
             {{ $this->animals->links('components.pagination') }}
         </section>
     </div>
+
+    {{-- SEO-текст розділу – лише на першій сторінці каталогу без фільтрів, щоб не повторювався на кожній вибірці --}}
+    @if ($this->animals->onFirstPage() && $activeCount === 0)
+        <x-seo-text :seo="$seo" class="!max-w-none !px-0 !py-4" />
+    @endif
 </div>

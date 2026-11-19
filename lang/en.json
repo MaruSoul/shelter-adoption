@@ -429,5 +429,12 @@
     "Відео": "Video",
     "Відтворити відео": "Play video",
     "Дивитися відео": "Watch video",
-    "Як ще допомогти притулку": "Other ways to help the shelter"
+    "Як ще допомогти притулку": "Other ways to help the shelter",
+    "Згода на аналітику": "Analytics consent",
+    "Ми хочемо рахувати відвідування сайту (Google Analytics), щоб розуміти, що допомагає тваринам знаходити дім. Без вашої згоди нічого не збирається.": "We would like to count visits (Google Analytics) to understand what helps animals find a home. Nothing is collected without your consent.",
+    "Відмовитись": "Decline",
+    "Дозволити": "Allow",
+    "Статистика відвідувань": "Visit statistics",
+    "Якщо ви погодилися в банері, сайт рахує відвідування за допомогою Google Analytics (знеособлено, без імені й контактів). Без згоди аналітика не завантажується.": "If you agreed in the banner, the site counts visits with Google Analytics (anonymously, without names or contacts). Without consent, analytics is not loaded.",
+    "Змінити вибір": "Change your choice"
 }

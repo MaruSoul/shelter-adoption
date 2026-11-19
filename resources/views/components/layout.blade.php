@@ -4,12 +4,14 @@
     'image' => null,
     'robots' => null,
     'alternates' => true,
+    'seoTitle' => null,
 ])
 @php
     $shelter = \App\Models\ShelterSetting::current();
     $brand = $shelter->tr('name');
     $tagline = $shelter->tr('tagline');
-    $pageTitle = $title ? $title.' – '.$brand : $brand.' – '.($tagline ?? __('притулок для тварин'));
+    // Title із SEO-налаштувань сторінки адміністратор пише повністю – назву притулку до нього не додаємо
+    $pageTitle = filled($seoTitle) ? $seoTitle : ($title ? $title.' – '.$brand : $brand.' – '.($tagline ?? __('притулок для тварин')));
     $pageDescription = $description ?? __('Знайдіть друга в притулку «:name»: каталог котів і собак, які шукають дім, та анкета на прилаштування без реєстрації.', ['name' => $brand]);
 @endphp
 <!DOCTYPE html>
@@ -21,6 +23,7 @@
     <meta name="description" content="{{ $pageDescription }}">
     <link rel="canonical" href="{{ url()->current() }}">
     @if ($robots)<meta name="robots" content="{{ $robots }}">@endif
+    @if ($shelter->google_site_verification)<meta name="google-site-verification" content="{{ $shelter->google_site_verification }}">@endif
     {{-- Мовні версії сторінки для пошуковиків: українська – основна (x-default) --}}
     @if ($alternates && ($ukUrl = \App\Support\LocaleUrls::alternate('uk')))
         @php($ukCanonical = strtok($ukUrl, '?'))
@@ -154,6 +157,10 @@
     </div>
 </footer>
 
+{{-- Аналітика лише на публічних сторінках і лише зі згоди відвідувача --}}
+@if ($shelter->google_analytics_id && ! request()->is('admin', 'admin/*'))
+    <x-analytics :id="$shelter->google_analytics_id" />
+@endif
 @livewireScripts
 </body>
 </html>
