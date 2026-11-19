@@ -47,6 +47,6 @@ ENTRYPOINT []
 CMD ["php", "vendor/bin/pest"]
 
 # Етап 4: веб-сервер nginx зі статичними файлами застосунку
-FROM nginx:1.29-alpine AS web
+FROM nginx:alpine AS web
 COPY docker/nginx/default.conf /etc/nginx/conf.d/default.conf
 COPY --from=app /var/www/html/public /var/www/html/public
