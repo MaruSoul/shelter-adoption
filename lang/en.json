@@ -436,5 +436,16 @@
     "Дозволити": "Allow",
     "Статистика відвідувань": "Visit statistics",
     "Якщо ви погодилися в банері, сайт рахує відвідування за допомогою Google Analytics (знеособлено, без імені й контактів). Без згоди аналітика не завантажується.": "If you agreed in the banner, the site counts visits with Google Analytics (anonymously, without names or contacts). Without consent, analytics is not loaded.",
-    "Змінити вибір": "Change your choice"
+    "Змінити вибір": "Change your choice",
+    "Немає доступу": "Access denied",
+    "Ця сторінка доступна лише її автору або адміністратору притулку. Якщо це ваша анкета чи картка, увійдіть до кабінету.": "This page is only available to its author or the shelter administrator. If this is your application or listing, please sign in.",
+    "Сторінка застаріла": "Page expired",
+    "Сторінка була відкрита надто довго, і з міркувань безпеки форму потрібно оновити. Поверніться назад і надішліть її ще раз.": "The page was open for too long, so for security reasons the form has to be refreshed. Go back and submit it again.",
+    "Повернутися назад": "Go back",
+    "Забагато спроб": "Too many attempts",
+    "Ви надсилаєте запити надто часто. Зачекайте хвилину й спробуйте ще раз.": "You are sending requests too often. Please wait a minute and try again.",
+    "Щось пішло не так": "Something went wrong",
+    "На сервері сталася помилка. Ми вже записали її в журнал; спробуйте оновити сторінку за кілька хвилин.": "A server error occurred. It has been logged; please try reloading the page in a few minutes.",
+    "Сайт оновлюється": "The site is being updated",
+    "Ми ненадовго вимкнули сайт для оновлення. Зазирніть за кілька хвилин – тварини нікуди не подінуться.": "The site is briefly offline for an update. Check back in a few minutes – the animals aren’t going anywhere."
 }
