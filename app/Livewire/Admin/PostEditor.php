@@ -93,7 +93,7 @@ class PostEditor extends Component
 
     public function addBlock(string $type, ?int $after = null): void
     {
-        abort_unless(array_key_exists($type, PostBlocks::TYPES), 422);
+        abort_unless(PostBlocks::type($type) !== null, 422);
         if (count($this->blocks) >= PostBlocks::MAX_BLOCKS) {
             $this->addError('blocks', 'Досягнуто максимум блоків.');
 
@@ -228,7 +228,7 @@ class PostEditor extends Component
     {
         return view('livewire.admin.post-editor', [
             'categories' => PostCategory::orderBy('name')->get(),
-            'types' => PostBlocks::TYPES,
+            'types' => PostBlocks::labels(),
             'animals' => Animal::where('status', AnimalStatus::Available)->orderBy('name')->get(['id', 'name']),
             'previewHtml' => $this->preview ? $this->renderPreview($schema) : null,
             'previewGaps' => $this->preview && $this->previewLocale === 'en' ? $this->previewGaps() : 0,
@@ -273,16 +273,6 @@ class PostEditor extends Component
     /** Для попереднього перегляду беремо лише заповнені блоки. */
     private function blocksForPreview(): array
     {
-        return array_values(array_filter($this->blocks, function ($b) {
-            $d = $b['data'] ?? [];
-
-            return match ($b['type']) {
-                'image' => ! empty($d['path']),
-                'animal' => ! empty($d['animal_id']),
-                'video' => PostBlocks::parseVideo((string) ($d['url'] ?? '')) !== null,
-                'list' => count(array_filter($d['items'] ?? [])) > 0,
-                default => trim($d['text'] ?? '') !== '',
-            };
-        }));
+        return array_values(array_filter($this->blocks, PostBlocks::isFilled(...)));
     }
 }

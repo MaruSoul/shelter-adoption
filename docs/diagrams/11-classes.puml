@@ -24,9 +24,37 @@ class ApplicationShow <<Livewire>> {
 class PostBlocks {
   +validate(array): array
   +forRender(array): array
-  +{static} blank(string): array
+  +{static} types(): array<string, BlockType>
+  +{static} localize(array, locale): array
+  +{static} englishCoverage(array): array
+}
+interface BlockType {
+  +key(): string
+  +rules(): array
+  +normalize(array): array
+  +localize(array): array
+  +forRender(array): ?array
+}
+interface PreparesBatch {
+  +prepare(array)
+}
+abstract class AbstractBlock {
+  #TEXT_FIELDS
+  #LIST_FIELDS
+}
+class "HeadingBlock, ParagraphBlock,\nImageBlock, QuoteBlock, ListBlock" as TextBlocks
+class AnimalBlock
+class VideoBlock {
+  +{static} parse(url): ?array
 }
 class PostEditor <<Livewire>>
+class Dictionaries <<Livewire>>
+class DictionaryType <<enum>> {
+  Species, Breeds, Colors, Categories
+  +model(): string
+  +fields(): array
+  +usageRelation(): string
+}
 class ApplicationStatus <<enum>> {
   New, InProgress, MeetingScheduled,
   Adopted, Declined, Closed
@@ -51,6 +79,13 @@ ApplicationShow --> ApplicationWorkflow
 ApplicationWorkflow --> ApplicationStatus
 ApplicationWorkflow --> Animal
 PostEditor --> PostBlocks
+PostBlocks o--> "7" BlockType
+AbstractBlock ..|> BlockType
+TextBlocks --|> AbstractBlock
+AnimalBlock --|> AbstractBlock
+VideoBlock --|> AbstractBlock
+AnimalBlock ..|> PreparesBatch
+Dictionaries --> DictionaryType
 AnimalCatalog --> Animal
 Animal --> AgeGroup
 Animal --> AnimalStatus

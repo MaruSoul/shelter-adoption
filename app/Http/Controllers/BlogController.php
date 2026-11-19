@@ -31,7 +31,7 @@ class BlogController extends Controller
     }
 
     /** Чернетка за прямою адресою – 404 для всіх, крім адміністратора (FR-14). */
-    public function show(Request $request, Post $post)
+    public function show(Request $request, Post $post, PostBlocks $blocks)
     {
         if (! $post->isPublished() && ! $request->user()?->isAdmin()) {
             abort(404);
@@ -41,7 +41,7 @@ class BlogController extends Controller
 
         return view('blog.show', [
             'post' => $post,
-            'blocks' => app(PostBlocks::class)->forRender($post->localizedBlocks()),
+            'blocks' => $blocks->forRender($post->localizedBlocks()),
             'related' => $this->related($post),
         ]);
     }

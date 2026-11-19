@@ -5,6 +5,7 @@ use App\Livewire\Admin\PostEditor;
 use App\Models\Animal;
 use App\Models\Post;
 use App\Models\PostCategory;
+use App\Services\Blocks\VideoBlock;
 use App\Services\PostBlocks;
 use Illuminate\Validation\ValidationException;
 use Livewire\Livewire;
@@ -59,7 +60,7 @@ it('перевіряє структуру блоків за схемою (FR-15)
 ]);
 
 it('розпізнає посилання на відео YouTube і Vimeo', function (string $url, string $provider, string $id) {
-    expect(PostBlocks::parseVideo($url))->toMatchArray(['provider' => $provider, 'video_id' => $id]);
+    expect(VideoBlock::parse($url))->toMatchArray(['provider' => $provider, 'video_id' => $id]);
 })->with([
     ['https://www.youtube.com/watch?v=dQw4w9WgXcQ', 'youtube', 'dQw4w9WgXcQ'],
     ['https://youtu.be/dQw4w9WgXcQ?si=abc', 'youtube', 'dQw4w9WgXcQ'],
