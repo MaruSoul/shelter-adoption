@@ -1,9 +1,8 @@
 <?php
 
-use App\Livewire\Cabinet\AnimalForm;
 use App\Models\AdoptionApplication;
 use App\Models\Animal;
-use Livewire\Livewire;
+use App\Models\User;
 
 it('пускає в панель притулку лише адміністратора (NFR-01)', function () {
     $this->get(route('admin.dashboard'))->assertRedirect(route('login'));
@@ -35,5 +34,5 @@ it('не дає отримати роль адміністратора чере�
         'name' => 'Хитрун', 'email' => 'h@example.com', 'password' => 'password123', 'password_confirmation' => 'password123', 'role' => 'admin',
     ])->assertRedirect();
 
-    expect(\App\Models\User::firstWhere('email', 'h@example.com')->isAdmin())->toBeFalse();
+    expect(User::firstWhere('email', 'h@example.com')->isAdmin())->toBeFalse();
 });

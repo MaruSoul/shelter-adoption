@@ -12,7 +12,6 @@ use App\Services\PostBlocks;
 use Livewire\Livewire;
 
 /** Двомовний вміст, який вводить адміністратор: тварини, статті, налаштування. */
-
 it('показує англійські тексти тварини, а без перекладу – український з позначкою', function () {
     $translated = Animal::factory()->create([
         'name' => 'Фелікс', 'name_en' => 'Felix',
