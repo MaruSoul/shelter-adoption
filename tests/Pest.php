@@ -21,3 +21,9 @@ function volunteer(array $attributes = []): User
 {
     return User::factory()->create($attributes);
 }
+
+/** Адреса англійської версії публічної сторінки: enRoute('animals.show', $animal) → /en/tvaryny/... */
+function enRoute(string $name, mixed $parameters = []): string
+{
+    return app('url')->routeIn('en', $name, $parameters);
+}

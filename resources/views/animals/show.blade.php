@@ -6,7 +6,7 @@
     <div class="mx-auto max-w-6xl px-6 py-7 flex flex-col gap-10">
         <nav aria-label="{{ __('Навігаційний ланцюжок') }}" class="text-sm text-muted flex flex-wrap gap-2">
             <a href="{{ route('home') }}" class="hover:underline">{{ __('Головна') }}</a><span aria-hidden="true">/</span>
-            <a href="{{ route('animals.index', ['species' => $animal->species->slug]) }}" class="hover:underline">{{ $animal->species->label('name_plural') }}</a><span aria-hidden="true">/</span>
+            <a href="{{ route('animals.species', $animal->species->slug) }}" class="hover:underline">{{ $animal->species->label('name_plural') }}</a><span aria-hidden="true">/</span>
             <span class="text-ink">{{ $animal->display_name }}</span>
         </nav>
 
@@ -217,7 +217,7 @@
             <section class="flex flex-col gap-6">
                 <div class="flex flex-wrap items-end justify-between gap-3">
                     <h2 class="text-3xl">{{ __('Вони теж шукають дім') }}</h2>
-                    <a href="{{ route('animals.index', ['species' => $animal->species->slug]) }}" class="font-semibold text-primary hover:underline">{{ __('Дивитися всіх →') }}</a>
+                    <a href="{{ route('animals.species', $animal->species->slug) }}" class="font-semibold text-primary hover:underline">{{ __('Дивитися всіх →') }}</a>
                 </div>
                 <div class="animal-grid">
                     @foreach ($similar as $other)

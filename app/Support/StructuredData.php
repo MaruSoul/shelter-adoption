@@ -48,7 +48,7 @@ final class StructuredData
     {
         return self::breadcrumbs([
             __('Головна') => route('home'),
-            $animal->species->label('name_plural') => route('animals.index', ['species' => $animal->species->slug]),
+            $animal->species->label('name_plural') => route('animals.species', $animal->species->slug),
             $animal->display_name => route('animals.show', $animal),
         ]);
     }

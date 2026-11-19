@@ -14,12 +14,14 @@
         <aside id="catalog-filters" aria-label="{{ __('Фільтри') }}" class="card p-6 flex-col gap-5 grow basis-64 lg:max-w-72 hidden lg:flex" x-bind:class="filtersOpen && 'max-lg:flex'">
             <fieldset class="flex flex-col gap-2">
                 <legend class="font-semibold mb-2">{{ __('Кого шукаєте') }}</legend>
+                {{-- Кожен вид – окрема сторінка каталогу (/tvaryny/cat) зі своїм заголовком; інші фільтри переносяться --}}
+                @php($keep = collect(request()->query())->except(['species', 'page', 'breed'])->all())
                 <div class="flex flex-wrap gap-2">
-                    <button type="button" wire:click="setSpecies('')" aria-pressed="{{ $species === '' ? 'true' : 'false' }}"
-                            @class(['btn border-[1.5px]', 'bg-primary text-primary-ink border-primary' => $species === '', 'bg-card border-line' => $species !== ''])>{{ __('Усі') }}</button>
+                    <a href="{{ route('animals.index', $keep) }}" @if ($species === '') aria-current="page" @endif
+                       @class(['btn border-[1.5px]', 'bg-primary text-primary-ink border-primary' => $species === '', 'bg-card border-line' => $species !== ''])>{{ __('Усі') }}</a>
                     @foreach ($speciesList as $s)
-                        <button type="button" wire:click="setSpecies('{{ $s->slug }}')" aria-pressed="{{ $species === $s->slug ? 'true' : 'false' }}"
-                                @class(['btn border-[1.5px]', 'bg-primary text-primary-ink border-primary' => $species === $s->slug, 'bg-card border-line' => $species !== $s->slug])>{{ $s->label('name_plural') }}</button>
+                        <a href="{{ route('animals.species', ['speciesSlug' => $s->slug] + $keep) }}" @if ($species === $s->slug) aria-current="page" @endif
+                           @class(['btn border-[1.5px]', 'bg-primary text-primary-ink border-primary' => $species === $s->slug, 'bg-card border-line' => $species !== $s->slug])>{{ $s->label('name_plural') }}</a>
                     @endforeach
                 </div>
             </fieldset>

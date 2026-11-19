@@ -47,7 +47,10 @@ class HomeController extends Controller
             ->map(fn (array $p) => [
                 'label' => $p['label'],
                 'hint' => $p['hint'],
-                'url' => route('animals.index', array_map(fn ($v) => is_bool($v) ? 1 : $v, $p['filters'])),
+                // Вид – окремий розділ каталогу (/tvaryny/cat), решта – фільтри в адресі
+                'url' => isset($p['filters']['species'])
+                    ? route('animals.species', $p['filters']['species'])
+                    : route('animals.index', array_map(fn ($v) => is_bool($v) ? 1 : $v, $p['filters'])),
                 'count' => Animal::query()->filter($p['filters'])->count(),
             ])
             ->filter(fn (array $p) => $p['count'] > 0)

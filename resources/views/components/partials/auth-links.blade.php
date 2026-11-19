@@ -5,7 +5,8 @@
             @if (app()->getLocale() === $code)
                 <span class="px-2.5 py-1 rounded-full bg-primary text-bg" aria-current="true" lang="{{ $code }}">{{ $short }}</span>
             @else
-                <a href="{{ route('locale.switch', $code) }}" class="px-2.5 py-1 rounded-full text-muted hover:text-primary" lang="{{ $code }}" hreflang="{{ $code }}"
+                {{-- Сторінка з мовними версіями – одразу на її відповідник; інакше через /mova (запамʼятати вибір) --}}
+                <a href="{{ \App\Support\LocaleUrls::alternate($code) ?? route('locale.switch', $code) }}" class="px-2.5 py-1 rounded-full text-muted hover:text-primary" lang="{{ $code }}" hreflang="{{ $code }}"
                    title="{{ $code === 'en' ? 'English' : 'Українська' }}">{{ $short }}</a>
             @endif
         @endforeach

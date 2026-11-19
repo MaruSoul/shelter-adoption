@@ -4,40 +4,65 @@ use App\Http\Controllers\AnimalController;
 use App\Http\Controllers\BlogController;
 use App\Http\Controllers\FavoriteController;
 use App\Http\Controllers\HomeController;
+use App\Http\Controllers\LlmsTxtController;
 use App\Http\Controllers\SitemapController;
 use App\Http\Middleware\SetLocale;
 use App\Livewire\Admin;
 use App\Livewire\AdoptionForm;
 use App\Livewire\AnimalCatalog;
 use App\Livewire\Cabinet;
+use App\Support\LocaleUrls;
 use Illuminate\Support\Facades\Route;
 
 /* ---------- Публічна частина ---------- */
 
-Route::get('/', HomeController::class)->name('home');
+/*
+ * Сторінки, які мають українську й англійську версії з окремими адресами:
+ * українська – без префікса, англійська – з /en (назви маршрутів en.*).
+ * Окремі адреси потрібні пошуковикам: так англійська версія теж потрапляє в пошук (теги hreflang).
+ * Шаблонам нічого міняти не треба – route('animals.index') на англійській сторінці сам веде на /en/tvaryny.
+ */
+$localizedPages = function () {
+    Route::get('/', HomeController::class)->name('home');
 
-Route::get('/tvaryny', AnimalCatalog::class)->name('animals.index');
-Route::get('/tvaryny/{animal}', [AnimalController::class, 'show'])->name('animals.show');
-Route::get('/tvaryny/{animal}/vzyaty-dodomu', AdoptionForm::class)->name('animals.adopt');
+    Route::get('/tvaryny', AnimalCatalog::class)->name('animals.index');
+    // Розділ каталогу для виду (/tvaryny/cat): окрема сторінка зі своїм заголовком і SEO-текстом.
+    // Адреса тварини завжди закінчується її номером (leo-3), адреса виду – без цифр, тож вони не плутаються.
+    Route::get('/tvaryny/{speciesSlug}', AnimalCatalog::class)->where('speciesSlug', '[a-z]+(?:-[a-z]+)*')->name('animals.species');
+    Route::get('/tvaryny/{animal}', [AnimalController::class, 'show'])->name('animals.show');
+    Route::get('/tvaryny/{animal}/vzyaty-dodomu', AdoptionForm::class)->name('animals.adopt');
 
-Route::get('/obrani', [FavoriteController::class, 'index'])->name('favorites.index');
+    Route::get('/obrani', [FavoriteController::class, 'index'])->name('favorites.index');
+
+    Route::get('/blog', [BlogController::class, 'index'])->name('blog.index');
+    Route::get('/blog/{post}', [BlogController::class, 'show'])->name('blog.show');
+
+    Route::view('/polityka-konfidentsiinosti', 'pages.privacy')->name('privacy');
+};
+Route::group(['localized' => 'uk'], $localizedPages);
+Route::group(['localized' => 'en', 'prefix' => 'en', 'as' => 'en.'], $localizedPages);
+
 Route::get('/obrani/kartky', [FavoriteController::class, 'cards'])->name('favorites.cards')->middleware('throttle:60,1');
 Route::middleware('auth')->group(function () {
     Route::post('/obrani/synkhronizuvaty', [FavoriteController::class, 'sync'])->name('favorites.sync');
     Route::post('/obrani/{animalId}', [FavoriteController::class, 'toggle'])->whereNumber('animalId')->name('favorites.toggle')->middleware('throttle:120,1');
 });
 
-Route::get('/blog', [BlogController::class, 'index'])->name('blog.index');
-Route::get('/blog/{post}', [BlogController::class, 'show'])->name('blog.show');
-
-Route::view('/polityka-konfidentsiinosti', 'pages.privacy')->name('privacy');
 Route::get('/sitemap.xml', SitemapController::class)->name('sitemap');
-// Перемикач мови: запамʼятовує вибір на рік і повертає на ту саму сторінку
+Route::get('/llms.txt', LlmsTxtController::class)->name('llms');
+
+// Перемикач мови для сторінок без окремих мовних адрес (кабінет, вхід): запамʼятовує вибір на рік
+// і повертає назад; якщо попередня сторінка має мовні версії – одразу на її відповідник
 Route::get('/mova/{locale}', function (string $locale) {
     abort_unless(in_array($locale, SetLocale::SUPPORTED, true), 404);
     $back = url()->previous();
     if (! str_starts_with($back, url('/')) || str_contains($back, '/mova/')) {
         $back = route('home');
+    }
+    $route = LocaleUrls::routeForUrl($back);
+    if (LocaleUrls::isLocalized($route)) {
+        $query = parse_url($back, PHP_URL_QUERY);
+        $back = app('url')->routeIn($locale, $route->getName(), $route->parameters()).($query ? '?'.$query : '');
     }
 
     return redirect($back)->withCookie(cookie()->forever(SetLocale::COOKIE, $locale, httpOnly: false));
@@ -47,6 +72,7 @@ Route::get('/robots.txt', fn () => response(implode("\n", [
     'User-agent: *',
     'Disallow: /admin',
     'Disallow: /kabinet',
+    'Disallow: /mova/',
     '',
     'Sitemap: '.route('sitemap'),
 ])."\n", 200, ['Content-Type' => 'text/plain; charset=UTF-8']))->name('robots');

@@ -16,11 +16,39 @@ it('типово показує сайт українською', function () {
         ->assertSee('Знайти друга');
 });
 
-it('перемикач запамʼятовує англійську й повертає на ту саму сторінку', function () {
-    $this->from(route('animals.index'))
+it('перемикач запамʼятовує англійську й веде на англійську версію тієї самої сторінки', function () {
+    $this->from(route('animals.index').'?sterilized=1')
         ->get(route('locale.switch', 'en'))
-        ->assertRedirect(route('animals.index'))
+        ->assertRedirect('/en/tvaryny?sterilized=1')
         ->assertCookie(SetLocale::COOKIE, 'en', false);
+});
+
+it('мову публічної сторінки визначає адреса, а не cookie', function () {
+    $animal = Animal::factory()->create();
+
+    // Відкрита англійська сторінка запамʼятовує вибір для кабінету й входу
+    $this->get('/en/tvaryny')->assertSee('lang="en"', false)->assertCookie(SetLocale::COOKIE, 'en', false);
+    $this->withUnencryptedCookie(SetLocale::COOKIE, 'en')->get(url('/tvaryny/'.$animal->slug))
+        ->assertSee('lang="uk"', false)->assertSee('Взяти додому');
+});
+
+it('англійська сторінка веде на англійські адреси й має теги hreflang', function () {
+    $animal = Animal::factory()->create();
+
+    $this->get(enRoute('animals.show', $animal))
+        ->assertSee('href="'.url('/en/tvaryny/'.$animal->slug.'/vzyaty-dodomu').'"', false)
+        ->assertSee('<link rel="alternate" hreflang="uk" href="'.url('/tvaryny/'.$animal->slug).'">', false)
+        ->assertSee('<link rel="alternate" hreflang="en" href="'.url('/en/tvaryny/'.$animal->slug).'">', false);
+    // Сторінки без мовних версій (вхід, кабінет) тегів hreflang не мають
+    $this->get(route('login'))->assertDontSee('hreflang="en"', false);
+});
+
+it('карта сайту містить обидві мовні версії', function () {
+    $animal = Animal::factory()->create();
+
+    $this->get(route('sitemap'))->assertOk()
+        ->assertSee('<loc>'.url('/en/tvaryny/'.$animal->slug).'</loc>', false)
+        ->assertSee('hreflang="uk" href="'.url('/tvaryny/'.$animal->slug).'"', false);
 });
 
 it('не приймає непідтримувану мову', function () {
@@ -30,8 +58,7 @@ it('не приймає непідтримувану мову', function () {
 it('показує інтерфейс англійською, а населені пункти – латиницею', function () {
     $animal = Animal::factory()->create();
 
-    $this->withUnencryptedCookie(SetLocale::COOKIE, 'en')
-        ->get(route('animals.show', $animal))
+    $this->get(enRoute('animals.show', $animal))
         ->assertOk()
         ->assertSee('lang="en"', false)
         ->assertSee('Take home')

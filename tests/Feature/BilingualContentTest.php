@@ -1,6 +1,5 @@
 <?php
 
-use App\Http\Middleware\SetLocale;
 use App\Livewire\Admin\AnimalEditor;
 use App\Livewire\Admin\AnimalIndex;
 use App\Livewire\Admin\PostEditor;
@@ -13,10 +12,6 @@ use App\Services\PostBlocks;
 use Livewire\Livewire;
 
 /** Двомовний вміст, який вводить адміністратор: тварини, статті, налаштування. */
-function inEnglish($test)
-{
-    return $test->withUnencryptedCookie(SetLocale::COOKIE, 'en');
-}
 
 it('показує англійські тексти тварини, а без перекладу – український з позначкою', function () {
     $translated = Animal::factory()->create([
@@ -26,15 +21,15 @@ it('показує англійські тексти тварини, а без �
     ]);
     $plain = Animal::factory()->create(['name' => 'Сніжка', 'story' => 'Шукає дім.', 'behavior' => null, 'adoption_terms' => null]);
 
-    // Українська версія не змінилася (cookie мови в тесті зберігається між запитами, тож спершу – українська)
+    // Українська версія не змінилася
     $this->get(route('animals.show', $translated))->assertSee('Фелікс')->assertSee('Жив у волонтерки.')->assertDontSee('Felix');
 
-    inEnglish($this)->get(route('animals.show', $translated))
+    $this->get(enRoute('animals.show', $translated))
         ->assertOk()->assertSee('Felix')->assertSee('Lived with a volunteer.')
         ->assertDontSee('Жив у волонтерки.')->assertDontSee('written by the shelter in Ukrainian');
 
     // Кличка без перекладу транслітерується, історія показується українською з позначкою мови
-    inEnglish($this)->get(route('animals.show', $plain))
+    $this->get(enRoute('animals.show', $plain))
         ->assertOk()->assertSee('Snizhka')->assertSee('Шукає дім.')
         ->assertSee('written by the shelter in Ukrainian')->assertSee('lang="uk"', false);
 });
@@ -97,7 +92,7 @@ it('конструктор статей зберігає переклад заг
 
     $this->get(route('blog.show', $post))->assertSee('Перші дні вдома')->assertSee('Миски')->assertDontSee('Bowls');
 
-    inEnglish($this)->get(route('blog.show', $post))
+    $this->get(enRoute('blog.show', $post))
         ->assertOk()
         ->assertSee('The first days at home')->assertSee('Introduction')->assertSee('Bowls')
         ->assertSee('Лежанка') // неперекладений пункт лишається українським
@@ -131,5 +126,5 @@ it('назва, підзаголовок і адреса притулку ред
     expect(ShelterSetting::current())->name_en->toBe('Domivka')->tagline_en->toBe('Cat shelter');
 
     $this->get(route('home'))->assertSee('Притулок для котів')->assertDontSee('Cat shelter');
-    inEnglish($this)->get(route('home'))->assertSee('Domivka')->assertSee('Cat shelter');
+    $this->get(enRoute('home'))->assertSee('Domivka')->assertSee('Cat shelter');
 });

@@ -10,7 +10,9 @@ use App\Models\Color;
 use App\Models\Locality;
 use App\Models\Region;
 use App\Models\Species;
+use Illuminate\Http\Exceptions\HttpResponseException;
 use Livewire\Attributes\Computed;
+use Livewire\Attributes\Locked;
 use Livewire\Attributes\Url;
 use Livewire\Component;
 use Livewire\WithPagination;
@@ -23,7 +25,8 @@ class AnimalCatalog extends Component
 {
     use WithPagination;
 
-    #[Url(except: '')]
+    /** Вид задається адресою розділу (/tvaryny/cat), а не параметром: так у кожного виду своя сторінка для пошуку. */
+    #[Locked]
     public string $species = '';
 
     #[Url(except: [])]
@@ -56,28 +59,33 @@ class AnimalCatalog extends Component
     #[Url(except: 'new')]
     public string $sort = 'new';
 
+    public function mount(?string $speciesSlug = null): void
+    {
+        // Старі посилання з ?species=cat ведуть на розділ виду з тими самими фільтрами
+        if ($speciesSlug === null && is_string($legacy = request()->query('species')) && $legacy !== '') {
+            abort_unless(Species::where('slug', $legacy)->exists(), 404);
+
+            throw new HttpResponseException(redirect()->to(route('animals.species', $legacy).$this->queryWithout('species'), 301));
+        }
+
+        if ($speciesSlug !== null) {
+            abort_unless(Species::where('slug', $speciesSlug)->exists(), 404);
+            $this->species = $speciesSlug;
+        }
+    }
+
     public function updated(string $property): void
     {
-        // Зміна виду скидає породу, зміна області – населений пункт
-        if ($property === 'species') {
-            $this->breed = '';
-        }
+        // Зміна області скидає населений пункт
         if ($property === 'region') {
             $this->locality = '';
         }
         $this->resetPage();
     }
 
-    public function setSpecies(string $slug): void
-    {
-        $this->species = $slug;
-        $this->breed = '';
-        $this->resetPage();
-    }
-
     public function resetFilters(): void
     {
-        $this->reset(['species', 'sex', 'age', 'sterilized', 'vaccinated', 'region', 'locality', 'breed', 'color', 'adopted', 'sort']);
+        $this->reset(['sex', 'age', 'sterilized', 'vaccinated', 'region', 'locality', 'breed', 'color', 'adopted', 'sort']);
         $this->resetPage();
     }
 
@@ -127,8 +135,16 @@ class AnimalCatalog extends Component
     private function activeFiltersCount(): int
     {
         return count(array_filter([
-            $this->species, $this->sex, $this->age, $this->sterilized, $this->vaccinated,
+            $this->sex, $this->age, $this->sterilized, $this->vaccinated,
             $this->region, $this->locality, $this->breed, $this->color, $this->adopted,
         ]));
+    }
+
+    /** Рядок запиту поточної адреси без заданого параметра: ?sex[]=f&sort=old */
+    private function queryWithout(string $key): string
+    {
+        $query = http_build_query(collect(request()->query())->except($key)->all());
+
+        return $query === '' ? '' : '?'.$query;
     }
 }

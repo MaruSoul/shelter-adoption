@@ -1,4 +1,6 @@
-<x-layout :title="$post->tr('title')" :description="$post->tr('excerpt')" :image="$post->coverUrl()">
+{{-- Стаття без англійського заголовка англійською версією показувала б український текст – таку сторінку не індексуємо --}}
+<x-layout :title="$post->tr('title')" :description="$post->tr('excerpt')" :image="$post->coverUrl()"
+          :alternates="filled($post->title_en)" :robots="app()->getLocale() === 'en' && blank($post->title_en) ? 'noindex, follow' : null">
     <x-slot:head>
         <x-json-ld :data="\App\Support\StructuredData::article($post, \App\Models\ShelterSetting::current())" />
         <x-json-ld :data="\App\Support\StructuredData::breadcrumbs([__('Блог') => route('blog.index'), $post->category->label() => route('blog.index', ['rubric' => $post->category->slug]), $post->tr('title') => route('blog.show', $post)])" />

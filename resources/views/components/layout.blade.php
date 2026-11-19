@@ -2,6 +2,8 @@
     'title' => null,
     'description' => null,
     'image' => null,
+    'robots' => null,
+    'alternates' => true,
 ])
 @php
     $shelter = \App\Models\ShelterSetting::current();
@@ -18,6 +20,15 @@
     <title>{{ $pageTitle }}</title>
     <meta name="description" content="{{ $pageDescription }}">
     <link rel="canonical" href="{{ url()->current() }}">
+    @if ($robots)<meta name="robots" content="{{ $robots }}">@endif
+    {{-- Мовні версії сторінки для пошуковиків: українська – основна (x-default) --}}
+    @if ($alternates && ($ukUrl = \App\Support\LocaleUrls::alternate('uk')))
+        @php($ukCanonical = strtok($ukUrl, '?'))
+        @php($enCanonical = strtok(\App\Support\LocaleUrls::alternate('en'), '?'))
+        <link rel="alternate" hreflang="uk" href="{{ $ukCanonical }}">
+        <link rel="alternate" hreflang="en" href="{{ $enCanonical }}">
+        <link rel="alternate" hreflang="x-default" href="{{ $ukCanonical }}">
+    @endif
     <meta property="og:type" content="website">
     <meta property="og:locale" content="{{ app()->getLocale() === 'en' ? 'en_US' : 'uk_UA' }}">
     <meta property="og:site_name" content="{{ $brand }}">
@@ -75,8 +86,8 @@
         <nav id="main-nav" aria-label="{{ __('Головне меню') }}"
              class="w-full lg:w-auto hidden lg:flex flex-col lg:flex-row gap-1 lg:gap-5 xl:gap-6 font-medium"
              x-bind:class="open && 'max-lg:flex'">
-            <a href="{{ route('animals.index') }}" @class(['py-2', 'text-primary font-semibold' => request()->routeIs('animals.*')])>{{ __('Знайти друга') }}</a>
-            <a href="{{ route('blog.index') }}" @class(['py-2', 'text-primary font-semibold' => request()->routeIs('blog.*')])>{{ __('Блог') }}</a>
+            <a href="{{ route('animals.index') }}" @class(['py-2', 'text-primary font-semibold' => request()->routeIs('animals.*', 'en.animals.*')])>{{ __('Знайти друга') }}</a>
+            <a href="{{ route('blog.index') }}" @class(['py-2', 'text-primary font-semibold' => request()->routeIs('blog.*', 'en.blog.*')])>{{ __('Блог') }}</a>
             <a href="{{ route('home') }}#help" class="py-2">{{ __('Як допомогти') }}</a>
             <div class="flex flex-wrap gap-2 pt-2 lg:hidden">
                 @include('components.partials.auth-links')

@@ -26,11 +26,20 @@ it('фільтрує за видом і віковою групою', function (
     Animal::factory()->create(['name' => 'СтарийКіт', 'species_id' => $cat->id, 'birth_date' => now()->subYears(7)]);
     Animal::factory()->create(['name' => 'Цуценя', 'species_id' => $dog->id, 'birth_date' => now()->subMonths(4)]);
 
-    Livewire::withQueryParams(['species' => 'cat', 'age' => ['up-to-1']])
-        ->test(AnimalCatalog::class)
+    Livewire::withQueryParams(['age' => ['up-to-1']])
+        ->test(AnimalCatalog::class, ['speciesSlug' => 'cat'])
         ->assertSee('Кошеня')
         ->assertDontSee('СтарийКіт')
         ->assertDontSee('Цуценя');
+});
+
+it('кожен вид має окрему сторінку каталогу, а старі посилання з ?species= ведуть на неї', function () {
+    Animal::factory()->create(['name' => 'Кошеня', 'species_id' => Species::firstWhere('slug', 'cat')->id]);
+
+    $this->get('/tvaryny/cat')->assertOk()->assertSee('Котики шукають дім')->assertSee('Кошеня');
+    $this->get('/en/tvaryny/cat')->assertOk()->assertSee('Cats looking for a home');
+    $this->get('/tvaryny?species=cat&sterilized=1')->assertRedirect('/tvaryny/cat?sterilized=1')->assertStatus(301);
+    $this->get('/tvaryny/kenguru')->assertNotFound();
 });
 
 it('показує зрозуміле повідомлення для порожньої вибірки', function () {

@@ -11,9 +11,9 @@ test('гість фільтрує каталог, відкриває твари�
     test.skip(info.project.name !== 'desktop', 'анкету подаємо один раз');
 
     await page.goto('/tvaryny');
-    await page.getByRole('button', { name: 'Котики' }).first().click();
+    await page.getByRole('link', { name: 'Котики' }).first().click();
+    await expect(page).toHaveURL(/\/tvaryny\/cat/);
     await page.getByLabel('Стерилізовані').check();
-    await expect(page).toHaveURL(/species=cat/);
     await expect(page).toHaveURL(/sterilized=(1|true)/);
 
     const firstCard = page.locator('.animal-grid a').first();

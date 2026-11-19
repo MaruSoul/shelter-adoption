@@ -24,7 +24,7 @@ export const options = {
     },
 };
 
-const FILTERS = ['', '?species=cat', '?species=dog', '?sex[0]=female', '?age[0]=2-5', '?sterilized=1', '?species=dog&page=2'];
+const FILTERS = ['', '/cat', '/dog', '?sex[0]=female', '?age[0]=2-5', '?sterilized=1', '/dog?page=2'];
 
 export function setup() {
     // Слаги доступних тварин беремо з каталогу (3 сторінки по 12)
