@@ -195,23 +195,7 @@ class Animal extends Model
 
         $query->when($f['sex'] ?? [], fn ($q, $sex) => $q->whereIn('sex', (array) $sex));
 
-        $query->when($f['age'] ?? [], function ($q, $groups) {
-            $q->where(function ($q) use ($groups) {
-                foreach ((array) $groups as $value) {
-                    $group = AgeGroup::tryFrom($value);
-                    if (! $group) {
-                        continue;
-                    }
-                    [$from, $to] = $group->birthDateRange();
-                    $q->orWhere(function ($q) use ($from, $to) {
-                        if ($from) {
-                            $q->whereDate('birth_date', '>=', $from);
-                        }
-                        $q->whereDate('birth_date', '<=', $to);
-                    });
-                }
-            });
-        });
+        $query->when($f['age'] ?? [], fn ($q, $groups) => self::whereInAgeGroups($q, (array) $groups));
 
         $query->when($f['sterilized'] ?? false, fn ($q) => $q->where('is_sterilized', true));
         $query->when($f['vaccinated'] ?? false, fn ($q) => $q->where('is_vaccinated', true));
@@ -226,5 +210,25 @@ class Animal extends Model
         } else {
             $query->where('status', AnimalStatus::Adopted->value);
         }
+    }
+
+    /** Тварини, вік яких потрапляє хоча б в одну з вікових груп (обчислюється за датою народження). */
+    private static function whereInAgeGroups(Builder $query, array $groups): void
+    {
+        $query->where(function ($q) use ($groups) {
+            foreach ($groups as $value) {
+                $group = AgeGroup::tryFrom($value);
+                if (! $group) {
+                    continue;
+                }
+                [$from, $to] = $group->birthDateRange();
+                $q->orWhere(function ($q) use ($from, $to) {
+                    if ($from) {
+                        $q->whereDate('birth_date', '>=', $from);
+                    }
+                    $q->whereDate('birth_date', '<=', $to);
+                });
+            }
+        });
     }
 }

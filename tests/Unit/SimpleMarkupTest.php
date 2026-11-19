@@ -31,3 +31,7 @@ it('розбирає заголовки, списки й абзаци SEO-тек
 it('прибирає позначки для мета-опису', function () {
     expect(SimpleMarkup::plain('Візьміть [кота](/tvaryny/cat) **сьогодні**'))->toBe('Візьміть кота сьогодні');
 });
+
+it('не вважає адресу «//інший-сайт» внутрішнім посиланням', function () {
+    expect((string) SimpleMarkup::inline('[сюди](//evil.example/x)'))->not->toContain('<a ');
+});
