@@ -11,7 +11,6 @@ use App\Models\Locality;
 use App\Models\Region;
 use App\Models\SeoPage;
 use App\Models\Species;
-use Illuminate\Http\Exceptions\HttpResponseException;
 use Livewire\Attributes\Computed;
 use Livewire\Attributes\Locked;
 use Livewire\Attributes\Url;
@@ -62,13 +61,6 @@ class AnimalCatalog extends Component
 
     public function mount(?string $speciesSlug = null): void
     {
-        // Старі посилання з ?species=cat ведуть на розділ виду з тими самими фільтрами
-        if ($speciesSlug === null && is_string($legacy = request()->query('species')) && $legacy !== '') {
-            abort_unless(Species::where('slug', $legacy)->exists(), 404);
-
-            throw new HttpResponseException(redirect()->to(route('animals.species', $legacy).$this->queryWithout('species'), 301));
-        }
-
         if ($speciesSlug !== null) {
             abort_unless(Species::where('slug', $speciesSlug)->exists(), 404);
             $this->species = $speciesSlug;
@@ -143,13 +135,5 @@ class AnimalCatalog extends Component
             $this->sex, $this->age, $this->sterilized, $this->vaccinated,
             $this->region, $this->locality, $this->breed, $this->color, $this->adopted,
         ]));
-    }
-
-    /** Рядок запиту поточної адреси без заданого параметра: ?sex[]=f&sort=old */
-    private function queryWithout(string $key): string
-    {
-        $query = http_build_query(collect(request()->query())->except($key)->all());
-
-        return $query === '' ? '' : '?'.$query;
     }
 }

@@ -33,12 +33,11 @@ it('фільтрує за видом і віковою групою', function (
         ->assertDontSee('Цуценя');
 });
 
-it('кожен вид має окрему сторінку каталогу, а старі посилання з ?species= ведуть на неї', function () {
+it('кожен вид має окрему сторінку каталогу', function () {
     Animal::factory()->create(['name' => 'Кошеня', 'species_id' => Species::firstWhere('slug', 'cat')->id]);
 
     $this->get('/tvaryny/cat')->assertOk()->assertSee('Котики шукають дім')->assertSee('Кошеня');
     $this->get('/en/tvaryny/cat')->assertOk()->assertSee('Cats looking for a home');
-    $this->get('/tvaryny?species=cat&sterilized=1')->assertRedirect('/tvaryny/cat?sterilized=1')->assertStatus(301);
     $this->get('/tvaryny/kenguru')->assertNotFound();
 });
 
