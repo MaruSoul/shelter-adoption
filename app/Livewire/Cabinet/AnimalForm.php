@@ -11,6 +11,7 @@ use App\Models\Animal;
 use App\Models\Color;
 use App\Models\Region;
 use App\Models\Species;
+use App\Services\PhotoStorage;
 use Illuminate\Support\Facades\DB;
 use Livewire\Component;
 
@@ -44,7 +45,7 @@ class AnimalForm extends Component
         }
     }
 
-    public function save()
+    public function save(PhotoStorage $photos)
     {
         $isNew = ! $this->animal->exists;
         if (! $isNew) {
@@ -60,7 +61,7 @@ class AnimalForm extends Component
             return null;
         }
 
-        DB::transaction(function () use ($isNew) {
+        DB::transaction(function () use ($isNew, $photos) {
             if ($isNew) {
                 $this->animal->created_by = auth()->id();
                 $this->animal->source = AnimalSource::Volunteer;
@@ -71,7 +72,7 @@ class AnimalForm extends Component
             $this->animal->published_at = null;
             $this->animal->save();
 
-            $this->storeUploads($this->animal);
+            $this->storeUploads($this->animal, $photos);
         });
 
         if ($isNew) {

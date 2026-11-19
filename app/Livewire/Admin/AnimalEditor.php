@@ -11,6 +11,7 @@ use App\Models\Animal;
 use App\Models\Color;
 use App\Models\Region;
 use App\Models\Species;
+use App\Services\PhotoStorage;
 use Illuminate\Support\Facades\DB;
 use Livewire\Component;
 
@@ -50,7 +51,7 @@ class AnimalEditor extends Component
         return [AnimalStatus::Available, AnimalStatus::Archived];
     }
 
-    public function save()
+    public function save(PhotoStorage $photos)
     {
         // Статус обирається лише для тварин притулку; у картки волонтера, прилаштованої чи відхиленої тварини
         // поля статусу у формі немає, тож і перевіряти нічого (інакше таку картку неможливо було зберегти)
@@ -62,7 +63,7 @@ class AnimalEditor extends Component
         $this->form->applyTo($this->animal);
         $isNew = ! $this->animal->exists;
 
-        DB::transaction(function () use ($isNew) {
+        DB::transaction(function () use ($isNew, $photos) {
             if ($isNew) {
                 $this->animal->source = AnimalSource::Shelter;
                 $this->animal->created_by = auth()->id();
@@ -75,7 +76,7 @@ class AnimalEditor extends Component
                 $this->animal->published_at ??= now();
             }
             $this->animal->save();
-            $this->storeUploads($this->animal);
+            $this->storeUploads($this->animal, $photos);
         });
 
         // Картку волонтера адміністратор редагує з черги модерації – туди ж і повертаємо, щоб одразу схвалити

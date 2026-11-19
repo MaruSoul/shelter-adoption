@@ -74,9 +74,8 @@ trait ManagesAnimalPhotos
     }
 
     /** Зберігає обрані фото після збереження картки. */
-    protected function storeUploads(Animal $animal): void
+    protected function storeUploads(Animal $animal, PhotoStorage $storage): void
     {
-        $storage = app(PhotoStorage::class);
         $next = (int) $animal->photos()->max('sort_order') + ($animal->photos()->exists() ? 1 : 0);
 
         foreach ($this->uploads as $file) {
@@ -86,10 +85,9 @@ trait ManagesAnimalPhotos
         $this->uploads = [];
     }
 
-    public function deletePhoto(int $photoId): void
+    public function deletePhoto(int $photoId, PhotoStorage $storage): void
     {
-        $photo = $this->ownedPhoto($photoId);
-        app(PhotoStorage::class)->delete($photo);
+        $storage->delete($this->ownedPhoto($photoId));
         $this->afterPhotosChanged();
     }
 
