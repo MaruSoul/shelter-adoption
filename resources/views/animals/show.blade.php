@@ -1,12 +1,12 @@
 @php($cover = $animal->photos->first())
-<x-layout :title="__(':name – :species шукає дім', ['name' => $animal->display_name, 'species' => mb_strtolower(__($animal->species->name))])"
+<x-layout :title="__(':name – :species шукає дім', ['name' => $animal->display_name, 'species' => mb_strtolower($animal->species->label())])"
           :description="\Illuminate\Support\Str::limit($animal->tr('story') ?? $animal->tr('behavior') ?? '', 155)"
           :image="$cover?->url()">
     <x-slot:head><x-json-ld :data="\App\Support\StructuredData::animalBreadcrumbs($animal)" /></x-slot:head>
     <div class="mx-auto max-w-6xl px-6 py-7 flex flex-col gap-10">
         <nav aria-label="{{ __('Навігаційний ланцюжок') }}" class="text-sm text-muted flex flex-wrap gap-2">
             <a href="{{ route('home') }}" class="hover:underline">{{ __('Головна') }}</a><span aria-hidden="true">/</span>
-            <a href="{{ route('animals.index', ['species' => $animal->species->slug]) }}" class="hover:underline">{{ __($animal->species->name_plural) }}</a><span aria-hidden="true">/</span>
+            <a href="{{ route('animals.index', ['species' => $animal->species->slug]) }}" class="hover:underline">{{ $animal->species->label('name_plural') }}</a><span aria-hidden="true">/</span>
             <span class="text-ink">{{ $animal->display_name }}</span>
         </nav>
 
@@ -132,7 +132,7 @@
                 <div class="flex flex-col gap-2">
                     <h1 class="text-5xl leading-tight">{{ $animal->display_name }}</h1>
                     <span @class(['chip self-start', 'bg-sun-soft text-accent' => $animal->acceptsApplications(), 'bg-success-soft text-success' => $animal->status === \App\Enums\AnimalStatus::Adopted, 'bg-surface text-muted' => ! $animal->acceptsApplications() && $animal->status !== \App\Enums\AnimalStatus::Adopted])>
-                        {{ __($animal->species->name) }} · {{ mb_strtolower($animal->status->label()) }}
+                        {{ $animal->species->label() }} · {{ mb_strtolower($animal->status->label()) }}
                     </span>
                     @if ($animal->isFromVolunteer())
                         <span class="text-sm text-muted">{{ __('Розміщено волонтером') }}@if ($location = $animal->tr('current_location')) · {{ __('зараз:') }} {{ $location }}@endif</span>
@@ -142,8 +142,8 @@
                     @foreach ([
                         __('Стать') => $animal->sex->label(),
                         __('Вік') => $animal->ageLabel(),
-                        __('Порода') => $animal->breed ? __($animal->breed->name) : __('Без породи'),
-                        __('Забарвлення') => $animal->color ? __($animal->color->name) : '–',
+                        __('Порода') => $animal->breed ? $animal->breed->label() : __('Без породи'),
+                        __('Забарвлення') => $animal->color ? $animal->color->label() : '–',
                         __('Область') => __($animal->locality->region->name),
                         __('Населений пункт') => \App\Support\Ukrainian::place($animal->locality->name),
                         __('Стерилізація') => $animal->is_sterilized ? __('Проведена') : __('Немає'),
@@ -202,6 +202,12 @@
                     <section class="card p-6 flex flex-col gap-2.5">
                         <h2 class="text-2xl">{{ $heading }}</h2>
                         <p class="text-muted whitespace-pre-line" @unless ($animal->isShownInLocale($field)) lang="{{ app()->getLocale() === 'en' ? 'uk' : 'en' }}" @endunless>{{ $text }}</p>
+                    </section>
+                @elseif ($field === 'adoption_terms' && $animal->acceptsApplications() && ($default = \App\Models\ShelterSetting::current()->tr('default_adoption_terms')))
+                    {{-- Власних умов у картці немає – показуємо типові умови притулку з налаштувань --}}
+                    <section class="card p-6 flex flex-col gap-2.5">
+                        <h2 class="text-2xl">{{ $heading }}</h2>
+                        <p class="text-muted whitespace-pre-line">{{ $default }}</p>
                     </section>
                 @endif
             @endforeach

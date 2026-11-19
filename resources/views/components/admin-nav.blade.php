@@ -7,6 +7,7 @@
         ['admin.animals.index', 'Тварини', null],
         ['admin.moderation', 'Модерація', $moderationCount],
         ['admin.posts.index', 'Статті', null],
+        ['admin.dictionaries', 'Довідники', null],
         ['admin.settings', 'Налаштування', null],
     ];
 @endphp

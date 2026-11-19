@@ -10,6 +10,7 @@ use App\Models\Animal;
 use App\Models\ApplicationStatusChange;
 use App\Models\Post;
 use App\Models\PostCategory;
+use App\Support\DictionaryTranslations;
 use App\Models\Region;
 use App\Models\ShelterSetting;
 use App\Models\User;
@@ -118,6 +119,8 @@ class DatabaseSeeder extends Seeder
 
         // Англійська версія тварин, статей і налаштувань
         $this->call(DemoTranslationsSeeder::class);
+        // Англійські назви видів, порід, забарвлень і рубрик – з lang/en.json (далі редагуються в «Довідниках»)
+        DictionaryTranslations::backfill();
     }
 
     private function application(Animal $animal, ApplicationStatus $final, ?User $admin, array $attributes = []): void

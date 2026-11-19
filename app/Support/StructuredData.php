@@ -48,7 +48,7 @@ final class StructuredData
     {
         return self::breadcrumbs([
             __('Головна') => route('home'),
-            __($animal->species->name_plural) => route('animals.index', ['species' => $animal->species->slug]),
+            $animal->species->label('name_plural') => route('animals.index', ['species' => $animal->species->slug]),
             $animal->display_name => route('animals.show', $animal),
         ]);
     }
@@ -65,7 +65,7 @@ final class StructuredData
             'image' => $post->coverUrl() ? url($post->coverUrl()) : null,
             'datePublished' => $post->published_at?->toAtomString(),
             'dateModified' => $post->updated_at?->toAtomString(),
-            'articleSection' => __($post->category->name),
+            'articleSection' => $post->category->label(),
             'timeRequired' => 'PT'.$post->readingMinutes().'M',
             // Мова, якою стаття фактично показана: англійська лише тоді, коли перекладено все
             'inLanguage' => app()->getLocale() === 'en' && $post->englishState() === 'full' ? 'en' : 'uk',

@@ -38,9 +38,14 @@ class Settings extends Component
             'form.telegram_url' => ['nullable', 'url:https', 'max:255'],
             'form.tiktok_url' => ['nullable', 'url:https', 'max:255'],
             'form.youtube_url' => ['nullable', 'url:https', 'max:255'],
+            'form.help_text' => ['nullable', 'string', 'max:3000'],
+            'form.help_text_en' => ['nullable', 'string', 'max:3000'],
+            'form.default_adoption_terms' => ['nullable', 'string', 'max:3000'],
+            'form.default_adoption_terms_en' => ['nullable', 'string', 'max:3000'],
         ], [], [
             'form.name' => 'назва', 'form.notification_email' => 'e-mail для сповіщень', 'form.email' => 'e-mail',
             'form.name_en' => 'назва англійською', 'form.tagline_en' => 'підзаголовок англійською', 'form.address_en' => 'адреса англійською',
+            'form.help_text' => 'як допомогти притулку', 'form.default_adoption_terms' => 'типові умови прилаштування',
         ])['form'];
 
         $settings = ShelterSetting::query()->first() ?? new ShelterSetting;

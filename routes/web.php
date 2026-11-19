@@ -77,5 +77,6 @@ Route::middleware(['auth', 'verified', 'can:admin'])->prefix('admin')->name('adm
     Route::get('/statti/nova', Admin\PostEditor::class)->name('posts.create');
     Route::get('/statti/{post}', Admin\PostEditor::class)->name('posts.edit');
 
+    Route::get('/dovidnyky', Admin\Dictionaries::class)->name('dictionaries');
     Route::get('/nalashtuvannia', Admin\Settings::class)->name('settings');
 });

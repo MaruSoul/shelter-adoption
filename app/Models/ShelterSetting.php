@@ -10,7 +10,7 @@ use Illuminate\Support\Facades\Cache;
 /**
  * Налаштування притулку зберігаються одним рядком і кешуються (FR-16).
  */
-#[Fillable(['name', 'name_en', 'tagline', 'tagline_en', 'address', 'address_en', 'phone', 'email', 'notification_email', 'instagram_url', 'facebook_url', 'telegram_url', 'tiktok_url', 'youtube_url'])]
+#[Fillable(['name', 'name_en', 'tagline', 'tagline_en', 'address', 'address_en', 'phone', 'email', 'notification_email', 'instagram_url', 'facebook_url', 'telegram_url', 'tiktok_url', 'youtube_url', 'help_text', 'help_text_en', 'default_adoption_terms', 'default_adoption_terms_en'])]
 class ShelterSetting extends Model
 {
     use HasTranslations {
@@ -18,7 +18,7 @@ class ShelterSetting extends Model
     }
 
     /** Публічні тексти, які мають англійську пару. */
-    public const TRANSLATABLE = ['name', 'tagline', 'address'];
+    public const TRANSLATABLE = ['name', 'tagline', 'address', 'help_text', 'default_adoption_terms'];
 
     private const CACHE_KEY = 'shelter_settings';
 

@@ -37,7 +37,7 @@ class HomeController extends Controller
     {
         $picks = [];
         foreach (Species::orderBy('id')->get() as $species) {
-            $picks[] = ['label' => __($species->name_plural), 'hint' => __('усі :species', ['species' => mb_strtolower(__($species->name_plural))]), 'filters' => ['species' => $species->slug]];
+            $picks[] = ['label' => $species->label('name_plural'), 'hint' => __('усі :species', ['species' => mb_strtolower($species->label('name_plural'))]), 'filters' => ['species' => $species->slug]];
         }
         $picks[] = ['label' => __('Малюки'), 'hint' => __('до року'), 'filters' => ['age' => [AgeGroup::UpToOne->value]]];
         $picks[] = ['label' => __('Старшенькі'), 'hint' => __('понад 5 років'), 'filters' => ['age' => [AgeGroup::OverFive->value]]];

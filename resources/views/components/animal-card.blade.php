@@ -15,7 +15,7 @@
     <div class="p-3 pb-4 sm:p-4 sm:pb-5 flex flex-col gap-1 sm:gap-2">
         <div class="flex items-center justify-between gap-2">
             <span class="font-display font-extrabold text-lg sm:text-xl leading-tight group-hover:text-primary truncate">{{ $animal->display_name }}</span>
-            <span class="chip bg-surface text-xs hidden sm:inline-flex">{{ __($animal->species->name) }}</span>
+            <span class="chip bg-surface text-xs hidden sm:inline-flex">{{ $animal->species->label() }}</span>
         </div>
         <span class="text-xs sm:text-sm text-muted">{{ $animal->ageLabel() }} · {{ $animal->sex->label() }}<span class="hidden sm:inline"> · {{ \App\Support\Ukrainian::place($animal->locality->name) }}</span></span>
     </div>

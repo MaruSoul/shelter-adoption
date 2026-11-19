@@ -121,7 +121,7 @@ class AnimalCatalog extends Component
             'breeds' => $speciesModel ? Breed::where('species_id', $speciesModel->id)->orderBy('name')->get() : collect(),
             'colors' => Color::orderBy('name')->get(),
             'activeCount' => $this->activeFiltersCount(),
-        ])->title($speciesModel ? __(':species шукають дім', ['species' => __($speciesModel->name_plural)]) : __('Знайти друга'));
+        ])->title($speciesModel ? __(':species шукають дім', ['species' => $speciesModel->label('name_plural')]) : __('Знайти друга'));
     }
 
     private function activeFiltersCount(): int

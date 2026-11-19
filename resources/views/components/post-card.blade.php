@@ -6,7 +6,7 @@
         @endif
     </div>
     <div class="p-5 flex flex-col gap-2">
-        <span class="text-sm font-semibold text-accent">{{ __($post->category->name) }}</span>
+        <span class="text-sm font-semibold text-accent">{{ $post->category->label() }}</span>
         <span class="font-display font-extrabold text-xl leading-tight group-hover:text-primary" @unless ($post->isShownInLocale('title')) lang="{{ app()->getLocale() === 'en' ? 'uk' : 'en' }}" @endunless>{{ $post->tr('title') }}</span>
         <span class="text-sm text-muted">
             @if ($post->published_at)

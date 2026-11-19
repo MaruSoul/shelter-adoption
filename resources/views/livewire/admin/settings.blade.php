@@ -12,6 +12,14 @@
                 <x-bilingual label="Адреса" model="form.address" translit hint="у підвалі сайту" />
             </fieldset>
 
+            <fieldset class="flex flex-col gap-5 pt-4 border-t border-line">
+                <legend class="font-display font-extrabold text-2xl pb-1">Тексти на сайті</legend>
+                <x-bilingual label="Як допомогти притулку" model="form.help_text" type="textarea" :rows="5"
+                             hint="блок на головній: що потрібно притулку, як передати корм, реквізити для допомоги. Порожнє поле – блок не показується" />
+                <x-bilingual label="Типові умови прилаштування" model="form.default_adoption_terms" type="textarea" :rows="4"
+                             hint="показуються на сторінці тварини, якщо в її картці власні умови не вказано" />
+            </fieldset>
+
             <fieldset class="flex flex-col gap-4 pt-4 border-t border-line">
                 <legend class="font-display font-extrabold text-2xl pb-1">Контакти</legend>
                 <p class="text-sm text-muted -mt-2">Однакові для обох мов.</p>

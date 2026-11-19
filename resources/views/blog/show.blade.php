@@ -1,12 +1,12 @@
 <x-layout :title="$post->tr('title')" :description="$post->tr('excerpt')" :image="$post->coverUrl()">
     <x-slot:head>
         <x-json-ld :data="\App\Support\StructuredData::article($post, \App\Models\ShelterSetting::current())" />
-        <x-json-ld :data="\App\Support\StructuredData::breadcrumbs([__('Блог') => route('blog.index'), __($post->category->name) => route('blog.index', ['rubric' => $post->category->slug]), $post->tr('title') => route('blog.show', $post)])" />
+        <x-json-ld :data="\App\Support\StructuredData::breadcrumbs([__('Блог') => route('blog.index'), $post->category->label() => route('blog.index', ['rubric' => $post->category->slug]), $post->tr('title') => route('blog.show', $post)])" />
     </x-slot:head>
     <article class="mx-auto max-w-3xl px-6 py-10 flex flex-col gap-6">
         <nav aria-label="{{ __('Навігаційний ланцюжок') }}" class="text-sm text-muted flex flex-wrap gap-2">
             <a href="{{ route('blog.index') }}" class="hover:underline">{{ __('Блог') }}</a><span aria-hidden="true">/</span>
-            <a href="{{ route('blog.index', ['rubric' => $post->category->slug]) }}" class="hover:underline">{{ __($post->category->name) }}</a>
+            <a href="{{ route('blog.index', ['rubric' => $post->category->slug]) }}" class="hover:underline">{{ $post->category->label() }}</a>
         </nav>
         @unless ($post->isPublished())
             <div role="status" class="rounded-2xl bg-sun-soft px-5 py-3 font-medium">{{ __('Чернетка – цю статтю бачите лише ви як адміністратор.') }}</div>

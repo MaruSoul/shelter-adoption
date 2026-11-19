@@ -1,4 +1,4 @@
-<x-layout :title="$current ? __($current->name) : __('Блог')" :description="__('Поради з підготовки до появи тварини вдома, здоровʼя, виховання та новини притулку.')">
+<x-layout :title="$current ? $current->label() : __('Блог')" :description="__('Поради з підготовки до появи тварини вдома, здоровʼя, виховання та новини притулку.')">
     <div class="mx-auto max-w-6xl px-6 py-10 flex flex-col gap-8">
         <div class="flex flex-col gap-2">
             <h1 class="text-4xl md:text-5xl">{{ __('Блог') }}</h1>
@@ -7,7 +7,7 @@
         <nav aria-label="{{ __('Рубрики') }}" class="flex flex-wrap gap-2">
             <a href="{{ route('blog.index') }}" @class(['btn border-[1.5px]', 'bg-primary text-primary-ink border-primary' => ! $current, 'bg-card border-line' => $current]) @if(! $current) aria-current="page" @endif>{{ __('Усі') }}</a>
             @foreach ($categories as $category)
-                <a href="{{ route('blog.index', ['rubric' => $category->slug]) }}" @class(['btn border-[1.5px]', 'bg-primary text-primary-ink border-primary' => $current?->is($category), 'bg-card border-line' => ! $current?->is($category)]) @if($current?->is($category)) aria-current="page" @endif>{{ __($category->name) }}</a>
+                <a href="{{ route('blog.index', ['rubric' => $category->slug]) }}" @class(['btn border-[1.5px]', 'bg-primary text-primary-ink border-primary' => $current?->is($category), 'bg-card border-line' => ! $current?->is($category)]) @if($current?->is($category)) aria-current="page" @endif>{{ $category->label() }}</a>
             @endforeach
         </nav>
         @if ($posts->isEmpty())

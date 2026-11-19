@@ -8,7 +8,7 @@
         <div class="p-5 flex flex-col gap-1.5">
             <span class="text-sm text-muted">{{ __('Ви подаєте анкету на') }}</span>
             <span class="font-display font-extrabold text-2xl">{{ $animal->display_name }}</span>
-            <span class="text-sm text-muted">{{ __($animal->species->name) }} · {{ $animal->ageLabel() }} · {{ \App\Support\Ukrainian::place($animal->locality->name) }}</span>
+            <span class="text-sm text-muted">{{ $animal->species->label() }} · {{ $animal->ageLabel() }} · {{ \App\Support\Ukrainian::place($animal->locality->name) }}</span>
             <a href="{{ route('animals.show', $animal) }}" class="mt-2 font-semibold text-primary hover:underline">{{ __('← Повернутися до сторінки') }}</a>
         </div>
     </aside>

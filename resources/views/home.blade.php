@@ -72,6 +72,13 @@
                 </div>
                 <a href="{{ auth()->check() ? route('cabinet.animals.create') : route('register') }}" class="btn-sun">{{ __('Розмістити тварину') }}</a>
             </div>
+            {{-- Текст редагується в «Налаштуваннях» адмінки; порожній – блоку немає --}}
+            @if ($helpText = \App\Models\ShelterSetting::current()->tr('help_text'))
+                <div class="rounded-3xl bg-card p-7 flex flex-col gap-2" data-reveal>
+                    <h3 class="text-2xl">{{ __('Як ще допомогти притулку') }}</h3>
+                    <p class="text-muted whitespace-pre-line">{{ $helpText }}</p>
+                </div>
+            @endif
         </div>
     </section>
 

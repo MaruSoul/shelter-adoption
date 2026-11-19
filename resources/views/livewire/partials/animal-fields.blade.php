@@ -7,7 +7,7 @@
     <label class="label">{{ __('Вид *') }}
         <select wire:model.live="form.species_id" class="field font-normal">
             <option value="">{{ __('Оберіть') }}</option>
-            @foreach ($species as $s)<option value="{{ $s->id }}">{{ __($s->name) }}</option>@endforeach
+            @foreach ($species as $s)<option value="{{ $s->id }}">{{ $s->label() }}</option>@endforeach
         </select>
         @error('form.species_id')<span class="error">{{ $message }}</span>@enderror
     </label>
@@ -25,14 +25,14 @@
     <label class="label">{{ __('Порода') }}
         <select wire:model="form.breed_id" class="field font-normal" @disabled(! $form->species_id)>
             <option value="">{{ __('Без породи / невідомо') }}</option>
-            @foreach ($form->breeds() as $b)<option value="{{ $b->id }}">{{ __($b->name) }}</option>@endforeach
+            @foreach ($form->breeds() as $b)<option value="{{ $b->id }}">{{ $b->label() }}</option>@endforeach
         </select>
         @error('form.breed_id')<span class="error">{{ $message }}</span>@enderror
     </label>
     <label class="label">{{ __('Забарвлення') }}
         <select wire:model="form.color_id" class="field font-normal">
             <option value="">{{ __('Не вказано') }}</option>
-            @foreach ($colors as $c)<option value="{{ $c->id }}">{{ __($c->name) }}</option>@endforeach
+            @foreach ($colors as $c)<option value="{{ $c->id }}">{{ $c->label() }}</option>@endforeach
         </select>
     </label>
     <label class="label">{{ __('Область *') }}

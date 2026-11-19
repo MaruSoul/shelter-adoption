@@ -1,6 +1,6 @@
 <div class="mx-auto max-w-6xl px-6 py-10 flex flex-col gap-7">
     <div class="flex flex-col gap-2">
-        <h1 class="text-4xl md:text-5xl">{{ $species ? __(':species шукають дім', ['species' => __($speciesList->firstWhere('slug', $species)?->name_plural)]) : __('Знайти друга') }}</h1>
+        <h1 class="text-4xl md:text-5xl">{{ $species ? __(':species шукають дім', ['species' => $speciesList->firstWhere('slug', $species)?->label('name_plural')]) : __('Знайти друга') }}</h1>
         <p class="text-muted">{{ __('Усі тварини оглянуті ветеринаром. Фільтри зберігаються в адресі сторінки – нею можна поділитися.') }}</p>
     </div>
 
@@ -19,7 +19,7 @@
                             @class(['btn border-[1.5px]', 'bg-primary text-primary-ink border-primary' => $species === '', 'bg-card border-line' => $species !== ''])>{{ __('Усі') }}</button>
                     @foreach ($speciesList as $s)
                         <button type="button" wire:click="setSpecies('{{ $s->slug }}')" aria-pressed="{{ $species === $s->slug ? 'true' : 'false' }}"
-                                @class(['btn border-[1.5px]', 'bg-primary text-primary-ink border-primary' => $species === $s->slug, 'bg-card border-line' => $species !== $s->slug])>{{ __($s->name_plural) }}</button>
+                                @class(['btn border-[1.5px]', 'bg-primary text-primary-ink border-primary' => $species === $s->slug, 'bg-card border-line' => $species !== $s->slug])>{{ $s->label('name_plural') }}</button>
                     @endforeach
                 </div>
             </fieldset>
@@ -64,7 +64,7 @@
                 <label class="label">{{ __('Порода') }}
                     <select wire:model.live="breed" class="field font-normal">
                         <option value="">{{ __('Будь-яка') }}</option>
-                        @foreach ($breeds as $b)<option value="{{ $b->id }}">{{ __($b->name) }}</option>@endforeach
+                        @foreach ($breeds as $b)<option value="{{ $b->id }}">{{ $b->label() }}</option>@endforeach
                     </select>
                 </label>
             @endif
@@ -72,7 +72,7 @@
             <label class="label">{{ __('Забарвлення') }}
                 <select wire:model.live="color" class="field font-normal">
                     <option value="">{{ __('Будь-яке') }}</option>
-                    @foreach ($colors as $c)<option value="{{ $c->id }}">{{ __($c->name) }}</option>@endforeach
+                    @foreach ($colors as $c)<option value="{{ $c->id }}">{{ $c->label() }}</option>@endforeach
                 </select>
             </label>
 
