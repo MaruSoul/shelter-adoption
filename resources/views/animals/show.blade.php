@@ -18,15 +18,31 @@
         @endunless
 
         <div class="flex flex-wrap gap-10 items-start">
-            {{-- Галерея: стрілки видно завжди (на телефоні немає наведення), гортання клавішами ← → і свайпом --}}
+            {{--
+                Галерея: стрілки видно завжди (на телефоні немає наведення), гортання клавішами ← → і свайпом.
+                Фото показується повністю (object-contain): тварин знімають і вертикально, і горизонтально.
+                Натиск на фото відкриває його на весь екран поверх сторінки.
+            --}}
             <div class="grow-[999] basis-[520px] min-w-0 flex flex-col gap-3"
                  x-data="{
                      active: 0,
                      startX: null,
-                     photos: @js($animal->photos->map(fn ($p) => ['url' => $p->url(), 'srcset' => $p->thumbUrl().' 600w, '.$p->url().' 1400w', 'alt' => $p->altFor($animal)])->values()),
+                     startY: null,
+                     full: false,
+                     photos: @js($animal->photos->map(fn ($p) => ['url' => $p->url(), 'thumb' => $p->thumbUrl(), 'srcset' => $p->thumbUrl().' 600w, '.$p->url().' 1400w', 'alt' => $p->altFor($animal)])->values()),
                      go(step) { this.active = (this.active + step + this.photos.length) % this.photos.length },
                      swipe(endX) { if (this.startX !== null && Math.abs(endX - this.startX) > 40) this.go(endX < this.startX ? 1 : -1); this.startX = null },
-                 }">
+                     {{-- На весь екран: запис в історії, щоб системна кнопка «Назад» на телефоні закривала фото, а не сторінку --}}
+                     openFull() { this.full = true; history.pushState({ lightbox: true }, '') },
+                     closeFull() { if (! this.full) return; this.full = false; if (history.state?.lightbox) history.back() },
+                     fullSwipe(e) {
+                         const t = e.changedTouches[0], dx = t.clientX - this.startX, dy = t.clientY - this.startY;
+                         if (Math.abs(dy) > 90 && Math.abs(dy) > Math.abs(dx)) this.closeFull();
+                         else if (Math.abs(dx) > 40 && this.photos.length > 1) this.go(dx < 0 ? 1 : -1);
+                         this.startX = this.startY = null;
+                     },
+                 }"
+                 x-on:popstate.window="full = false">
                 <div class="group relative aspect-[4/3] rounded-[1.75rem] bg-tint-1 overflow-hidden"
                      @if ($animal->photos->count() > 1)
                          role="region" aria-roledescription="{{ __('галерея') }}" aria-label="{{ __('Фото :name', ['name' => $animal->display_name]) }}" tabindex="0"
@@ -34,12 +50,21 @@
                          x-on:touchstart.passive="startX = $event.touches[0].clientX"
                          x-on:touchend="swipe($event.changedTouches[0].clientX)"
                      @endif>
-                    {{-- Перше фото є в HTML одразу (браузер починає його вантажити ще до запуску скриптів), далі галерея лише підміняє адресу --}}
                     @if ($cover)
-                        {{-- На телефоні браузер бере мініатюру 600 px, на великому екрані – повне фото --}}
+                        {{-- Тло: та сама світлина, розмита на всю рамку, щоб поля біля вертикального фото не були порожніми.
+                             Якщо тло не потрібне, достатньо прибрати цей <img> – поля стануть кольору рамки. --}}
+                        <img src="{{ $cover->thumbUrl() }}" alt="" aria-hidden="true" x-bind:src="photos[active].thumb"
+                             class="absolute inset-0 size-full object-cover scale-125 blur-2xl opacity-70">
+                        {{-- Перше фото є в HTML одразу (браузер починає його вантажити ще до запуску скриптів), далі галерея лише підміняє адресу.
+                             На телефоні браузер бере мініатюру 600 px, на великому екрані – повне фото --}}
                         <img src="{{ $cover->url() }}" srcset="{{ $cover->thumbUrl() }} 600w, {{ $cover->url() }} 1400w"
                              sizes="(min-width: 1024px) 720px, 100vw" alt="{{ $cover->altFor($animal) }}" fetchpriority="high" width="1200" height="900"
-                             x-bind:src="photos[active].url" x-bind:srcset="photos[active].srcset" x-bind:alt="photos[active].alt" class="size-full object-cover">
+                             x-bind:src="photos[active].url" x-bind:srcset="photos[active].srcset" x-bind:alt="photos[active].alt" class="relative size-full object-contain">
+                        <button type="button" x-on:click="openFull()" class="absolute inset-0 cursor-zoom-in" aria-label="{{ __('Відкрити фото на весь екран') }}">
+                            <span class="absolute top-3 right-3 size-10 rounded-full bg-card/70 backdrop-blur text-ink shadow flex items-center justify-center opacity-80 transition group-hover:opacity-100" aria-hidden="true">
+                                <svg viewBox="0 0 24 24" class="size-5" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 9V4h5M20 9V4h-5M4 15v5h5M20 15v5h-5"/></svg>
+                            </span>
+                        </button>
                     @endif
                     @if ($animal->photos->count() > 1)
                         <button type="button" x-on:click="go(-1)" aria-label="{{ __('Попереднє фото') }}"
@@ -66,6 +91,40 @@
                             </button>
                         @endforeach
                     </div>
+                @endif
+
+                {{-- Перегляд на весь екран: свайп убік – наступне фото, свайп вниз або Esc – закрити --}}
+                @if ($cover)
+                    <template x-teleport="body">
+                        <div x-show="full" x-cloak x-transition.opacity x-trap.noscroll.inert="full"
+                             role="dialog" aria-modal="true" aria-label="{{ __('Фото :name', ['name' => $animal->display_name]) }}"
+                             class="fixed inset-0 z-50 bg-[#0d0b14] flex items-center justify-center select-none"
+                             x-on:keydown.escape.window="closeFull()"
+                             x-on:keydown.left.window="full && go(-1)" x-on:keydown.right.window="full && go(1)"
+                             x-on:touchstart.passive="startX = $event.touches[0].clientX; startY = $event.touches[0].clientY"
+                             x-on:touchend="fullSwipe($event)"
+                             x-on:click.self="closeFull()">
+                            <img x-bind:src="photos[active].url" x-bind:alt="photos[active].alt"
+                                 class="max-h-[100dvh] max-w-full object-contain" x-on:click.self="closeFull()">
+                            <button type="button" x-on:click="closeFull()" aria-label="{{ __('Закрити') }}"
+                                    class="absolute top-3 right-3 size-12 rounded-full bg-white/15 text-white flex items-center justify-center hover:bg-white/25">
+                                <svg viewBox="0 0 24 24" class="size-6" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"/></svg>
+                            </button>
+                            @if ($animal->photos->count() > 1)
+                                <button type="button" x-on:click="go(-1)" aria-label="{{ __('Попереднє фото') }}"
+                                        class="absolute left-3 top-1/2 -translate-y-1/2 size-12 rounded-full bg-white/15 text-white flex items-center justify-center hover:bg-white/25">
+                                    <svg viewBox="0 0 24 24" class="size-7" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M15 5l-7 7 7 7"/></svg>
+                                </button>
+                                <button type="button" x-on:click="go(1)" aria-label="{{ __('Наступне фото') }}"
+                                        class="absolute right-3 top-1/2 -translate-y-1/2 size-12 rounded-full bg-white/15 text-white flex items-center justify-center hover:bg-white/25">
+                                    <svg viewBox="0 0 24 24" class="size-7" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 5l7 7-7 7"/></svg>
+                                </button>
+                                <span class="absolute bottom-4 left-1/2 -translate-x-1/2 rounded-full bg-white/15 text-white text-sm font-semibold px-3 py-1" aria-live="polite">
+                                    <span x-text="active + 1">1</span> / {{ $animal->photos->count() }}
+                                </span>
+                            @endif
+                        </div>
+                    </template>
                 @endif
             </div>
 

@@ -423,5 +423,7 @@
     "Завантажуємо фото": "Uploading photo",
     "з": "of",
     "Обрано більше фото, ніж можна додати; зайві пропущено:": "You selected more photos than can be added; skipped:",
-    "Не вдалося завантажити:": "Failed to upload:"
+    "Не вдалося завантажити:": "Failed to upload:",
+    "Відкрити фото на весь екран": "Open photo full screen",
+    "Закрити": "Close"
 }
