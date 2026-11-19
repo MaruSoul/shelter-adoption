@@ -53,7 +53,30 @@ it('перевіряє структуру блоків за схемою (FR-15)
     'зображення не з конструктора' => [[['type' => 'image', 'data' => ['path' => '../../.env', 'alt' => 'x']]]],
     'неіснуюча тварина' => [[['type' => 'animal', 'data' => ['animal_id' => 999999]]]],
     'список без пунктів' => [[['type' => 'list', 'data' => ['style' => 'bullet', 'items' => []]]]],
+    'відео не з YouTube чи Vimeo' => [[['type' => 'video', 'data' => ['url' => 'https://evil.example/watch?v=dQw4w9WgXcQ']]]],
+    'відео з підробленим доменом' => [[['type' => 'video', 'data' => ['url' => 'https://youtube.com.evil.example/watch?v=dQw4w9WgXcQ']]]],
+    'відео з кодом замість посилання' => [[['type' => 'video', 'data' => ['url' => '<iframe src="https://evil"></iframe>']]]],
 ]);
+
+it('розпізнає посилання на відео YouTube і Vimeo', function (string $url, string $provider, string $id) {
+    expect(PostBlocks::parseVideo($url))->toMatchArray(['provider' => $provider, 'video_id' => $id]);
+})->with([
+    ['https://www.youtube.com/watch?v=dQw4w9WgXcQ', 'youtube', 'dQw4w9WgXcQ'],
+    ['https://youtu.be/dQw4w9WgXcQ?si=abc', 'youtube', 'dQw4w9WgXcQ'],
+    ['https://m.youtube.com/watch?feature=share&v=dQw4w9WgXcQ', 'youtube', 'dQw4w9WgXcQ'],
+    ['https://youtube.com/shorts/dQw4w9WgXcQ', 'youtube', 'dQw4w9WgXcQ'],
+    ['https://vimeo.com/76979871', 'vimeo', '76979871'],
+]);
+
+it('показує відео в статті лише після натиску, з вставкою без cookie', function () {
+    $post = makePost(['blocks' => [['type' => 'video', 'data' => ['url' => 'https://youtu.be/dQw4w9WgXcQ', 'caption' => 'Як ми гуляємо']]]]);
+
+    $this->get(route('blog.show', $post))
+        ->assertOk()
+        ->assertSee('https://i.ytimg.com/vi/dQw4w9WgXcQ/hqdefault.jpg', false)
+        ->assertSee('https://www.youtube-nocookie.com/embed/dQw4w9WgXcQ', false)
+        ->assertSee('Як ми гуляємо');
+});
 
 it('нормалізує правильні блоки', function () {
     $animal = Animal::factory()->create();

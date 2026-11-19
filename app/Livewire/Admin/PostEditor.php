@@ -261,6 +261,7 @@ class PostEditor extends Component
             return match ($b['type']) {
                 'image' => ! empty($d['path']),
                 'animal' => ! empty($d['animal_id']),
+                'video' => PostBlocks::parseVideo((string) ($d['url'] ?? '')) !== null,
                 'list' => count(array_filter($d['items'] ?? [])) > 0,
                 default => trim($d['text'] ?? '') !== '',
             };

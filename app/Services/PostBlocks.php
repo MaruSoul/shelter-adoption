@@ -27,6 +27,7 @@ class PostBlocks
         'quote' => 'Цитата',
         'list' => 'Список',
         'animal' => 'Картка тварини',
+        'video' => 'Відео',
     ];
 
     /**
@@ -40,6 +41,7 @@ class PostBlocks
         'quote' => ['text', 'author'],
         'list' => ['items'],
         'animal' => [],
+        'video' => ['caption'],
     ];
 
     /** Порожній блок заданого типу – з нього конструктор починає редагування. */
@@ -54,6 +56,7 @@ class PostBlocks
                 'quote' => ['text' => '', 'text_en' => '', 'author' => '', 'author_en' => ''],
                 'list' => ['style' => 'bullet', 'items' => [''], 'items_en' => ['']],
                 'animal' => ['animal_id' => null],
+                'video' => ['url' => '', 'caption' => '', 'caption_en' => ''],
             },
         ];
     }
@@ -194,8 +197,9 @@ class PostBlocks
             $data = $block['data'] ?? [];
 
             return match ($block['type'] ?? null) {
-                'image' => ['type' => 'image', 'data' => $data + ['url' => Storage::disk('public')->url($data['path'] ?? '')]],
+                'image' => ['type' => 'image', 'data' => $data + ['url' => Storage::disk('public')->url($data['path'] ?? '')]] + array_intersect_key($block, ['lang' => 1]),
                 'animal' => isset($animals[$data['animal_id'] ?? 0]) ? ['type' => 'animal', 'animal' => $animals[$data['animal_id']]] : null,
+                'video' => ($video = self::parseVideo($data['url'] ?? '')) ? ['type' => 'video', 'data' => $data + $video] + array_intersect_key($block, ['lang' => 1]) : null,
                 default => $block,
             };
         })->filter()->values()->all();
@@ -226,7 +230,42 @@ class PostBlocks
                 'items_en.*' => ['nullable', 'string', 'max:300'],
             ],
             'animal' => ['animal_id' => ['required', 'integer', Rule::exists('animals', 'id')]],
+            'video' => [
+                'url' => ['required', 'string', 'max:255', function (string $attribute, mixed $value, \Closure $fail) {
+                    if (! self::parseVideo((string) $value)) {
+                        $fail('Вставте посилання на відео з YouTube або Vimeo.');
+                    }
+                }],
+                'caption' => ['nullable', 'string', 'max:200'], 'caption_en' => ['nullable', 'string', 'max:200'],
+            ],
         };
+    }
+
+    /**
+     * Розбирає посилання на відео. Вставка будується з ідентифікатора самим сайтом,
+     * тому довільний iframe чи скрипт через цей блок потрапити на сторінку не може.
+     *
+     * @return array{provider: string, video_id: string, embed: string, thumb: ?string}|null
+     */
+    public static function parseVideo(string $url): ?array
+    {
+        $url = trim($url);
+        $patterns = [
+            // youtube.com/watch?v=ID, youtu.be/ID, youtube.com/shorts/ID, youtube.com/embed/ID, youtube.com/live/ID
+            'youtube' => '~^https?://(?:www\.|m\.)?(?:youtube\.com/(?:watch\?(?:.*&)?v=|shorts/|embed/|live/)|youtu\.be/)([A-Za-z0-9_-]{11})(?:[?&#/].*)?$~',
+            'vimeo' => '~^https?://(?:www\.|player\.)?vimeo\.com/(?:video/)?(\d{6,12})(?:[?#/].*)?$~',
+        ];
+        foreach ($patterns as $provider => $pattern) {
+            if (preg_match($pattern, $url, $m)) {
+                $id = $m[1];
+
+                return $provider === 'youtube'
+                    ? ['provider' => 'youtube', 'video_id' => $id, 'embed' => "https://www.youtube-nocookie.com/embed/{$id}?autoplay=1&rel=0", 'thumb' => "https://i.ytimg.com/vi/{$id}/hqdefault.jpg"]
+                    : ['provider' => 'vimeo', 'video_id' => $id, 'embed' => "https://player.vimeo.com/video/{$id}?autoplay=1&dnt=1", 'thumb' => null];
+            }
+        }
+
+        return null;
     }
 
     private function normalize(string $type, array $data): array
@@ -255,6 +294,7 @@ class PostBlocks
                 return ['style' => $data['style'], 'items' => $items, 'items_en' => array_filter($itemsEn) ? $itemsEn : null];
             })(),
             'animal' => ['animal_id' => (int) $data['animal_id']],
+            'video' => ['url' => $trim($data['url']), 'caption' => $opt($data['caption'] ?? null), 'caption_en' => $opt($data['caption_en'] ?? null)],
         };
 
         // Порожні переклади не зберігаємо, щоб JSON статей без англійської лишався таким, як був
@@ -275,7 +315,7 @@ class PostBlocks
     {
         return ['text' => 'текст', 'level' => 'рівень', 'path' => 'зображення', 'alt' => 'опис зображення', 'caption' => 'підпис',
             'author' => 'автор', 'style' => 'вигляд списку', 'items' => 'пункти', 'items.*' => 'пункт', 'animal_id' => 'тварина',
-            'text_en' => 'текст (EN)', 'alt_en' => 'опис зображення (EN)', 'caption_en' => 'підпис (EN)', 'author_en' => 'автор (EN)',
+            'url' => 'посилання на відео', 'text_en' => 'текст (EN)', 'alt_en' => 'опис зображення (EN)', 'caption_en' => 'підпис (EN)', 'author_en' => 'автор (EN)',
             'items_en.*' => 'пункт (EN)'];
     }
 }

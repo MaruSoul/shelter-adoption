@@ -132,11 +132,20 @@
                                 </select>
                                 <p class="text-sm text-muted">Картка тварини перекладається автоматично з її сторінки.</p>
                                 @break
+                            @case('video')
+                                <input type="url" wire:model.live.blur="blocks.{{ $i }}.data.url" class="field" inputmode="url"
+                                       placeholder="https://www.youtube.com/watch?v=…" aria-label="Посилання на відео">
+                                <p class="text-sm text-muted">Скопіюйте адресу відео з YouTube (звичайне відео або Shorts) чи Vimeo – вставку сайт зробить сам.</p>
+                                @if ($video = \App\Services\PostBlocks::parseVideo($block['data']['url'] ?? ''))
+                                    @if ($video['thumb'])<img src="{{ $video['thumb'] }}" alt="" class="max-h-40 rounded-2xl self-start">@endif
+                                @endif
+                                <x-bilingual model="blocks.{{ $i }}.data.caption" placeholder="Підпис (необовʼязково)" compact />
+                                @break
                         @endswitch
 
                         {{-- Помилки текстових полів показує сама пара UA/EN; тут – решта (зображення, тварина, список) --}}
                         @foreach ($errors->getMessages() as $key => $messages)
-                            @if (preg_match('/^blocks\.'.$i.'\.data\.(path|animal_id|items|level|style)$/', $key))
+                            @if (preg_match('/^blocks\.'.$i.'\.data\.(path|animal_id|items|level|style|url)$/', $key))
                                 @foreach ($messages as $message)<span class="error">{{ $message }}</span>@endforeach
                             @endif
                         @endforeach
