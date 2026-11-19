@@ -115,7 +115,7 @@ docker compose --profile tests run --rm tests
 
 ### Наскрізні, швидкодія й навантаження
 
-Потрібні Node.js 22 і запущений сайт із демо-даними (`migrate:fresh --seed`).
+Потрібні Node.js 26 і запущений сайт із демо-даними (`migrate:fresh --seed`).
 
 ```bash
 npm ci && npx playwright install chromium     # один раз
@@ -129,7 +129,7 @@ k6 run -e BASE_URL=http://localhost:8080 tests/load/catalog-and-form.js
 
 ## Локальний запуск без Docker
 
-Потрібні PHP 8.3+ з розширеннями `pdo_pgsql`, `gd`, `intl`, `zip`, `exif`, Composer, Node.js 22 і PostgreSQL.
+Потрібні PHP 8.5+ з розширеннями `pdo_pgsql`, `gd`, `intl`, `zip`, `exif`, Composer, Node.js 26 і PostgreSQL.
 
 ```bash
 composer install

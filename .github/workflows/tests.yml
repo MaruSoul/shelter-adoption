@@ -38,10 +38,10 @@ jobs:
           extensions: mbstring, pdo_pgsql, pgsql, gd, intl, zip, exif, bcmath
           coverage: none
 
-      - name: Node.js 22
+      - name: Node.js 26
         uses: actions/setup-node@v4
         with:
-          node-version: 22
+          node-version: 26
           cache: npm
 
       - name: Залежності PHP

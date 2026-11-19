@@ -1,5 +1,5 @@
 # Етап 1: збірка фронтенду (Vite + Tailwind)
-FROM node:22-alpine AS assets
+FROM node:26-alpine AS assets
 WORKDIR /app
 COPY package.json package-lock.json* ./
 RUN if [ -f package-lock.json ]; then npm ci; else npm install; fi
