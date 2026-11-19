@@ -91,6 +91,7 @@
                                 @break
                             @case('paragraph')
                                 <x-bilingual model="blocks.{{ $i }}.data.text" type="textarea" :rows="5" placeholder="Текст абзацу" />
+                                <p class="text-sm text-muted">{{ \App\Support\SimpleMarkup::HINT }}. Внутрішні посилання на тварин і статті допомагають сайту в пошуку.</p>
                                 @break
                             @case('quote')
                                 <x-bilingual model="blocks.{{ $i }}.data.text" type="textarea" :rows="2" placeholder="Цитата" />

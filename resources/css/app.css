@@ -209,3 +209,36 @@
     border-color: var(--color-sun);
     background-color: var(--color-sun-soft);
 }
+
+/* Посилання й заголовки всередині текстів із мінірозмітки (статті, SEO-тексти сторінок) */
+.prose-links a {
+    color: var(--color-primary);
+    text-decoration: underline;
+    text-underline-offset: 3px;
+}
+.prose-links a:hover {
+    text-decoration-thickness: 2px;
+}
+.seo-text {
+    display: flex;
+    flex-direction: column;
+    gap: 0.9rem;
+    color: var(--color-muted);
+    line-height: 1.7;
+}
+.seo-text h2 {
+    font-size: 1.6rem;
+    color: var(--color-ink);
+    padding-top: 0.4rem;
+}
+.seo-text h3 {
+    font-size: 1.3rem;
+    color: var(--color-ink);
+}
+.seo-text ul {
+    list-style: disc;
+    padding-left: 1.4rem;
+}
+.seo-text strong {
+    color: var(--color-ink);
+}

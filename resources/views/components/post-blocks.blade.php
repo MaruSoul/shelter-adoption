@@ -1,6 +1,6 @@
 @props(['blocks'])
-{{-- Рендеринг блоків статті. Увесь текст виводиться через {{ }} і тому екранується. --}}
-<div class="flex flex-col gap-5 text-lg leading-relaxed">
+{{-- Рендеринг блоків статті. Увесь текст екранується; у абзацах і списках розпізнаються лише посилання й жирний (App\Support\SimpleMarkup). --}}
+<div class="flex flex-col gap-5 text-lg leading-relaxed prose-links">
     @foreach ($blocks as $block)
         {{-- Блок без перекладу показується українською: позначаємо мову для екранних читачів --}}
         @php($lang = isset($block['lang']) ? 'lang='.$block['lang'] : '')
@@ -13,7 +13,7 @@
                 @endif
                 @break
             @case('paragraph')
-                <p class="whitespace-pre-line" {{ $lang }}>{{ $block['data']['text'] }}</p>
+                <p class="whitespace-pre-line" {{ $lang }}>{{ \App\Support\SimpleMarkup::inline($block['data']['text']) }}</p>
                 @break
             @case('image')
                 <figure class="flex flex-col gap-2" {{ $lang }}>
@@ -29,9 +29,9 @@
                 @break
             @case('list')
                 @if ($block['data']['style'] === 'ordered')
-                    <ol class="list-decimal pl-6 flex flex-col gap-1.5" {{ $lang }}>@foreach ($block['data']['items'] as $item)<li>{{ $item }}</li>@endforeach</ol>
+                    <ol class="list-decimal pl-6 flex flex-col gap-1.5" {{ $lang }}>@foreach ($block['data']['items'] as $item)<li>{{ \App\Support\SimpleMarkup::inline($item) }}</li>@endforeach</ol>
                 @else
-                    <ul class="list-disc pl-6 flex flex-col gap-1.5 marker:text-primary" {{ $lang }}>@foreach ($block['data']['items'] as $item)<li>{{ $item }}</li>@endforeach</ul>
+                    <ul class="list-disc pl-6 flex flex-col gap-1.5 marker:text-primary" {{ $lang }}>@foreach ($block['data']['items'] as $item)<li>{{ \App\Support\SimpleMarkup::inline($item) }}</li>@endforeach</ul>
                 @endif
                 @break
             @case('animal')
