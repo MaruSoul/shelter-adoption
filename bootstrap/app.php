@@ -14,8 +14,9 @@ return Application::configure(basePath: dirname(__DIR__))
     )
     ->withMiddleware(function (Middleware $middleware): void {
         $middleware->web(append: [SetLocale::class]);
-        // На сервері перед сайтом стоїть Caddy з HTTPS: довіряємо його заголовкам X-Forwarded-*,
-        // щоб посилання й адреси файлів будувалися з https://. Ззовні контейнер застосунку недоступний.
+        // На сервері перед сайтом стоїть nginx з HTTPS (docker/host-nginx): довіряємо його заголовкам
+        // X-Forwarded-*, щоб посилання будувалися з https://, а IP відвідувача була справжньою.
+        // Порт контейнера web відкрито лише на 127.0.0.1, тож підробити ці заголовки ззовні не можна.
         $middleware->trustProxies(at: '*');
         // Мову читаємо з незашифрованої cookie, щоб її можна було встановити без сесії
         $middleware->encryptCookies(except: [SetLocale::COOKIE]);

@@ -160,51 +160,35 @@ tests/            автотести Pest
 
 ## Розгортання на сервері
 
-Робоча копія: **https://pet.tinycdn.cloud**. На сервері потрібні лише Docker і Git; HTTPS забезпечує Caddy
-(`docker/caddy/Caddyfile`), сертифікат Let's Encrypt він отримує й поновлює сам.
+Робоча копія: **https://pet.tinycdn.cloud**. На сервері встановлені Docker і nginx; HTTPS забезпечує nginx
+із сертифікатом Let's Encrypt (certbot) і передає запити контейнеру `web` на `127.0.0.1:8080`.
+Копія конфігурації nginx – `docker/host-nginx/pet.tinycdn.cloud.conf`. Git на сервері не використовується.
 
-**1. DNS.** Запис `A` для `pet.tinycdn.cloud` → IP сервера. Порти 80 і 443 мають бути відкриті.
+**Налаштування.** У робочій папці на ноутбуці лежать два файли (обидва не потрапляють у git і в образ Docker):
 
-**2. Код.** Репозиторій приватний, тому на сервері створіть ключ і додайте його в GitHub
-(Settings → Deploy keys, лише читання):
+| Файл | Для чого |
+|---|---|
+| `.env` | локальний запуск (`APP_ENV=local`, http://localhost:8080) |
+| `.env_prod` | точна копія `.env` на сервері; шаблон – `.env.production.example` |
 
-```bash
-ssh-keygen -t ed25519 -f ~/.ssh/shelter -N ""
-cat ~/.ssh/shelter.pub          # вставити в Deploy keys
-GIT_SSH_COMMAND="ssh -i ~/.ssh/shelter" git clone git@github.com:MaruSoul/shelter-adoption.git
-cd shelter-adoption
-git config core.sshCommand "ssh -i ~/.ssh/shelter"
-```
+**Оновлення сайту:**
 
-**3. Налаштування.**
-
-```bash
-cp .env.production.example .env
-sed -i "s|^APP_KEY=.*|APP_KEY=base64:$(openssl rand -base64 32)|" .env
-sed -i "s|^DB_PASSWORD=.*|DB_PASSWORD=$(openssl rand -hex 24)|" .env
-```
-
-**4. Запуск і демо-дані.**
+1. Завантажити всю папку проєкту на сервер.
+2. На сервері видалити `.env` і перейменувати `.env_prod` на `.env`.
+3. Зібрати й перезапустити контейнери (код вбудовується в образ, тому без `--build` зміни не зʼявляться):
 
 ```bash
-docker compose -f compose.yaml -f compose.prod.yaml up -d --build
-docker compose -f compose.yaml -f compose.prod.yaml exec app php artisan db:seed --force
+docker compose up -d --build
 ```
 
-Міграції виконуються автоматично під час старту контейнера. Демо-акаунти з таблиці вище після захисту варто
+Міграції виконуються автоматично під час старту контейнера. Якщо змінюєте `.env` прямо на сервері, ту саму зміну
+внесіть у `.env_prod` на ноутбуці, інакше наступне завантаження її перезапише. Демо-акаунти з таблиці вище варто
 змінити або видалити: паролі опубліковані в цьому README.
 
-**Оновлення** до нової версії:
-
-```bash
-git pull
-docker compose -f compose.yaml -f compose.prod.yaml up -d --build
-```
-
-**Пошта.** За замовчуванням листи потрапляють у Mailpit, який на сервері доступний лише локально
-(в листах персональні дані з анкет). Подивитися з ноутбука:
-`ssh -L 8025:localhost:8025 користувач@сервер`, далі http://localhost:8025. Щоб листи доходили до людей,
-вкажіть у `.env` реквізити SMTP-сервісу (`MAIL_HOST`, `MAIL_PORT`, `MAIL_USERNAME`, `MAIL_PASSWORD`) і перезапустіть.
+**Пошта.** Листи потрапляють у Mailpit, який слухає лише `127.0.0.1` (в листах персональні дані з анкет).
+Подивитися з ноутбука: `ssh -L 8025:localhost:8025 користувач@сервер`, далі http://localhost:8025. Щоб листи
+доходили до людей, вкажіть у `.env` реквізити SMTP-сервісу (`MAIL_HOST`, `MAIL_PORT`, `MAIL_USERNAME`, `MAIL_PASSWORD`)
+і перезапустіть.
 
 **Резервна копія бази:**
 

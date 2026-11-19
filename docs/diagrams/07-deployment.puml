@@ -4,6 +4,7 @@ node "Пристрій користувача" <<device>> {
   node "Веббраузер" <<executionEnvironment>> as Browser
 }
 node "Сервер (локально: Docker Desktop; публічно: VPS)" <<node>> {
+  node "nginx на хості (лише VPS)\nHTTPS :443, Let's Encrypt (certbot)" <<executionEnvironment>> as Proxy
   node "web: nginx 1.x\n:80 → хост :8080\n(gzip, статичні файли)" <<container>> as Web
   node "app: php-fpm 8.5\nLaravel, міграції під час старту" <<container>> as App
   node "queue: php artisan queue:work" <<container>> as Q
@@ -11,7 +12,9 @@ node "Сервер (локально: Docker Desktop; публічно: VPS)" <<
   node "mailpit: SMTP :1025,\nвеб :8025 (лише розробка)" <<container>> as Mail
   folder "том storage\n(фото, мініатюри)" as Vol
 }
-Browser --> Web : HTTP(S)
+Browser --> Proxy : HTTPS
+Proxy --> Web : HTTP 127.0.0.1:8080
+Browser ..> Web : локально: HTTP :8080
 Web --> App : FastCGI :9000\n(внутрішня мережа)
 App --> DB : TCP 5432\n(внутрішня мережа)
 Q --> DB : jobs
