@@ -132,3 +132,27 @@ it('стаття може мати власні Title і Description для по
         ->assertSee('content="Опис для пошуку"', false)
         ->assertSee('Довга назва статті');
 });
+
+it('англійська версія статті показує окреме відео, а без нього – те саме, що й українська', function () {
+    $post = makePost(['title_en' => 'Walks', 'blocks' => [
+        ['type' => 'video', 'data' => ['url' => 'https://youtu.be/aaaaaaaaaaa', 'url_en' => 'https://youtu.be/bbbbbbbbbbb']],
+        ['type' => 'video', 'data' => ['url' => 'https://youtu.be/ccccccccccc']],
+    ]]);
+
+    $this->get(route('blog.show', $post))
+        ->assertSee('embed/aaaaaaaaaaa', false)->assertDontSee('embed/bbbbbbbbbbb', false)->assertSee('embed/ccccccccccc', false);
+    $this->get(enRoute('blog.show', $post))
+        ->assertSee('embed/bbbbbbbbbbb', false)->assertDontSee('embed/aaaaaaaaaaa', false)->assertSee('embed/ccccccccccc', false);
+
+    // Порожнє англійське відео не рахується неперекладеним фрагментом
+    expect(PostBlocks::englishCoverage($post->blocks))->toBe([0, 0]);
+});
+
+it('перевіряє й англійське посилання на відео', function () {
+    expect(fn () => app(PostBlocks::class)->validate([
+        ['type' => 'video', 'data' => ['url' => 'https://youtu.be/aaaaaaaaaaa', 'url_en' => 'https://evil.example/video']],
+    ]))->toThrow(ValidationException::class);
+
+    $clean = app(PostBlocks::class)->validate([['type' => 'video', 'data' => ['url' => 'https://youtu.be/aaaaaaaaaaa', 'url_en' => '']]]);
+    expect($clean[0]['data'])->not->toHaveKey('url_en');
+});

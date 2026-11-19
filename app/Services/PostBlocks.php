@@ -56,7 +56,7 @@ class PostBlocks
                 'quote' => ['text' => '', 'text_en' => '', 'author' => '', 'author_en' => ''],
                 'list' => ['style' => 'bullet', 'items' => [''], 'items_en' => ['']],
                 'animal' => ['animal_id' => null],
-                'video' => ['url' => '', 'caption' => '', 'caption_en' => ''],
+                'video' => ['url' => '', 'url_en' => '', 'caption' => '', 'caption_en' => ''],
             },
         ];
     }
@@ -114,6 +114,11 @@ class PostBlocks
                 }
             }
 
+            // Відео: окреме англійське посилання необовʼязкове, але поле має бути в конструкторі
+            if ($block['type'] === 'video') {
+                $block['data']['url_en'] = (string) ($block['data']['url_en'] ?? '');
+            }
+
             return $block;
         }, $blocks);
     }
@@ -151,6 +156,11 @@ class PostBlocks
             }
             if ($untranslated) {
                 $block['lang'] = 'uk';
+            }
+            // Окреме відео для англійської версії; якщо його немає, показується те саме, що й українською.
+            // Відсутність англійського відео не вважається неперекладеним фрагментом.
+            if ($block['type'] === 'video' && filled($block['data']['url_en'] ?? null)) {
+                $block['data']['url'] = $block['data']['url_en'];
             }
 
             return $block;
@@ -231,11 +241,12 @@ class PostBlocks
             ],
             'animal' => ['animal_id' => ['required', 'integer', Rule::exists('animals', 'id')]],
             'video' => [
-                'url' => ['required', 'string', 'max:255', function (string $attribute, mixed $value, \Closure $fail) {
+                'url' => ['required', 'string', 'max:255', $videoUrl = function (string $attribute, mixed $value, \Closure $fail) {
                     if (! self::parseVideo((string) $value)) {
                         $fail('Вставте посилання на відео з YouTube або Vimeo.');
                     }
                 }],
+                'url_en' => ['nullable', 'string', 'max:255', $videoUrl],
                 'caption' => ['nullable', 'string', 'max:200'], 'caption_en' => ['nullable', 'string', 'max:200'],
             ],
         };
@@ -294,7 +305,10 @@ class PostBlocks
                 return ['style' => $data['style'], 'items' => $items, 'items_en' => array_filter($itemsEn) ? $itemsEn : null];
             })(),
             'animal' => ['animal_id' => (int) $data['animal_id']],
-            'video' => ['url' => $trim($data['url']), 'caption' => $opt($data['caption'] ?? null), 'caption_en' => $opt($data['caption_en'] ?? null)],
+            'video' => [
+                'url' => $trim($data['url']), 'url_en' => $opt($data['url_en'] ?? null),
+                'caption' => $opt($data['caption'] ?? null), 'caption_en' => $opt($data['caption_en'] ?? null),
+            ],
         };
 
         // Порожні переклади не зберігаємо, щоб JSON статей без англійської лишався таким, як був
@@ -315,7 +329,7 @@ class PostBlocks
     {
         return ['text' => 'текст', 'level' => 'рівень', 'path' => 'зображення', 'alt' => 'опис зображення', 'caption' => 'підпис',
             'author' => 'автор', 'style' => 'вигляд списку', 'items' => 'пункти', 'items.*' => 'пункт', 'animal_id' => 'тварина',
-            'url' => 'посилання на відео', 'text_en' => 'текст (EN)', 'alt_en' => 'опис зображення (EN)', 'caption_en' => 'підпис (EN)', 'author_en' => 'автор (EN)',
+            'url' => 'посилання на відео', 'url_en' => 'посилання на відео (EN)', 'text_en' => 'текст (EN)', 'alt_en' => 'опис зображення (EN)', 'caption_en' => 'підпис (EN)', 'author_en' => 'автор (EN)',
             'items_en.*' => 'пункт (EN)'];
     }
 }
