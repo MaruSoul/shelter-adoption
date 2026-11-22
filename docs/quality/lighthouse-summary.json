@@ -1,152 +1,100 @@
 {
- "d_": {
+ "home": {
+  "perf": 98,
+  "a11y": 100,
+  "bp": 100,
+  "seo": 100,
+  "lcp": 0.6,
+  "cls": 0,
+  "tbt": 158,
+  "fcp": 0.6,
+  "desk_perf": 100,
+  "desk_lcp": 0.2,
+  "desk_a11y": 100,
+  "desk_seo": 100
+ },
+ "catalog": {
   "perf": 100,
   "a11y": 100,
   "bp": 100,
   "seo": 100,
-  "fcp": 0.31156619999999996,
-  "lcp": 0.31156619999999996,
+  "lcp": 0.7,
   "cls": 0,
-  "tbt": 0,
-  "runs": 1,
-  "perf_all": [
-   100
-  ]
+  "tbt": 65,
+  "fcp": 0.7,
+  "desk_perf": 99,
+  "desk_lcp": 0.8,
+  "desk_a11y": 100,
+  "desk_seo": 100
  },
- "d_blog": {
-  "perf": 100,
+ "pet": {
+  "perf": 85,
   "a11y": 100,
   "bp": 100,
   "seo": 100,
-  "fcp": 0.19039015,
-  "lcp": 0.731865525,
+  "lcp": 4.1,
   "cls": 0,
-  "tbt": 0,
-  "runs": 1,
-  "perf_all": [
-   100
-  ]
+  "tbt": 157,
+  "fcp": 0.7,
+  "desk_perf": 100,
+  "desk_lcp": 0.8,
+  "desk_a11y": 100,
+  "desk_seo": 100
  },
- "d_tvaryny": {
-  "perf": 99,
-  "a11y": 100,
-  "bp": 100,
-  "seo": 100,
-  "fcp": 0.33409469999999997,
-  "lcp": 0.8661894,
-  "cls": 0,
-  "tbt": 20.5,
-  "runs": 1,
-  "perf_all": [
-   99
-  ]
- },
- "d_tvaryny_animal": {
-  "perf": 99,
-  "a11y": 100,
-  "bp": 100,
-  "seo": 100,
-  "fcp": 0.214,
-  "lcp": 0.8505,
-  "cls": 0,
-  "tbt": 0,
-  "runs": 1,
-  "perf_all": [
-   99
-  ]
- },
- "d_tvaryny_animal_vzyaty-dodomu": {
-  "perf": 100,
-  "a11y": 100,
-  "bp": 100,
-  "seo": 100,
-  "fcp": 0.179214,
-  "lcp": 0.5706420000000001,
-  "cls": 0,
-  "tbt": 0,
-  "runs": 1,
-  "perf_all": [
-   100
-  ]
- },
- "m_": {
-  "perf": 99,
-  "a11y": 100,
-  "bp": 100,
-  "seo": 100,
-  "fcp": 1.443,
-  "lcp": 1.443,
-  "cls": 0,
-  "tbt": 100,
-  "runs": 3,
-  "perf_all": [
-   99,
-   99,
-   99
-  ]
- },
- "m_blog": {
-  "perf": 89,
-  "a11y": 100,
-  "bp": 100,
-  "seo": 100,
-  "fcp": 0.644,
-  "lcp": 3.795,
-  "cls": 0,
-  "tbt": 56.5,
-  "runs": 3,
-  "perf_all": [
-   89,
-   90,
-   88
-  ]
- },
- "m_tvaryny": {
-  "perf": 100,
-  "a11y": 100,
-  "bp": 100,
-  "seo": 100,
-  "fcp": 1.3407025,
-  "lcp": 1.3407025,
-  "cls": 0,
-  "tbt": 43,
-  "runs": 3,
-  "perf_all": [
-   100,
-   100,
-   100
-  ]
- },
- "m_tvaryny_animal": {
-  "perf": 82,
-  "a11y": 100,
-  "bp": 100,
-  "seo": 100,
-  "fcp": 0.6301036,
-  "lcp": 4.632198399999999,
-  "cls": 0,
-  "tbt": 137.5,
-  "runs": 3,
-  "perf_all": [
-   81,
-   90,
-   82
-  ]
- },
- "m_tvaryny_animal_vzyaty-dodomu": {
+ "form": {
   "perf": 97,
   "a11y": 100,
   "bp": 100,
   "seo": 100,
-  "fcp": 0.6282798,
-  "lcp": 2.5456030000000003,
+  "lcp": 2.7,
   "cls": 0,
-  "tbt": 47,
-  "runs": 3,
-  "perf_all": [
-   97,
-   97,
-   96
-  ]
+  "tbt": 52,
+  "fcp": 0.6,
+  "desk_perf": 100,
+  "desk_lcp": 0.7,
+  "desk_a11y": 100,
+  "desk_seo": 100
+ },
+ "blog": {
+  "perf": 88,
+  "a11y": 100,
+  "bp": 100,
+  "seo": 100,
+  "lcp": 3.9,
+  "cls": 0,
+  "tbt": 102,
+  "fcp": 0.6,
+  "desk_perf": 100,
+  "desk_lcp": 0.8,
+  "desk_a11y": 100,
+  "desk_seo": 100
+ },
+ "help": {
+  "perf": 100,
+  "a11y": 100,
+  "bp": 100,
+  "seo": 100,
+  "lcp": 0.6,
+  "cls": 0,
+  "tbt": 53,
+  "fcp": 0.6,
+  "desk_perf": 100,
+  "desk_lcp": 0.2,
+  "desk_a11y": 100,
+  "desk_seo": 100
+ },
+ "encat": {
+  "perf": 100,
+  "a11y": 100,
+  "bp": 100,
+  "seo": 100,
+  "lcp": 0.6,
+  "cls": 0,
+  "tbt": 46,
+  "fcp": 0.6,
+  "desk_perf": 100,
+  "desk_lcp": 0.8,
+  "desk_a11y": 100,
+  "desk_seo": 100
  }
 }
