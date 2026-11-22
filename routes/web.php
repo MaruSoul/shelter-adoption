@@ -38,7 +38,7 @@ $localizedPages = function () {
     Route::get('/blog', [BlogController::class, 'index'])->name('blog.index');
     Route::get('/blog/{post}', [BlogController::class, 'show'])->name('blog.show');
 
-    Route::get('/dopomohty', HelpController::class)->name('help');
+    Route::get('/help', HelpController::class)->name('help');
 
     Route::view('/polityka-konfidentsiinosti', 'pages.privacy')->name('privacy');
 };
