@@ -55,6 +55,14 @@ it('гість подає анкету без реєстрації, адміні
     Mail::assertQueued(ApplicationReceivedMail::class, fn ($m) => $m->hasTo('olena@example.com'));
 });
 
+it('лист адміністратору показує контакти окремими рядками (D-19)', function () {
+    $application = AdoptionApplication::factory()->create(['phone' => '+380671234567']);
+
+    $html = (new NewApplicationMail($application))->render();
+
+    expect($html)->toMatch('/'.preg_quote(e($application->region->name), '/').'<br>\s*Телефон: \+380671234567<br>/u');
+});
+
 it('перевіряє обовʼязкові поля, формат телефону і згоду', function () {
     $animal = Animal::factory()->create();
 
