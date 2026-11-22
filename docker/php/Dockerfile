@@ -43,6 +43,10 @@ CMD ["php-fpm"]
 # Етап 3: образ для запуску автотестів (додає dev-залежності, зокрема Pest)
 FROM app AS tests
 RUN composer install --prefer-dist --no-interaction
+# Як у CI: тести читають власний .env (зі зразка) з окремим ключем, а не змінні робочого середовища.
+# Справжні змінні оточення мають пріоритет над <env> з phpunit.xml, тож env_file з робочим .env
+# підміняв би тестову базу (shelter_test) і поштовий драйвер на робочі.
+RUN cp .env.example .env && php artisan key:generate --force --no-interaction
 ENTRYPOINT []
 CMD ["php", "vendor/bin/pest"]
 

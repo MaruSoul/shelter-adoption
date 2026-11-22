@@ -68,9 +68,13 @@ services:
       target: tests
     pull_policy: build
     profiles: ["tests"]
-    env_file: .env
+    # Без env_file: змінні з робочого .env мали б пріоритет над phpunit.xml, і тести (RefreshDatabase)
+    # працювали б з основною базою shelter, очищаючи її. Передаємо лише доступ до PostgreSQL.
     environment:
       APP_ENV: testing
+      DB_HOST: db
+      DB_USERNAME: ${DB_USERNAME:-shelter}
+      DB_PASSWORD: ${DB_PASSWORD:-secret}
     depends_on:
       db:
         condition: service_healthy
