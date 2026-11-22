@@ -38,8 +38,10 @@ class SitemapController extends Controller
         Post::published()->select(['id', 'slug', 'title_en', 'updated_at'])->orderBy('id')
             ->each(fn ($p) => $add('blog.show', [$p], $p->updated_at, filled($p->title_en)));
 
-        return response()
-            ->view('sitemap', ['pages' => $pages])
-            ->header('Content-Type', 'application/xml');
+        // XML-оголошення додається тут, а не в шаблоні: рядок «<?xml» у Blade-шаблоні PHP з увімкненим
+        // short_open_tag (типово в офіційному образі Docker) сприймає як відкривальний тег PHP – помилка 500
+        $xml = '<?xml version="1.0" encoding="UTF-8"?>'."\n".view('sitemap', ['pages' => $pages])->render();
+
+        return response($xml, 200, ['Content-Type' => 'application/xml']);
     }
 }
