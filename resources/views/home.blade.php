@@ -73,11 +73,19 @@
                 </div>
                 <a href="{{ auth()->check() ? route('cabinet.animals.create') : route('register') }}" class="btn-sun">{{ __('Розмістити тварину') }}</a>
             </div>
-            {{-- Текст редагується в «Налаштуваннях» адмінки; порожній – блоку немає --}}
-            @if ($helpText = \App\Models\ShelterSetting::current()->tr('help_text'))
-                <div class="rounded-3xl bg-card p-7 flex flex-col gap-2" data-reveal>
-                    <h3 class="text-2xl">{{ __('Як ще допомогти притулку') }}</h3>
-                    <p class="text-muted whitespace-pre-line">{{ $helpText }}</p>
+            {{-- Фінансова допомога: вступ і способи з панелі «Допомога»; нічого не заповнено – блоку немає --}}
+            @php($donations = \App\Models\DonationMethod::query()->shown()->get())
+            @php($helpText = \App\Models\ShelterSetting::current()->tr('help_text'))
+            @if ($donations->isNotEmpty() || $helpText)
+                <div class="flex flex-col gap-4" data-reveal>
+                    <div class="flex flex-wrap items-end justify-between gap-3">
+                        <div class="flex flex-col gap-1 max-w-3xl">
+                            <h3 class="text-3xl">{{ __('Як ще допомогти притулку') }}</h3>
+                            @if ($helpText)<div class="seo-text prose-links">{{ \App\Support\SimpleMarkup::block($helpText) }}</div>@endif
+                        </div>
+                        <a href="{{ route('help') }}" class="font-semibold text-primary hover:underline">{{ __('Усі способи допомогти') }} →</a>
+                    </div>
+                    <x-donation-tabs :methods="$donations" />
                 </div>
             @endif
         </div>

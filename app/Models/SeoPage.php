@@ -50,7 +50,7 @@ class SeoPage extends Model
             $pages['species:'.$species->slug] = 'Каталог: '.$species->name_plural;
         }
 
-        return $pages + ['blog' => 'Блог'];
+        return $pages + ['blog' => 'Блог', 'help' => 'Як допомогти'];
     }
 
     /** Налаштування сторінки або порожня модель (усі поля null), якщо їх ще не задано. */

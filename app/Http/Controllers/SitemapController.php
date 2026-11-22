@@ -30,6 +30,7 @@ class SitemapController extends Controller
         $add('animals.index', [], now());
         Species::orderBy('id')->each(fn ($s) => $add('animals.species', [$s->slug], now()));
         $add('blog.index', [], now());
+        $add('help', [], now());
 
         Animal::query()->visible()->select(['id', 'slug', 'updated_at'])->orderBy('id')
             ->each(fn ($a) => $add('animals.show', [$a], $a->updated_at));

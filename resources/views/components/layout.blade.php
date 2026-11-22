@@ -91,7 +91,7 @@
              x-bind:class="open && 'max-lg:flex'">
             <a href="{{ route('animals.index') }}" @class(['py-2', 'text-primary font-semibold' => request()->routeIs('animals.*', 'en.animals.*')])>{{ __('Знайти друга') }}</a>
             <a href="{{ route('blog.index') }}" @class(['py-2', 'text-primary font-semibold' => request()->routeIs('blog.*', 'en.blog.*')])>{{ __('Блог') }}</a>
-            <a href="{{ route('home') }}#help" class="py-2">{{ __('Як допомогти') }}</a>
+            <a href="{{ route('help') }}" @class(['py-2', 'text-primary font-semibold' => request()->routeIs('help', 'en.help')])>{{ __('Як допомогти') }}</a>
             <div class="flex flex-wrap gap-2 pt-2 lg:hidden">
                 @include('components.partials.auth-links')
             </div>
@@ -136,6 +136,8 @@
             <nav aria-label="{{ __('Нижнє меню') }}" class="flex flex-wrap gap-6">
                 <a href="{{ route('animals.index') }}" class="hover:underline">{{ __('Знайти друга') }}</a>
                 <a href="{{ route('blog.index') }}" class="hover:underline">{{ __('Блог') }}</a>
+                <a href="{{ route('help') }}" class="hover:underline">{{ __('Як допомогти') }}</a>
+                @if ($shelter->reports_url)<a href="{{ $shelter->reports_url }}" target="_blank" rel="noopener" class="hover:underline">{{ __('Звіти') }} ↗</a>@endif
                 <a href="{{ route('privacy') }}" class="hover:underline">{{ __('Політика конфіденційності') }}</a>
             </nav>
             @if ($socials = $shelter->socialLinks())

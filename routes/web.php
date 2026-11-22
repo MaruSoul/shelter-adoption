@@ -3,6 +3,7 @@
 use App\Http\Controllers\AnimalController;
 use App\Http\Controllers\BlogController;
 use App\Http\Controllers\FavoriteController;
+use App\Http\Controllers\HelpController;
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\LlmsTxtController;
 use App\Http\Controllers\SitemapController;
@@ -36,6 +37,8 @@ $localizedPages = function () {
 
     Route::get('/blog', [BlogController::class, 'index'])->name('blog.index');
     Route::get('/blog/{post}', [BlogController::class, 'show'])->name('blog.show');
+
+    Route::get('/dopomohty', HelpController::class)->name('help');
 
     Route::view('/polityka-konfidentsiinosti', 'pages.privacy')->name('privacy');
 };
@@ -105,5 +108,6 @@ Route::middleware(['auth', 'verified', 'can:admin'])->prefix('admin')->name('adm
 
     Route::get('/dovidnyky', Admin\Dictionaries::class)->name('dictionaries');
     Route::get('/seo', Admin\Seo::class)->name('seo');
+    Route::get('/dopomoha', Admin\Donations::class)->name('donations');
     Route::get('/nalashtuvannia', Admin\Settings::class)->name('settings');
 });

@@ -55,8 +55,9 @@ it('не дає транслітерувати довільну властиві
 });
 
 it('фільтрує тварин без англійського перекладу', function () {
-    $done = Animal::factory()->create(['story' => 'Текст', 'story_en' => 'Text', 'behavior' => null, 'adoption_terms' => null]);
-    $todo = Animal::factory()->create(['story' => 'Текст', 'story_en' => null, 'behavior' => null, 'adoption_terms' => null]);
+    // Клички задано явно: фабрика бере їх із короткого списку, і дві тварини могли отримати однакову
+    $done = Animal::factory()->create(['name' => 'Перекладений', 'story' => 'Текст', 'story_en' => 'Text', 'behavior' => null, 'adoption_terms' => null]);
+    $todo = Animal::factory()->create(['name' => 'Неперекладений', 'story' => 'Текст', 'story_en' => null, 'behavior' => null, 'adoption_terms' => null]);
 
     expect(Animal::missingTranslation()->pluck('id')->all())->toBe([$todo->id]);
 

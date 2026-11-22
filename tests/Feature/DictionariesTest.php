@@ -6,7 +6,6 @@ use App\Models\Animal;
 use App\Models\Breed;
 use App\Models\Color;
 use App\Models\PostCategory;
-use App\Models\ShelterSetting;
 use App\Models\Species;
 use Livewire\Livewire;
 
@@ -71,18 +70,13 @@ it('новий вид і рубрика отримують постійну ад
         ->and(PostCategory::where('name', 'Здоровʼя')->value('slug'))->toBe('zdorovia');
 });
 
-it('показує блок «Як допомогти» і типові умови прилаштування з налаштувань', function () {
+it('показує типові умови прилаштування з налаштувань', function () {
     $animal = Animal::factory()->create(['adoption_terms' => null]);
-
-    $this->get(route('home'))->assertDontSee('Як ще допомогти притулку');
 
     Livewire::actingAs(admin())->test(Settings::class)
         ->set('form.name', 'Клуб хвостики')->set('form.notification_email', 'shelter@example.com')
-        ->set('form.help_text', 'Потрібен корм для котят')
         ->set('form.default_adoption_terms', 'Знайомство в притулку й договір')
         ->call('save')->assertHasNoErrors();
 
-    expect(ShelterSetting::current()->help_text)->toBe('Потрібен корм для котят');
-    $this->get(route('home'))->assertSee('Як ще допомогти притулку')->assertSee('Потрібен корм для котят');
     $this->get(route('animals.show', $animal))->assertSee('Знайомство в притулку й договір');
 });

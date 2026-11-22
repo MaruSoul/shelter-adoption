@@ -49,6 +49,7 @@ class LlmsTxtController extends Controller
         }
 
         $lines = [...$lines, '', '## Інше', '',
+            '- [Як допомогти притулку]('.$url->routeIn('uk', 'help').'): банка Monobank, реквізити, PayPal, звіти',
             '- [Блог]('.$url->routeIn('uk', 'blog.index').')',
             '- [Політика конфіденційності]('.$url->routeIn('uk', 'privacy').')',
             '- [Карта сайту]('.route('sitemap').')',

@@ -90,6 +90,7 @@ class Seo extends Component
             $this->page === 'home' => $url->routeIn($locale, 'home'),
             $this->page === 'animals' => $url->routeIn($locale, 'animals.index'),
             $this->page === 'blog' => $url->routeIn($locale, 'blog.index'),
+            $this->page === 'help' => $url->routeIn($locale, 'help'),
             default => $url->routeIn($locale, 'animals.species', substr($this->page, strlen('species:'))),
         };
     }

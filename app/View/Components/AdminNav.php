@@ -27,6 +27,7 @@ class AdminNav extends Component
             ['admin.moderation', 'Модерація', Animal::where('status', AnimalStatus::Moderation)->count()],
             ['admin.posts.index', 'Статті', null],
             ['admin.dictionaries', 'Довідники', null],
+            ['admin.donations', 'Допомога', null],
             ['admin.seo', 'SEO', null],
             ['admin.settings', 'Налаштування', null],
         ];
