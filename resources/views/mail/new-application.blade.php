@@ -1,9 +1,9 @@
 <x-mail::message>
 # Нова анкета на {{ $application->animal->name }}
 
-**{{ $application->name }}**, {{ $application->region->name }}
-Телефон: {{ $application->phone }}
-E-mail: {{ $application->email }}
+**{{ $application->name }}**, {{ $application->region->name }}<br>
+Телефон: {{ $application->phone }}<br>
+E-mail: {{ $application->email }}<br>
 Зручний звʼязок: {{ $application->contact_channels->map->label()->join(', ') }}
 
 @if ($application->comment)

@@ -6,28 +6,29 @@ entity "species" as species {
   * id : bigint <<PK>>
   --
   name, name_plural, slug <<UQ>>
+  name_en, name_plural_en
 }
 entity "breeds" as breeds {
   * id <<PK>>
   --
   * species_id <<FK>>
-  name (UQ з species_id)
+  name (UQ з species_id), name_en
 }
 entity "colors" as colors {
   * id <<PK>>
   --
-  name <<UQ>>
+  name <<UQ>>, name_en
 }
 entity "regions" as regions {
   * id <<PK>>
   --
-  name <<UQ>>
+  name <<UQ>>, name_en
 }
 entity "localities" as localities {
   * id <<PK>>
   --
   * region_id <<FK>>
-  name (UQ з region_id)
+  name (UQ з region_id), name_en
 }
 entity "users" as users {
   * id <<PK>>
@@ -41,10 +42,10 @@ entity "animals" as animals {
   --
   * species_id, locality_id <<FK>>
   breed_id, color_id, created_by <<FK>>
-  name, slug <<UQ>>, sex, birth_date
+  name, name_en, slug <<UQ>>, sex, birth_date
   is_sterilized, is_vaccinated
-  story, behavior, adoption_terms
-  current_location, source, status
+  story, behavior, adoption_terms (+ *_en)
+  current_location (+ _en), source, status
   moderation_note, published_at,
   adopted_at, deleted_at
 }
@@ -76,21 +77,39 @@ entity "favorites" as fav {
 entity "post_categories" as cats {
   * id <<PK>>
   --
-  name <<UQ>>, slug <<UQ>>
+  name <<UQ>>, name_en, slug <<UQ>>
 }
 entity "posts" as posts {
   * id <<PK>>
   --
   * post_category_id <<FK>>
   author_id <<FK>>
-  title, slug <<UQ>>, excerpt, cover_path
-  blocks (jsonb), status, published_at
+  title, excerpt (+ *_en), slug <<UQ>>
+  meta_title, meta_description (+ *_en)
+  cover_path, blocks (jsonb, переклад
+  усередині блоку), status, published_at
 }
 entity "shelter_settings" as settings {
   * id <<PK>>
   --
-  name, tagline, address, phone, email,
-  notification_email, *_url соцмереж
+  name, tagline, address (+ *_en), phone,
+  email, notification_email, *_url соцмереж
+  help_text, default_adoption_terms (+ *_en)
+  google_site_verification, google_analytics_id
+}
+entity "seo_pages" as seo {
+  * id <<PK>>
+  --
+  key <<UQ>> (home, animals, species:cat, blog…)
+  title, description, h1, text (+ *_en)
+}
+entity "donation_methods" as don {
+  * id <<PK>>
+  --
+  type: monobank | requisites | paypal | link
+  position, is_visible
+  title, note (+ *_en)
+  details (json: url, iban, recipient…)
 }
 species ||--o{ breeds
 species ||--o{ animals

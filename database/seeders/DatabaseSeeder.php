@@ -4,10 +4,12 @@ namespace Database\Seeders;
 
 use App\Enums\AnimalStatus;
 use App\Enums\ApplicationStatus;
+use App\Enums\DonationType;
 use App\Enums\PostStatus;
 use App\Models\AdoptionApplication;
 use App\Models\Animal;
 use App\Models\ApplicationStatusChange;
+use App\Models\DonationMethod;
 use App\Models\Post;
 use App\Models\PostCategory;
 use App\Models\Region;
@@ -44,6 +46,8 @@ class DatabaseSeeder extends Seeder
             'youtube_url' => 'https://www.youtube.com/',
             'notification_email' => 'admin@domivka.local',
         ]);
+
+        $this->donationMethods();
 
         $admin = User::factory()->admin()->create([
             'name' => 'Адміністратор притулку',
@@ -190,5 +194,26 @@ class DatabaseSeeder extends Seeder
 
         // Замість заглушок – справжні фото
         $this->call(BlogCoverSeeder::class);
+    }
+
+    /**
+     * Демо-способи допомоги для сторінки «Як допомогти»: банка, реквізити (IBAN із коректною
+     * контрольною сумою) і PayPal. Справжні дані притулок вносить в адмінці.
+     */
+    private function donationMethods(): void
+    {
+        $methods = [
+            [DonationType::Monobank, 'Банка на корм і ліки', 'Food and vet care jar', 'Поповнення займає хвилину, підходить будь-яка картка.', 'Takes a minute, any card works.', ['url' => 'https://send.monobank.ua/jar/2xKqZ7example']],
+            [DonationType::Requisites, 'Переказ на рахунок ГО', 'Bank transfer', 'Для переказу з будь-якого банку України.', 'For transfers from any Ukrainian bank.', ['recipient' => 'ГО «Клуб хвостики»', 'iban' => 'UA213223130000026007233566001', 'code' => '45678912', 'bank' => 'АТ «Універсал Банк»', 'purpose' => 'Благодійна допомога тваринам']],
+            [DonationType::PayPal, 'PayPal для допомоги з-за кордону', 'PayPal from abroad', null, null, ['account' => 'https://paypal.me/clubkhvostyky']],
+        ];
+
+        foreach ($methods as $i => [$type, $title, $titleEn, $note, $noteEn, $details]) {
+            DonationMethod::query()->create([
+                'type' => $type, 'position' => $i + 1, 'is_visible' => true,
+                'title' => $title, 'title_en' => $titleEn, 'note' => $note, 'note_en' => $noteEn,
+                'details' => $type->normalize($details),
+            ]);
+        }
     }
 }

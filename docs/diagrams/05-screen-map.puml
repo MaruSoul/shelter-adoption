@@ -16,6 +16,9 @@ state "UI-12 Картка анкети" as AShow
 state "UI-13 Модерація" as AMod
 state "UI-14 Конструктор статті" as APost
 state "UI-15 Блог і стаття" as Blog
+state "UI-16 Як допомогти" as Help
+state "UI-17 Англійська версія\n(той самий екран за /en/…)" as En
+state "UI-18 Довідники, SEO,\nспособи допомоги, налаштування" as ASet
 [*] --> Home
 Home --> Cat : Знайти друга /\nдобірка
 Home --> Pet : результат гри
@@ -27,6 +30,9 @@ Form --> Ok : анкету створено
 Ok --> Auth : Створити акаунт
 Pet --> Fav : сердечко
 Home --> Blog
+Home --> Help : Підтримати
+Home --> En : перемикач UA/EN\n(та сама сторінка)
+En --> Home : UA
 Auth --> Cab : пошту підтверджено
 Cab --> VForm : Розмістити тварину
 VForm --> Cab : картка на модерації
@@ -35,5 +41,6 @@ ADash --> AList : лічильник
 AList --> AShow : Відкрити →
 ADash --> AMod
 ADash --> APost
+ADash --> ASet
 APost --> Blog : попередній перегляд /\nпублікація
 @enduml

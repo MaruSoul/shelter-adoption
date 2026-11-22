@@ -6,25 +6,35 @@ actor "Зареєстрований\nкористувач\n(волонтер)" a
 actor "Адміністратор\nпритулку" as A
 actor "Поштовий сервіс\n(зовнішня система)" as M
 U -|> G
-rectangle "Вебсистема Домівка" {
-  usecase "UC-01 Переглянути каталог\nз фільтрами" as UC1
-  usecase "UC-02 Переглянути сторінку\nтварини" as UC2
-  usecase "UC-03 Подати анкету\n«Взяти додому»" as UC3
-  usecase "UC-04 Читати блог" as UC4
-  usecase "UC-05 Зареєструватися\nй підтвердити e-mail" as UC5
-  usecase "UC-06 Переглянути свої анкети\nта їхні статуси" as UC6
-  usecase "UC-07 Розмістити знайдену\nтварину" as UC7
-  usecase "UC-08 Обробити анкету\n(зміна статусу, нотатки)" as UC8
-  usecase "UC-09 Позначити\nприлаштування" as UC9
-  usecase "UC-10 Модерувати картку\nволонтера" as UC10
-  usecase "UC-11 Керувати тваринами\nй фото" as UC11
-  usecase "UC-12 Створити статтю\nв конструкторі" as UC12
-  usecase "UC-13 Змінити налаштування\nпритулку" as UC13
+rectangle "Вебсистема Клуб хвостики" {
+  rectangle "Публічна частина (UA / EN)" {
+    usecase "UC-01 Переглянути каталог\nз фільтрами" as UC1
+    usecase "UC-02 Переглянути сторінку\nтварини" as UC2
+    usecase "UC-03 Подати анкету\n«Взяти додому»" as UC3
+    usecase "UC-04 Читати блог" as UC4
+    usecase "UC-14 Перемкнути мову\nсайту (UA/EN)" as UC14
+    usecase "UC-15 Переглянути способи\nдопомоги притулку" as UC15
+    usecase "UC-05 Зареєструватися\nй підтвердити e-mail" as UC5
+    usecase "UC-06 Переглянути свої анкети\nта їхні статуси" as UC6
+    usecase "UC-07 Розмістити знайдену\nтварину" as UC7
+  }
+  rectangle "Панель адміністратора" {
+    usecase "UC-08 Обробити анкету\n(зміна статусу, нотатки)" as UC8
+    usecase "UC-09 Позначити\nприлаштування" as UC9
+    usecase "UC-10 Модерувати картку\nволонтера" as UC10
+    usecase "UC-11 Керувати тваринами\nй фото" as UC11
+    usecase "UC-12 Створити статтю\nв конструкторі" as UC12
+    usecase "UC-16 Заповнити переклад\nвмісту англійською" as UC16
+    usecase "UC-13 Змінити налаштування\nпритулку" as UC13
+    usecase "UC-17 Вести довідники,\nSEO-тексти, способи допомоги" as UC17
+  }
 }
 G -- UC1
 G -- UC2
 G -- UC3
 G -- UC4
+G -- UC14
+G -- UC15
 G -- UC5
 U -- UC6
 U -- UC7
@@ -34,6 +44,12 @@ UC10 -- A
 UC11 -- A
 UC12 -- A
 UC13 -- A
+UC17 -- A
+UC11 ..> UC16 : «include»
+UC12 ..> UC16 : «include»
 UC3 ..> M : «include»\nсповіщення
 UC9 .> UC8 : «extend»
+UC14 -[hidden]-> UC8
+UC15 -[hidden]-> UC10
+UC5 -[hidden]-> UC13
 @enduml
