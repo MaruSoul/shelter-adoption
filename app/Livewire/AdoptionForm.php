@@ -49,6 +49,9 @@ class AdoptionForm extends Component
 
     public bool $submitted = false;
 
+    /** Анкету привʼязано до наявного акаунта з цією поштою – її вже видно в кабінеті після входу. */
+    public bool $inCabinet = false;
+
     public function mount(Animal $animal): void
     {
         abort_unless($animal->isPublic(), 404);
@@ -137,7 +140,7 @@ class AdoptionForm extends Component
         }
 
         try {
-            $service->handle($this->animal, [
+            $application = $service->handle($this->animal, [
                 'name' => trim($data['name']),
                 'email' => $data['email'],
                 'phone' => $data['phone'],
@@ -158,6 +161,7 @@ class AdoptionForm extends Component
             $user->forceFill(['phone' => $data['phone'], 'region_id' => (int) $data['region_id']])->save();
         }
 
+        $this->inCabinet = $application->user_id !== null;
         $this->submitted = true;
     }
 

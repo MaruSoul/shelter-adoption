@@ -106,7 +106,16 @@
                 <h1 class="text-3xl md:text-4xl">{{ __('Дякуємо! Анкету отримано') }}</h1>
                 <p class="text-lg max-w-md"><strong>{{ $animal->display_name }}</strong> {{ __('уже чекає на знайомство з вами.') }}</p>
                 <p class="text-muted max-w-md">{{ __('Адміністратор притулку звʼяжеться з вами найближчим часом обраним способом. Копію анкети ми надіслали на :email.', ['email' => $email]) }}</p>
+                <p class="text-sm text-muted max-w-md">{{ __('Не бачите листа? Зачекайте кілька хвилин і перевірте папку «Спам» або «Промоакції». Якщо лист там, позначте його як «Не спам» – тоді наступні листи від притулку приходитимуть у «Вхідні».') }}</p>
                 @guest
+                    @if ($inCabinet)
+                        {{-- Пошта належить наявному акаунту – анкета вже в кабінеті, пропонувати реєстрацію немає сенсу --}}
+                        <div class="rounded-2xl bg-sun-soft p-5 flex flex-col items-center gap-2.5 max-w-md w-full mt-2">
+                            <span class="font-semibold">{{ __('Анкета вже у вашому кабінеті') }}</span>
+                            <span class="text-muted text-sm">{{ __('Увійдіть в акаунт, щоб стежити за її статусом.') }}</span>
+                            <a href="{{ route('login') }}" class="btn-primary">{{ __('Увійти') }}</a>
+                        </div>
+                    @else
                     <div class="rounded-2xl bg-sun-soft p-5 flex flex-col items-center gap-2.5 max-w-md w-full mt-2">
                         <span class="font-semibold">{{ __('Хочете стежити за статусом анкети?') }}</span>
                         <span class="text-muted text-sm">{{ __('Увійдіть в акаунт з цією ж поштою – анкета вже чекатиме у вашому кабінеті. Акаунта ще немає? Створіть його: після підтвердження адреси анкета зʼявиться там автоматично.') }}</span>
@@ -115,6 +124,7 @@
                             <a href="{{ route('register') }}" class="btn-outline">{{ __('Створити акаунт') }}</a>
                         </div>
                     </div>
+                    @endif
                 @else
                     <a href="{{ route('cabinet') }}" class="btn-primary min-h-12 px-8 mt-2">{{ __('Перейти до кабінету') }}</a>
                 @endguest

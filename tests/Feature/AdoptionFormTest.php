@@ -8,6 +8,7 @@ use App\Mail\NewApplicationMail;
 use App\Models\AdoptionApplication;
 use App\Models\Animal;
 use App\Models\Region;
+use App\Models\User;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\RateLimiter;
 use Livewire\Livewire;
@@ -170,4 +171,36 @@ it('після надсилання анкети Лапа радіє', function 
     fillForm(Livewire::test(AdoptionForm::class, ['animal' => Animal::factory()->create()]))
         ->call('submit')
         ->assertSee('Лапа радіє разом із вами');
+});
+
+it('власнику підтвердженого акаунта пропонує увійти, а не реєструватися – і на сторінці, і в листі', function () {
+    Mail::fake();
+    $animal = Animal::factory()->create();
+    User::factory()->create(['email' => 'olena@example.com']);
+
+    Livewire::test(AdoptionForm::class, ['animal' => $animal])
+        ->set('name', 'Олена')->set('email', 'olena@example.com')->set('phone', '+380671234567')
+        ->set('region_id', (string) Region::first()->id)->set('consent', true)
+        ->call('submit')
+        ->assertSet('submitted', true)->assertSet('inCabinet', true)
+        ->assertSee('Анкета вже у вашому кабінеті')->assertDontSee('Створити акаунт')
+        ->assertSee('Спам');
+
+    Mail::assertQueued(ApplicationReceivedMail::class, function (ApplicationReceivedMail $mail) {
+        $html = $mail->render();
+
+        return str_contains($html, 'Відкрити кабінет') && ! str_contains($html, 'Створити акаунт');
+    });
+});
+
+it('гостю без акаунта лист пропонує створити акаунт', function () {
+    Mail::fake();
+    $animal = Animal::factory()->create();
+
+    Livewire::test(AdoptionForm::class, ['animal' => $animal])
+        ->set('name', 'Олена')->set('email', 'new@example.com')->set('phone', '+380671234567')
+        ->set('region_id', (string) Region::first()->id)->set('consent', true)
+        ->call('submit')->assertSet('inCabinet', false)->assertSee('Створити акаунт');
+
+    Mail::assertQueued(ApplicationReceivedMail::class, fn ($mail) => str_contains($mail->render(), 'Створити акаунт'));
 });
