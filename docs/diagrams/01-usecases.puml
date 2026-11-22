@@ -49,4 +49,7 @@ UC11 ..> UC16 : «include»
 UC12 ..> UC16 : «include»
 UC3 ..> M : «include»\nсповіщення
 UC9 .> UC8 : «extend»
+UC14 -[hidden]-> UC8
+UC15 -[hidden]-> UC10
+UC5 -[hidden]-> UC13
 @enduml
