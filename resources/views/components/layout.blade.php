@@ -123,7 +123,8 @@
 <footer class="bg-ink text-bg mt-16">
     <div class="mx-auto max-w-6xl px-6 py-12 flex flex-wrap justify-between gap-8">
         <div class="flex flex-col gap-2 max-w-sm">
-            <span class="size-32 rounded-full bg-bg p-1 mb-2"><img src="/logo.png" alt="{{ __('Логотип притулку') }}" width="480" height="505" loading="lazy" class="size-full object-contain"></span>
+            {{-- Літери логотипа йдуть по колу аж до кутів зображення, тож відступ усередині кола більший, щоб вони не виходили за край --}}
+            <span class="size-36 shrink-0 rounded-full bg-bg p-4 mb-2 flex items-center justify-center"><img src="/logo.png" alt="{{ __('Логотип притулку') }}" width="480" height="505" loading="lazy" class="size-full object-contain"></span>
             <span class="font-display font-extrabold text-xl uppercase tracking-wider">{{ $brand }}</span>
             @if ($tagline)<span class="opacity-85">{{ $tagline }}</span>@endif
             <span class="opacity-85">
